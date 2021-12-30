@@ -1,5 +1,16 @@
 https://zhuanlan.zhihu.com/p/358568363
 
+
+Rscript执行命令
+```text
+//安装依赖
+Rscript -e 'install.packages("readxl",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/")'
+//查询已安装包
+Rscript -e 'installed.packages()'
+```
+
+
+
 ```text
 Usage: jpackage <options>
 
