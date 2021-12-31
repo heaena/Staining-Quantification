@@ -1,0 +1,2 @@
+#!/bin/bash
+Rscript -e 'install.packages("readxl",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/")'
