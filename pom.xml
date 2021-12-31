@@ -61,6 +61,7 @@
                             <Class-Path>config/</Class-Path>
                         </manifestEntries>
                     </archive>
+
                     <!-- 排除配置文件，不打包到jar包中，被排除的配置文件在程序加载时，会从外部找 -->
                     <excludes>
                         <exclude>script/**/**</exclude>
