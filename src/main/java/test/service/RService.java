@@ -1,10 +1,14 @@
 package test.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import test.util.ProcessUtil;
 
 import javax.swing.*;
 
 public class RService {
+
+    private static Logger loger = LoggerFactory.getLogger(RService.class);
 
     /**
      * 安装R依赖
@@ -18,6 +22,7 @@ public class RService {
     private static boolean execAndPrint(String scriptFile, JTextArea log) {
         try {
             String scriptPath = RService.class.getClassLoader().getResource(scriptFile).getPath();
+            loger.info(scriptPath);
             return ProcessUtil.exec(scriptPath, line -> {
                 if (log != null) {
                     log.append(line + "\n");
@@ -37,4 +42,6 @@ public class RService {
     public static boolean installedPackages(JTextArea log) {
         return execAndPrint("script/installed.packages", log);
     }
+
+
 }

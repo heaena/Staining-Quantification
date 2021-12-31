@@ -1,6 +1,8 @@
 package test;
 
 
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import test.service.RService;
 
 import javax.swing.*;
@@ -8,6 +10,7 @@ import java.awt.*;
 import java.net.URI;
 import java.net.URL;
 
+@SpringBootApplication
 public class ImageApp {
 
     public static void main(String[] args) {
@@ -28,6 +31,9 @@ public class ImageApp {
 
         jf.setContentPane(panel);
         jf.setVisible(true);
+
+        //启动web服务
+        new Thread(() -> SpringApplication.run(ImageApp.class, args)).start();
 
     }
 
@@ -114,7 +120,7 @@ public class ImageApp {
     public static void openBrowse(String path) {
         URI uri = null;
         try {
-            uri = new URL("http://www.baidu.com").toURI();
+            uri = new URL("http://localhost").toURI();
             Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
 
             if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {

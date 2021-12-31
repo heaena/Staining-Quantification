@@ -42,4 +42,22 @@ public class ProcessUtil {
 
     }
 
+    public static void main(String[] args) {
+        String c = "Rscript -e 'installed.packages()'";
+        try {
+            Process process = Runtime.getRuntime().exec(c);
+            BufferedReader inr = new BufferedReader(new InputStreamReader(process.getInputStream(),"UTF-8"));
+            String line = null;
+            while ((line = inr.readLine()) != null) {
+                System.out.println(line);
+            }
+            inr.close();
+            //返回值为0表示调用成功
+            int re = process.waitFor();
+            System.out.println(re);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }
