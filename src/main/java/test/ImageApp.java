@@ -10,6 +10,27 @@ import java.net.URL;
 
 public class ImageApp {
 
+    public static void main(String[] args) {
+        JFrame jf = new JFrame(ImageApp.class.getSimpleName());
+        jf.setSize(700, 500);
+        jf.setLocationRelativeTo(null);
+        jf.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
+        JPanel panel = new JPanel();
+
+        //安装依赖按钮
+        addInstallPackagesBtn(panel);
+        addInstalledPackagesBtn(panel);
+        //首页按钮
+        addHomeBtn(panel);
+        //日志区域
+        addLogTextArea(panel);
+
+        jf.setContentPane(panel);
+        jf.setVisible(true);
+
+    }
+
     /**在面板中的索引*/
     public static final int INDEX_INSTALL_PACKAGES_BTN = 0;
     public static final int INDEX_INSTALLED_PACKAGES_BTN = 1;
@@ -88,27 +109,6 @@ public class ImageApp {
         final JButton homeBtn = new JButton("首页");
         homeBtn.addActionListener(e -> openBrowse("/"));
         panel.add(homeBtn, INDEX_HOME_BTN);
-    }
-
-    public static void main(String[] args) {
-        JFrame jf = new JFrame("Image");
-        jf.setSize(700, 500);
-        jf.setLocationRelativeTo(null);
-        jf.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
-        JPanel panel = new JPanel();
-
-        //安装依赖按钮
-        addInstallPackagesBtn(panel);
-        addInstalledPackagesBtn(panel);
-        //首页按钮
-        addHomeBtn(panel);
-        //日志区域
-        addLogTextArea(panel);
-
-        jf.setContentPane(panel);
-        jf.setVisible(true);
-
     }
 
     public static void openBrowse(String path) {

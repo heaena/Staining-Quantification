@@ -24,7 +24,7 @@
     </dependencies>
 
     <build>
-        <finalName>jpackage-test</finalName>
+        <finalName>image-app</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -32,7 +32,7 @@
                 <version>2.6.2</version>
                 <configuration>
                     <fork>true</fork>
-                    <mainClass>com.alibaba.csp.sentinel.dashboard.DashboardApplication</mainClass>
+                    <mainClass>test.ImageApp</mainClass>
                 </configuration>
                 <executions>
                     <execution>

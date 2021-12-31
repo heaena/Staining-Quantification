@@ -1,6 +1,5 @@
 package test.service;
 
-import org.springframework.core.io.ClassPathResource;
 import test.util.ProcessUtil;
 
 import javax.swing.*;
@@ -18,10 +17,8 @@ public class RService {
 
     private static boolean execAndPrint(String scriptFile, JTextArea log) {
         try {
-            ClassPathResource classPathResource = new ClassPathResource(scriptFile);
-            String path = classPathResource.getFile().getPath();
-            String command = "sh " + path;
-            return ProcessUtil.exec(command, line -> {
+            String scriptPath = RService.class.getClassLoader().getResource(scriptFile).getPath();
+            return ProcessUtil.exec(scriptPath, line -> {
                 if (log != null) {
                     log.append(line + "\n");
                 }

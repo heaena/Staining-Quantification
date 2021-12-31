@@ -1,0 +1,9 @@
+**/**/target/
+.classpath
+.project
+.settings
+**/**/*.iml
+.idea
+./package-content/*.jar
+./package-script/*.dmg
+./package-script/*.exe

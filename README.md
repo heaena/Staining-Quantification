@@ -211,7 +211,5 @@ Options for creating the application package:
           Path of the predefined runtime image to install
           (absolute path or relative to the current directory)
           Option is required when creating a runtime package.
-
-Platform dependent options for creating the application package:
-
+              
 ```
