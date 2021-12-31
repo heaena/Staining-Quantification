@@ -8,7 +8,7 @@ import java.awt.*;
 import java.net.URI;
 import java.net.URL;
 
-public class TestOpenBrowse {
+public class ImageApp {
 
     /**在面板中的索引*/
     public static final int INDEX_INSTALL_PACKAGES_BTN = 0;
@@ -58,8 +58,7 @@ public class TestOpenBrowse {
      * 清除日志
      */
     private static void cleanAndBeginLog(String title) {
-        log.setText("");
-        log.setText("> "+title + "\n================================\n");
+        log.setText("> " + title + "\n================================\n");
     }
 
 
