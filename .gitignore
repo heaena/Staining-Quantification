@@ -4,6 +4,6 @@
 .settings
 **/**/*.iml
 .idea
-./package-content/*.jar
+./package-content
 ./package-script/*.dmg
 ./package-script/*.exe

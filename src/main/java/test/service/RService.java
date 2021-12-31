@@ -2,6 +2,7 @@ package test.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.ClassPathResource;
 import test.util.ProcessUtil;
 
 import javax.swing.*;
@@ -21,7 +22,7 @@ public class RService {
 
     private static boolean execAndPrint(String scriptFile, JTextArea log) {
         try {
-            String scriptPath = RService.class.getClassLoader().getResource(scriptFile).getPath();
+            String scriptPath = new ClassPathResource(scriptFile).getFile().getPath();
             loger.info(scriptPath);
             return ProcessUtil.exec(scriptPath, line -> {
                 if (log != null) {
