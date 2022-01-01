@@ -1,9 +1,9 @@
-package test;
+package image.analysis.cloud;
 
 
+import image.analysis.cloud.service.RService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import test.service.RService;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,10 +11,10 @@ import java.net.URI;
 import java.net.URL;
 
 @SpringBootApplication
-public class ImageApp {
+public class ImageAnalysisApp {
 
     public static void main(String[] args) {
-        JFrame jf = new JFrame(ImageApp.class.getSimpleName());
+        JFrame jf = new JFrame(ImageAnalysisApp.class.getSimpleName());
         jf.setSize(700, 500);
         jf.setLocationRelativeTo(null);
         jf.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -33,7 +33,7 @@ public class ImageApp {
         jf.setVisible(true);
 
         //启动web服务
-        new Thread(() -> SpringApplication.run(ImageApp.class, args)).start();
+        new Thread(() -> SpringApplication.run(ImageAnalysisApp.class, args)).start();
 
     }
 

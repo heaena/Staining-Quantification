@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.example</groupId>
-    <artifactId>jpackage-test</artifactId>
+    <groupId>image.analysis.cloud</groupId>
+    <artifactId>image-analysis-app</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
@@ -31,7 +31,7 @@
     </dependencies>
 
     <build>
-        <finalName>image-app</finalName>
+        <finalName>image-analysis-app</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -54,7 +54,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>test.ImageApp</mainClass>
+                            <mainClass>image.analysis.cloud.ImageAnalysisApp</mainClass>
                         </manifest>
                         <!-- 指定配置文件外置目录 -->
                         <manifestEntries>

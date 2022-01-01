@@ -1,9 +1,9 @@
-package test.service;
+package image.analysis.cloud.service;
 
+import image.analysis.cloud.util.ProcessUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
-import test.util.ProcessUtil;
 
 import javax.swing.*;
 

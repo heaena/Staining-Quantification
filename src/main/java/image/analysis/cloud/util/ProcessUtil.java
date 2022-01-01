@@ -1,4 +1,4 @@
-package test.util;
+package image.analysis.cloud.util;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
