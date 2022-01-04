@@ -14,7 +14,7 @@ module image.analysis.cloud.app {
     requires mybatis.plus.annotation;
     requires lombok;
     requires org.apache.commons.lang3;
-    requires mybatis.plus.extension;
+    requires mybatis.plus;
     requires fastjson;
     requires spring.context;
     requires java.annotation;
@@ -28,6 +28,7 @@ module image.analysis.cloud.app {
     requires spring.boot;
     requires org.mybatis;
     requires spring.beans;
+    requires mybatis.plus.extension;
 
     opens image.analysis.cloud.app.entrypoint.gui to javafx.fxml;
     exports image.analysis.cloud.app;

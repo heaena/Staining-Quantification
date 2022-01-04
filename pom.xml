@@ -17,7 +17,9 @@
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        <package.dir>${project.basedir}/package-content</package.dir>
+        <mainClass>image.analysis.cloud.app.HelloApplication</mainClass>
+        <javafx.version>15.0.1</javafx.version>
+        <package.dir>${project.build.directory}</package.dir>
     </properties>
 
     <dependencies>
@@ -34,7 +36,7 @@
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-boot-starter</artifactId>
-            <version>3.2.0</version>
+            <version>3.5.0</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/com.h2database/h2 -->
         <dependency>
@@ -51,12 +53,12 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.11</version>
+            <version>3.12.0</version>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>30.1-jre</version>
+            <version>31.0.1-jre</version>
         </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
@@ -66,17 +68,17 @@
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
-            <version>17.0.1</version>
+            <version>${javafx.version}</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
-            <version>17.0.1</version>
+            <version>${javafx.version}</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-web</artifactId>
-            <version>17.0.1</version>
+            <version>${javafx.version}</version>
         </dependency>
         <dependency>
             <groupId>org.controlsfx</groupId>
@@ -134,17 +136,33 @@
     </dependencies>
 
     <build>
-        <finalName>image-analysis-app</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
                 <configuration>
                     <source>${maven.compiler.source}</source>
                     <target>${maven.compiler.target}</target>
                 </configuration>
             </plugin>
-
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jlink-plugin</artifactId>
+                <version>3.1.0</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <!-- configuration elements goes here -->
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.0.0</version>
+                <configuration>
+                    <mainClass>${mainClass}</mainClass>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -161,7 +179,7 @@
                         </manifest>
                         <!-- 指定配置文件外置目录 -->
                         <manifestEntries>
-                            <Class-Path>config/</Class-Path>
+                            <Class-Path>conf/</Class-Path>
                         </manifestEntries>
                     </archive>
 
@@ -186,7 +204,7 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${package.dir}/config</outputDirectory>
+                            <outputDirectory>${package.dir}/conf</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>src/main/resources</directory>
@@ -220,9 +238,44 @@
                     </execution>
                 </executions>
             </plugin>
-
+            <plugin>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+                <version>0.0.8</version>
+                <configuration>
+                    <mainClass>treefx/com.acme.treefx.TreeFX</mainClass>
+                    <stripDebug>true</stripDebug>
+                    <compress>2</compress>
+                    <noHeaderFiles>true</noHeaderFiles>
+                    <noManPages>true</noManPages>
+                    <launcher>treefx</launcher>
+                    <jlinkImageName>treefx</jlinkImageName>
+                    <jlinkZipName>treefx</jlinkZipName>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.panteleyev</groupId>
+                <artifactId>jpackage-maven-plugin</artifactId>
+                <version>1.4.0</version>
+                <configuration>
+                    <name>TreeFX</name>
+                    <appVersion>1.0.0</appVersion>
+                    <vendor>io.trydent</vendor>
+                    <module>treefx/com.acme.treefx.TreeFX</module>
+                    <runtimeImage>target/treefx</runtimeImage>
+                    <modulePath>${java.home}/jmods</modulePath>
+                    <destination>target/dist</destination>
+                    <linuxShortcut>true</linuxShortcut>
+                    <linuxPackageName>treefx</linuxPackageName>
+                    <linuxAppCategory>Utilities</linuxAppCategory>
+                    <linuxMenuGroup>Utilities</linuxMenuGroup>
+                    <icon>${project.basedir}/duke.png</icon>
+                    <javaOptions>
+                        <option>-Dfile.encoding=UTF-8</option>
+                    </javaOptions>
+                </configuration>
+            </plugin>
         </plugins>
-
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
