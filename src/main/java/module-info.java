@@ -30,6 +30,7 @@ module image.analysis.cloud.app {
     requires spring.beans;
     requires mybatis.plus.extension;
 
+
     opens image.analysis.cloud.app.entrypoint.gui to javafx.fxml;
     exports image.analysis.cloud.app;
 }

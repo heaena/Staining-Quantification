@@ -2,6 +2,7 @@ package image.analysis.cloud.app;
 
 
 import image.analysis.cloud.app.application.service.RService;
+import javafx.application.Application;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -14,6 +15,11 @@ import java.net.URL;
 public class ImageAnalysisApp {
 
     public static void main(String[] args) {
+        Application.launch(HelloApplication.class);
+//        start();
+    }
+
+    private static void start() {
         JFrame jf = new JFrame(ImageAnalysisApp.class.getSimpleName());
         jf.setSize(700, 500);
         jf.setLocationRelativeTo(null);
@@ -33,7 +39,7 @@ public class ImageAnalysisApp {
         jf.setVisible(true);
 
         //启动web服务
-        new Thread(() -> SpringApplication.run(ImageAnalysisApp.class, args)).start();
+        new Thread(() -> SpringApplication.run(ImageAnalysisApp.class)).start();
 
     }
 

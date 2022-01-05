@@ -17,9 +17,12 @@
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        <mainClass>image.analysis.cloud.app.HelloApplication</mainClass>
-        <javafx.version>15.0.1</javafx.version>
-        <package.dir>${project.build.directory}</package.dir>
+        <javafx.version>17.0.1</javafx.version>
+        <mainClass>image.analysis.cloud.app.ImageAnalysisApp</mainClass>
+        <package.content.dir>${project.basedir}/package-content</package.content.dir>
+        <package.output.dir>${project.basedir}/package-output</package.output.dir>
+        <package.mainJar.filename>image-analysis-app</package.mainJar.filename>
+        <package.app.filename>ImageAnalysisApp</package.app.filename>
     </properties>
 
     <dependencies>
@@ -36,7 +39,7 @@
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-boot-starter</artifactId>
-            <version>3.5.0</version>
+            <version>3.2.0</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/com.h2database/h2 -->
         <dependency>
@@ -53,12 +56,12 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.12.0</version>
+            <version>3.11</version>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>31.0.1-jre</version>
+            <version>30.1-jre</version>
         </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
@@ -78,7 +81,12 @@
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-web</artifactId>
-            <version>${javafx.version}</version>
+            <version>17.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.jfoenix</groupId>
+            <artifactId>jfoenix</artifactId>
+            <version>9.0.10</version>
         </dependency>
         <dependency>
             <groupId>org.controlsfx</groupId>
@@ -136,46 +144,30 @@
     </dependencies>
 
     <build>
+        <finalName>${package.mainJar.filename}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
                 <configuration>
                     <source>${maven.compiler.source}</source>
                     <target>${maven.compiler.target}</target>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jlink-plugin</artifactId>
-                <version>3.1.0</version>
-                <extensions>true</extensions>
-                <configuration>
-                    <!-- configuration elements goes here -->
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>3.0.0</version>
-                <configuration>
-                    <mainClass>${mainClass}</mainClass>
-                </configuration>
-            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.2.0</version>
                 <configuration>
                     <!--jar包目录-->
-                    <outputDirectory>${package.dir}</outputDirectory>
+                    <outputDirectory>${package.content.dir}</outputDirectory>
                     <archive>
                         <!--指定程序入口-->
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>image.analysis.cloud.app.HelloApplication</mainClass>
+                            <mainClass>${mainClass}</mainClass>
                         </manifest>
                         <!-- 指定配置文件外置目录 -->
                         <manifestEntries>
@@ -204,7 +196,7 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${package.dir}/conf</outputDirectory>
+                            <outputDirectory>${package.content.dir}/conf</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>src/main/resources</directory>
@@ -229,7 +221,7 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${package.dir}/lib</outputDirectory>
+                            <outputDirectory>${package.content.dir}/lib</outputDirectory>
                             <!-- 包含间接依赖 -->
                             <excludeTransitive>false</excludeTransitive>
                             <!-- 不忽略版本 -->
@@ -238,44 +230,26 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.openjfx</groupId>
-                <artifactId>javafx-maven-plugin</artifactId>
-                <version>0.0.8</version>
-                <configuration>
-                    <mainClass>treefx/com.acme.treefx.TreeFX</mainClass>
-                    <stripDebug>true</stripDebug>
-                    <compress>2</compress>
-                    <noHeaderFiles>true</noHeaderFiles>
-                    <noManPages>true</noManPages>
-                    <launcher>treefx</launcher>
-                    <jlinkImageName>treefx</jlinkImageName>
-                    <jlinkZipName>treefx</jlinkZipName>
-                </configuration>
-            </plugin>
+
             <plugin>
                 <groupId>org.panteleyev</groupId>
                 <artifactId>jpackage-maven-plugin</artifactId>
                 <version>1.4.0</version>
                 <configuration>
-                    <name>TreeFX</name>
+                    <name>ImageAnalysisApp</name>
+                    <type>DMG</type>
                     <appVersion>1.0.0</appVersion>
-                    <vendor>io.trydent</vendor>
-                    <module>treefx/com.acme.treefx.TreeFX</module>
-                    <runtimeImage>target/treefx</runtimeImage>
-                    <modulePath>${java.home}/jmods</modulePath>
-                    <destination>target/dist</destination>
-                    <linuxShortcut>true</linuxShortcut>
-                    <linuxPackageName>treefx</linuxPackageName>
-                    <linuxAppCategory>Utilities</linuxAppCategory>
-                    <linuxMenuGroup>Utilities</linuxMenuGroup>
-                    <icon>${project.basedir}/duke.png</icon>
+                    <mainJar>${package.mainJar.filename}.jar</mainJar>
+                    <input>${package.content.dir}</input>
+                    <destination>${package.output.dir}</destination>
                     <javaOptions>
                         <option>-Dfile.encoding=UTF-8</option>
                     </javaOptions>
                 </configuration>
             </plugin>
+
         </plugins>
+
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
