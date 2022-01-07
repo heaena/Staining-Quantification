@@ -51,9 +51,9 @@ public class FileSystem {
 
     public String getFilePath() {
         if (StringUtils.isEmpty(parentId)) {
-            return AnalysisConfig.getImgStoragePath() + "/" + name;
+            return AnalysisConfig.getImgStorageInputPath() + "/" + name;
         } else {
-            return AnalysisConfig.getImgStoragePath() + "/" + path;
+            return AnalysisConfig.getImgStorageInputPath() + "/" + path;
         }
     }
 
