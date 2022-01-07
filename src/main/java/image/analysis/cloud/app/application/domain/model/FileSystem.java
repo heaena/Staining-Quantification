@@ -3,7 +3,7 @@ package image.analysis.cloud.app.application.domain.model;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import image.analysis.cloud.app.entrypoint.config.InitConfig;
+import image.analysis.cloud.app.application.AnalysisConfig;
 import image.analysis.cloud.app.infra.util.IdUtil;
 import org.apache.commons.lang3.StringUtils;
 
@@ -12,7 +12,7 @@ import java.util.Date;
 
 @TableName("file_system")
 public class FileSystem {
-    public static final String UPLOAD_PATH = "/input";
+//    public static final String UPLOAD_PATH = "/input";
     //文件夹
     public static final int TYPE_DIR = 1;
     //文件
@@ -51,10 +51,9 @@ public class FileSystem {
 
     public String getFilePath() {
         if (StringUtils.isEmpty(parentId)) {
-            //用户根目录
-            return getUploadRootPath() + "/" + name;
+            return AnalysisConfig.getImgStoragePath() + "/" + name;
         } else {
-            return InitConfig.getRootFilePath() + "/" + path;
+            return AnalysisConfig.getImgStoragePath() + "/" + path;
         }
     }
 
@@ -126,7 +125,4 @@ public class FileSystem {
         this.fileUri = fileUri;
     }
 
-    public static String getUploadRootPath() {
-        return InitConfig.getRootFilePath() + UPLOAD_PATH;
-    }
 }
