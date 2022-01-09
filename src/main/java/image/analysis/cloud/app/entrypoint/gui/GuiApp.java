@@ -11,12 +11,9 @@ import java.net.URL;
 
 @Component
 public class GuiApp extends JFrame {
-    public GuiApp() {
-        init();
-    }
 
     public void start() {
-        setVisible(true);
+        init();
     }
     public void init() {
         setTitle(ImageAnalysisApp.class.getSimpleName());

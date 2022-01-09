@@ -1,9 +1,9 @@
 import router from './router'
+import store from './store'
 import NProgress from 'nprogress' // progress bar
 import '@/components/NProgress/nprogress.less' // progress bar custom style
 import { setDocumentTitle, domTitle } from '@/utils/domUtil'
 import { i18nRender } from '@/locales'
-import store from './store'
 
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
@@ -15,6 +15,7 @@ router.beforeEach((to, from, next) => {
     store.dispatch('GenerateRoutes', {})
   }
   next()
+  NProgress.done()
 })
 
 router.afterEach(() => {

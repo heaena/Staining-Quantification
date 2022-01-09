@@ -19,11 +19,19 @@ public class AnalysisConfig {
     }
 
     public static String getImgAnalysisInputPath() {
-        return workspaceRootPath + "/image-analysis/input";
+        return getImgAnalysisPath() + "/input";
     }
 
     public static String getImgAnalysisOutputPath() {
-        return workspaceRootPath + "/image-analysis/output";
+        return getImgAnalysisPath() + "/output";
+    }
+
+    public static String getImgAnalysisPath() {
+        return workspaceRootPath + "/image-analysis";
+    }
+
+    public static String getImgAnalysisH2Path() {
+        return workspaceRootPath + "/h2";
     }
 
     public static String getWorkspaceRootPath() {

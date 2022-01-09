@@ -1,6 +1,7 @@
 package image.analysis.cloud.app.application.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import image.analysis.cloud.app.application.AnalysisConfig;
 import image.analysis.cloud.app.application.domain.model.FileSystem;
 import image.analysis.cloud.app.application.domain.repo.FileSystemRepo;
 import image.analysis.cloud.app.infra.ResponseWrapper;
@@ -79,7 +80,7 @@ public class FileSystemService {
     private FileSystem addUserRootFolder() {
         FileSystem fileSystem = new FileSystem();
         fileSystem.setId(IdUtil.uuid());
-        fileSystem.setPath(FileSystem.UPLOAD_PATH + "/");
+        fileSystem.setPath(AnalysisConfig.getImgAnalysisInputPath() + "/");
         fileSystem.setCreateDate(new Date());
         fileSystem.checkExists();
         fileSystemRepo.save(fileSystem);

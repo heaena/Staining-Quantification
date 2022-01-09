@@ -6,10 +6,8 @@ export const asyncRouterMap = [
     path: '/',
     name: 'index',
     component: BasicLayout,
-    meta: { title: 'menu.home' },
     redirect: '/picture',
     children: [
-      // dashboard
       {
         path: '/picture',
         name: '图片分析',

@@ -7,3 +7,4 @@
 ./package-content
 ./package-script/*.dmg
 ./package-script/*.exe
+**/**/node_modules

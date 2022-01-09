@@ -4,26 +4,19 @@ logging:
   file:
     path: /Users/zhangkai/logs/image-app
 
+
 web:
   file-root: /Users/zhangkai/tmp
   analysis-platform:
     rscript-dir: /Users/zhangkai/IdeaProjects/picture-analysis-admin/R
-
 spring:
-  web:
-    resources:
-      static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/,file:${web.file-root}
-  datasource:
-    platform: h2
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:file:/Users/zhangkai/tmp/db/ia
-    # Windows
-    # url: jdbc:h2:file:C:/data/sample/${spring.application.name}/db;
-    username: sa
-    password: sa
   h2:
     console:
       path: /h2
       enabled: true
       settings:
         web-allow-others: true
+  sql:
+    init:
+      schema-locations: classpath:db/schema.sql
+      mode: always
