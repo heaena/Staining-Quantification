@@ -21,13 +21,15 @@ public class FileSystem {
     private String id;
     private String name;
     private String path;
-    private String parentId;
+    private String parentPath;
     private String userId;
     private Date createDate;
     private int type;
 
     @TableField(exist = false)
     private String fileUri;
+    private String resourcePath;
+    private boolean isDir;
 
     public FileSystem() {
     }
@@ -36,7 +38,7 @@ public class FileSystem {
         this.id = IdUtil.uuid();
         this.name = name;
         this.createDate = createDate;
-        this.parentId = parentFileSystem.getId();
+        this.parentPath = parentFileSystem.getId();
         this.userId = parentFileSystem.getUserId();
         this.path = parentFileSystem.getPath() + "/" + name;
         this.type = type;
@@ -50,7 +52,7 @@ public class FileSystem {
     }
 
     public String getFilePath() {
-        if (StringUtils.isEmpty(parentId)) {
+        if (StringUtils.isEmpty(parentPath)) {
             return AnalysisConfig.getImgAnalysisInputPath() + "/" + name;
         } else {
             return AnalysisConfig.getImgAnalysisInputPath() + "/" + path;
@@ -85,12 +87,12 @@ public class FileSystem {
         this.path = path;
     }
 
-    public String getParentId() {
-        return parentId;
+    public String getParentPath() {
+        return parentPath;
     }
 
-    public void setParentId(String parentId) {
-        this.parentId = parentId;
+    public void setParentPath(String parentPath) {
+        this.parentPath = parentPath;
     }
 
     public String getUserId() {
@@ -125,4 +127,19 @@ public class FileSystem {
         this.fileUri = fileUri;
     }
 
+    public void setResourcePath(String resourcePath) {
+        this.resourcePath = resourcePath;
+    }
+
+    public String getResourcePath() {
+        return resourcePath;
+    }
+
+    public boolean isDir() {
+        return isDir;
+    }
+
+    public void setDir(boolean dir) {
+        isDir = dir;
+    }
 }

@@ -21,23 +21,36 @@ import java.util.List;
 public class FileSystemService {
     @Resource
     private FileSystemRepo fileSystemRepo;
-    public List<FileSystem> listByParentId(String parentId, String name) {
-        if (StringUtils.isEmpty(parentId)) {
-            FileSystem userRootFolder = getAndCheckUserRootFolder();
-            parentId = userRootFolder.getId();
+    private String getResourcePathByFile(File file) throws IOException {
+        String canonicalPath = file.getCanonicalPath();
+        return canonicalPath.replace(AnalysisConfig.getImgAnalysisPath(), "");
+    }
+    public List<FileSystem> listByParentPath(String parentPath, String name) throws IOException {
+        String parentCanonicalPath;
+        if (StringUtils.isEmpty(parentPath)) {
+            parentCanonicalPath = AnalysisConfig.getImgAnalysisInputPath();
+        } else {
+            parentCanonicalPath = AnalysisConfig.getImgAnalysisInputPath() + parentPath;
         }
-        QueryWrapper queryWrapper = new QueryWrapper();
-        queryWrapper.eq("parent_id", parentId);
-        if (StringUtils.isNotEmpty(name)) {
-            queryWrapper.like("name", "%" + name + "%");
+
+        File parentDir = new File(parentCanonicalPath);
+        File[] files = parentDir.listFiles(pathname -> !pathname.isHidden());
+        List<FileSystem> res = new LinkedList<>();
+        for (File file: files) {
+            FileSystem fileSystem = new FileSystem();
+            fileSystem.setName(file.getName());
+            fileSystem.setPath(file.getCanonicalPath());
+            fileSystem.setResourcePath(getResourcePathByFile(file));
+            fileSystem.setDir(file.isDirectory());
+            res.add(fileSystem);
         }
-        return fileSystemRepo.list(queryWrapper);
+        return res;
     }
 
     public ResponseWrapper addFile(MultipartFile[] uploadFiles, String folderId) throws IOException {
         FileSystem parentFileSystem = null;
         if (StringUtils.isEmpty(folderId)) {
-            parentFileSystem = getAndCheckUserRootFolder();
+            parentFileSystem = getRootFolder();
         } else {
             parentFileSystem = fileSystemRepo.getById(folderId);
         }
@@ -55,20 +68,20 @@ public class FileSystemService {
         return ResponseWrapper.success();
     }
 
-    public void addFolder(String name, String parentId) {
+    public void addFolder(String name, String parentPath) {
         FileSystem parentFileSystem = null;
-        if (StringUtils.isEmpty(parentId)) {
+        if (StringUtils.isEmpty(parentPath)) {
             //查询用户的根目录
-            parentFileSystem = getAndCheckUserRootFolder();
+            parentFileSystem = getRootFolder();
         } else {
-            parentFileSystem = fileSystemRepo.getById(parentId);
+            parentFileSystem = fileSystemRepo.getById(parentPath);
         }
 
         FileSystem fileSystem = new FileSystem(name, new Date(), parentFileSystem, FileSystem.TYPE_DIR);
         fileSystemRepo.save(fileSystem);
     }
 
-    public FileSystem getAndCheckUserRootFolder() {
+    public FileSystem getRootFolder() {
         FileSystem userRootFileSystem = null;
         userRootFileSystem = getUserRootFolder();
         if (userRootFileSystem == null) {

@@ -19,9 +19,9 @@ public class FileSystemController extends BaseController{
     @Resource
     private FileSystemService fileSystemService;
     @GetMapping("/list")
-    public ResponseWrapper list(String parentId, String name) {
+    public ResponseWrapper list(String parentPath, String name) throws IOException {
         //如果parentId为null，则查询当前用户的文件夹
-        List<FileSystem> imageList = fileSystemService.listByParentId(parentId, name);
+        List<FileSystem> imageList = fileSystemService.listByParentPath(parentPath, name);
         return ResponseWrapper.success(imageList);
     }
 
