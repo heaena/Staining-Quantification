@@ -1,75 +1,15 @@
 package image.analysis.cloud.app.application.domain.model;
 
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableName;
-import image.analysis.cloud.app.application.AnalysisConfig;
-import image.analysis.cloud.app.infra.util.IdUtil;
-import org.apache.commons.lang3.StringUtils;
-
-import java.io.File;
-import java.util.Date;
-
-@TableName("file_system")
 public class FileSystem {
-//    public static final String UPLOAD_PATH = "/input";
-    //文件夹
-    public static final int TYPE_DIR = 1;
-    //文件
-    public static final int TYPE_FILE = 2;
 
-    private String id;
     private String name;
     private String path;
     private String parentPath;
-    private String userId;
-    private Date createDate;
-    private int type;
-
-    @TableField(exist = false)
-    private String fileUri;
+    private String canonicalFilePath;
+    private String canonicalParentFilePath;
     private String resourcePath;
     private boolean isDir;
-
-    public FileSystem() {
-    }
-
-    public FileSystem(String name, Date createDate, FileSystem parentFileSystem, int type) {
-        this.id = IdUtil.uuid();
-        this.name = name;
-        this.createDate = createDate;
-        this.parentPath = parentFileSystem.getId();
-        this.userId = parentFileSystem.getUserId();
-        this.path = parentFileSystem.getPath() + "/" + name;
-        this.type = type;
-    }
-
-    public void checkExists() {
-        File localFile = getLocalFile();
-        if (!localFile.exists()) {
-            localFile.mkdirs();
-        }
-    }
-
-    public String getFilePath() {
-        if (StringUtils.isEmpty(parentPath)) {
-            return AnalysisConfig.getImgAnalysisInputPath() + "/" + name;
-        } else {
-            return AnalysisConfig.getImgAnalysisInputPath() + "/" + path;
-        }
-    }
-
-    public File getLocalFile() {
-        return new File(getFilePath());
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;
@@ -79,12 +19,28 @@ public class FileSystem {
         this.name = name;
     }
 
-    public String getPath() {
-        return path;
+    public String getCanonicalFilePath() {
+        return canonicalFilePath;
     }
 
-    public void setPath(String path) {
-        this.path = path;
+    public void setCanonicalFilePath(String canonicalFilePath) {
+        this.canonicalFilePath = canonicalFilePath;
+    }
+
+    public String getResourcePath() {
+        return resourcePath;
+    }
+
+    public void setResourcePath(String resourcePath) {
+        this.resourcePath = resourcePath;
+    }
+
+    public boolean isDir() {
+        return isDir;
+    }
+
+    public void setDir(boolean dir) {
+        isDir = dir;
     }
 
     public String getParentPath() {
@@ -95,51 +51,19 @@ public class FileSystem {
         this.parentPath = parentPath;
     }
 
-    public String getUserId() {
-        return userId;
+    public String getPath() {
+        return path;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setPath(String path) {
+        this.path = path;
     }
 
-    public Date getCreateDate() {
-        return createDate;
+    public String getCanonicalParentFilePath() {
+        return canonicalParentFilePath;
     }
 
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
-    }
-
-    public int getType() {
-        return type;
-    }
-
-    public void setType(int type) {
-        this.type = type;
-    }
-
-    public String getFileUri() {
-        return fileUri;
-    }
-
-    public void setFileUri(String fileUri) {
-        this.fileUri = fileUri;
-    }
-
-    public void setResourcePath(String resourcePath) {
-        this.resourcePath = resourcePath;
-    }
-
-    public String getResourcePath() {
-        return resourcePath;
-    }
-
-    public boolean isDir() {
-        return isDir;
-    }
-
-    public void setDir(boolean dir) {
-        isDir = dir;
+    public void setCanonicalParentFilePath(String canonicalParentFilePath) {
+        this.canonicalParentFilePath = canonicalParentFilePath;
     }
 }

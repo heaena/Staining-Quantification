@@ -1,5 +1,6 @@
 package image.analysis.cloud.app.entrypoint.web;
 
+import image.analysis.cloud.app.application.AnalysisConfig;
 import image.analysis.cloud.app.application.domain.model.FileSystem;
 import image.analysis.cloud.app.application.service.FileSystemService;
 import image.analysis.cloud.app.infra.ResponseWrapper;
@@ -16,29 +17,29 @@ import java.util.List;
 @Slf4j
 public class FileSystemController extends BaseController{
 
-    @Resource
-    private FileSystemService fileSystemService;
+    private FileSystemService inputFileSystemService = new FileSystemService(AnalysisConfig.getImgAnalysisInputPath(), WebConfig.getServerContextPath() + AnalysisConfig.getInputRootPath());
+
     @GetMapping("/list")
     public ResponseWrapper list(String parentPath, String name) throws IOException {
         //如果parentId为null，则查询当前用户的文件夹
-        List<FileSystem> imageList = fileSystemService.listByParentPath(parentPath, name);
+        List<FileSystem> imageList = inputFileSystemService.listByParentPath(parentPath, name);
         return ResponseWrapper.success(imageList);
     }
 
     @PostMapping("/addFolder")
-    public ResponseWrapper add(String name, String parentId) {
-        fileSystemService.addFolder(name, parentId);
+    public ResponseWrapper add(String name, String parentPath) {
+        inputFileSystemService.addFolder(name, parentPath);
         return ResponseWrapper.success();
     }
 
     @PostMapping("/uploadFile")
     public ResponseWrapper upload(@RequestParam("files") MultipartFile[] uploadFiles, String folderId) throws IOException {
-        return fileSystemService.addFile(uploadFiles, folderId);
+        return inputFileSystemService.addFile(uploadFiles, folderId);
     }
 
     @DeleteMapping("/remove")
     public ResponseWrapper removeFile(@RequestParam("id") String id) throws IOException {
-        fileSystemService.removeFile(id);
+        inputFileSystemService.removeFile(id);
         return ResponseWrapper.success();
     }
 }

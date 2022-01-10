@@ -2,6 +2,7 @@ package image.analysis.cloud.app.application.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import image.analysis.cloud.app.application.AnalysisConfig;
 import image.analysis.cloud.app.application.domain.model.AnalysisTask;
 import image.analysis.cloud.app.application.domain.model.FileSystem;
 import image.analysis.cloud.app.application.domain.repo.AnalysisTaskRepo;
@@ -45,14 +46,16 @@ public class AnalysisService {
         analysisTaskRepo.removeById(id);
     }
 
-    public ResponseWrapper startTask(String taskName, String param, String fileId) {
-        FileSystem fileSystem = fileSystemRepo.getById(fileId);
-        AnalysisTask analysisTask = new AnalysisTask(taskName, param, fileId);
-        String inputPath = fileSystem.getFilePath();
-        String outputPath = analysisTask.getOutputFileSystemPath();
-        analysisTaskRepo.save(analysisTask);
+    public ResponseWrapper startTask(String taskName, String param, String path) {
+        File file = new File(path);
+        if (file.isFile()) {
+
+        }
+        String inputPath = null;
+        String outputPath = null;
+        String taskId = inputPath;
         executorService.submit(() -> {
-            ResponseWrapper response = remoteAnalysisPlatformService.startTask(analysisTask.getId(), inputPath, outputPath, JSONObject.parseObject(param));
+            ResponseWrapper response = remoteAnalysisPlatformService.startTask(taskId, inputPath, outputPath, JSONObject.parseObject(param));
             if (response.isSuccess()) {
 
             } else {
@@ -76,7 +79,7 @@ public class AnalysisService {
                     for (String fileName:list) {
                         FileSystem fileSystem = new FileSystem();
                         fileSystem.setName(fileName);
-                        fileSystem.setPath(item.getOutputPath() + "/" + fileName);
+//                        fileSystem.setPath(item.getOutputPath() + "/" + fileName);
                         fileSystems.add(fileSystem);
                     }
                     item.setImageList(fileSystems);

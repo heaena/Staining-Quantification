@@ -35,8 +35,8 @@
     <a-table :data-source="dataSource">
       <a-table-column key="name" title="文件名" data-index="name" >
         <template slot-scope="text, record">
-          <a @click="openImageDetail(record)">
-            <a-icon v-if="record.type===1" type="folder" style="color: goldenrod;fontSize: 20px;margin-right: 10px;" theme="filled" />
+          <a @click="onClickItem(record)">
+            <a-icon v-if="record.dir===true" type="folder" style="color: goldenrod;fontSize: 20px;margin-right: 10px;" theme="filled" />
             <a-icon v-else type="file-text" style="fontSize: 20px;margin-right: 10px;" theme="filled" /><span style="color: black">{{ record.name }}</span>
           </a>
         </template>
@@ -62,8 +62,9 @@
       width="90%"
       @close="handleImageModalCancel"
     >
-      <a :href="image.src" :download="image.name" style="font-size: 20px;border: silver 1px;">下载</a>
-      <img :src="image.src" width="100%"/>
+      <a :href="image.resourcePath" :download="image.name" style="font-size: 20px;border: silver 1px;">下载</a>
+      <span style="margin-left: 20px;">文件路径 {{ image.canonicalFilePath }}</span>
+      <img :src="image.resourcePath" width="100%"/>
     </a-drawer>
     <!--新增文件夹-->
     <a-modal
@@ -162,7 +163,7 @@
             <a-row :gutter="[16,16]">
               <a-col v-for="img in item.imageList" :key="img.path" :span="6">
                 <a-card :hoverable="true">
-                  <img onclick="openImageDetail()" slot="cover" :src="getImagePath(img)"/>
+                  <img onclick="onClickItem()" slot="cover" :src="getImagePath(img)"/>
                   <a-card-meta>
                     <template slot="description">
                       {{ img.name }}
@@ -214,7 +215,7 @@ export default {
       confirmLoading: false,
       // 查询参数
       queryParam: {
-        parentId: '',
+        parentPath: '',
         name: ''
       },
       dataSource: [],
@@ -262,7 +263,7 @@ export default {
     },
     getUploadData () {
       return {
-        folderId: this.queryParam.parentId
+        folderId: this.queryParam.parentPath
       }
     },
     handleChange (info) {
@@ -279,7 +280,7 @@ export default {
       this.folder.showModal = false
     },
     handleFolderModalOk () {
-      const requestParameters = { name: this.folder.name }
+      const requestParameters = { name: this.folder.name, parentPath: this.queryParam.parentPath }
       addFolder(requestParameters)
         .then(res => {
           this.loadData()
@@ -291,7 +292,7 @@ export default {
       this.folder.showModal = true
     },
     onClickBreadcrumb (item) {
-      this.queryParam.parentId = item.id
+      this.queryParam.parentPath = item.id
       for (var i = 0; i < this.breadcrumb.length; i++) {
         if (this.breadcrumb[i].id === item.id) {
           this.breadcrumb.splice(i + 1, this.breadcrumb.length)
@@ -300,17 +301,17 @@ export default {
       }
       this.loadData()
     },
-    openImageDetail (record) {
-      if (record.type === 2) {
-        this.image.name = record.name
-        this.image.src = record.path
-        this.image.showModal = true
-      } else {
-        const item = { name: record.name, id: record.id }
-        this.breadcrumb.push(item)
+    onClickItem (record) {
+      if (record.dir === true) {
+        this.breadcrumb.push(record)
         this.dataSource = []
-        this.queryParam.parentId = record.id
+        this.queryParam.parentPath = record.path
         this.loadData()
+      } else {
+        this.image.name = record.name
+        this.image.resourcePath = record.resourcePath
+        this.image.canonicalFilePath = record.canonicalFilePath
+        this.image.showModal = true
       }
     },
     handleImageModalCancel (e) {

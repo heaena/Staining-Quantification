@@ -1,9 +1,10 @@
 server:
   port: 80
+  servlet:
+    context-path: /api
 logging:
   file:
     path: /Users/zhangkai/logs/image-app
-
 
 web:
   file-root: /Users/zhangkai/tmp

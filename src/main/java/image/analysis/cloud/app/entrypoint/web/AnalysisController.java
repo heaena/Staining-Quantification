@@ -16,7 +16,6 @@ import java.util.List;
 @Slf4j
 public class AnalysisController extends BaseController{
 
-    @Resource
     private FileSystemService fileSystemService;
     @Resource
     private AnalysisService analysisService;
@@ -49,8 +48,8 @@ public class AnalysisController extends BaseController{
     }
 
     @PostMapping("/startTask")
-    public ResponseWrapper startTask(@RequestParam("taskName") String taskName, @RequestParam("param") String param, @RequestParam("fileId") String fileId) {
-        analysisService.startTask(taskName, param, fileId);
+    public ResponseWrapper startTask(@RequestParam("taskName")String taskName, @RequestParam("param") String param, @RequestParam("path") String path) {
+        analysisService.startTask(taskName, param, path);
         return ResponseWrapper.success();
     }
 
