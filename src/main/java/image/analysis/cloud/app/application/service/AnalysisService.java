@@ -46,13 +46,17 @@ public class AnalysisService {
         analysisTaskRepo.removeById(id);
     }
 
-    public ResponseWrapper startTask(String taskName, String param, String path) {
-        File file = new File(path);
-        if (file.isFile()) {
+    private String getCanonicalPath(String path) {
+        return AnalysisConfig.getImgAnalysisInputPath() + path;
+    }
 
+    public ResponseWrapper startTask(String taskName, String param, String path) {
+        String canonicalPath = getCanonicalPath(path);
+        File file = new File(getCanonicalPath(path));
+        if (file.isFile()) {
         }
-        String inputPath = null;
-        String outputPath = null;
+        String inputPath = canonicalPath;
+        String outputPath = file.getParent();
         String taskId = inputPath;
         executorService.submit(() -> {
             ResponseWrapper response = remoteAnalysisPlatformService.startTask(taskId, inputPath, outputPath, JSONObject.parseObject(param));

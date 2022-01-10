@@ -86,7 +86,10 @@ public class FileSystemService {
     public ResponseWrapper addFile(MultipartFile[] uploadFiles, String parentPath) throws IOException {
         String parentCanonicalPath = getCanonicalPath(parentPath);
         for (MultipartFile uploadFile:uploadFiles) {
-            uploadFile.transferTo(new File(parentCanonicalPath, uploadFile.getOriginalFilename()));
+            String path = parentCanonicalPath + "/" + uploadFile.getOriginalFilename();
+            File file = new File(path, uploadFile.getOriginalFilename());
+            file.mkdirs();
+            uploadFile.transferTo(file);
         }
         return ResponseWrapper.success();
     }
