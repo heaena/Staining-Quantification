@@ -2,9 +2,9 @@ package image.analysis.cloud.app.application.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import image.analysis.cloud.app.application.AnalysisConfig;
 import image.analysis.cloud.app.application.domain.model.AnalysisTask;
 import image.analysis.cloud.app.application.domain.model.FileSystem;
+import image.analysis.cloud.app.application.domain.model.ImageAnalysisTask;
 import image.analysis.cloud.app.application.domain.repo.AnalysisTaskRepo;
 import image.analysis.cloud.app.application.domain.repo.FileSystemRepo;
 import image.analysis.cloud.app.infra.ResponseWrapper;
@@ -25,6 +25,8 @@ public class AnalysisService {
     private AnalysisTaskRepo analysisTaskRepo;
     @Resource
     private FileSystemRepo fileSystemRepo;
+    @Resource
+    private FileSystemService fileSystemService;
     @Resource
     private RemoteAnalysisPlatformService remoteAnalysisPlatformService;
 
@@ -47,7 +49,7 @@ public class AnalysisService {
     }
 
     private String getCanonicalPath(String path) {
-        return AnalysisConfig.getImgAnalysisInputPath() + path;
+        return null; //todo
     }
 
     public ResponseWrapper startTask(String taskName, String param, String path) {
@@ -59,7 +61,7 @@ public class AnalysisService {
         String outputPath = file.getParent();
         String taskId = inputPath;
         executorService.submit(() -> {
-            ResponseWrapper response = remoteAnalysisPlatformService.startTask(taskId, inputPath, outputPath, JSONObject.parseObject(param));
+            ResponseWrapper response = remoteAnalysisPlatformService.executeTask(taskId, inputPath, outputPath, JSONObject.parseObject(param));
             if (response.isSuccess()) {
 
             } else {
@@ -91,5 +93,24 @@ public class AnalysisService {
             }
         });
         return analysisTaskList;
+    }
+
+    public void startTask(String taskName, String folderName, Boolean all, List<String> imageList, String param) {
+        List<ImageAnalysisTask> imageAnalysisTasks = fileSystemService.getAnalysisTask(taskName, folderName, all, imageList, param);
+        imageAnalysisTasks.stream().forEach(item -> {
+            executorService.submit(() -> {
+                File outputFolder = new File(item.getOutputFolderPath());
+                if (!outputFolder.exists()) {
+                    outputFolder.mkdirs();
+                }
+                ResponseWrapper response = remoteAnalysisPlatformService.executeTask(item.getTaskId(), item.getTaskName(), item.getImagePath(), item.getOutputFolderPath(), JSONObject.parseObject(param));
+                if (response.isSuccess()) {
+
+                } else {
+
+                }
+            });
+        });
+
     }
 }

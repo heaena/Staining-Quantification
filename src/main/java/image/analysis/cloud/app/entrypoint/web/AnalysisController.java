@@ -48,8 +48,13 @@ public class AnalysisController extends BaseController{
     }
 
     @PostMapping("/startTask")
-    public ResponseWrapper startTask(@RequestParam("taskName")String taskName, @RequestParam("param") String param, @RequestParam("path") String path) {
-        analysisService.startTask(taskName, param, path);
+    public ResponseWrapper startTask(
+            @RequestParam("taskName")String taskName,
+            @RequestParam("folderName")String folderName,
+            Boolean all,
+            String imageList,
+            @RequestParam("param") String param) {
+        analysisService.startTask(taskName, folderName, all, null, param);
         return ResponseWrapper.success();
     }
 

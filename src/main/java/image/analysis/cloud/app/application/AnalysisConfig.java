@@ -9,8 +9,7 @@ import org.springframework.stereotype.Component;
 public class AnalysisConfig {
     private static String workspaceRootPath;
     private static String workspaceName = ".image-analysis-cloud-app";
-    private static String inputRootPath = "/input";
-    private static String outputRootPath = "/output";
+    private static String analysisWorkspaceName = "image-analysis";
 
     @Value("${user.home}")
     public void setUserHome(String userHome) {
@@ -23,31 +22,16 @@ public class AnalysisConfig {
         return workspaceRootPath + "/logs";
     }
 
-    public static String getImgAnalysisInputPath() {
-        return getImgAnalysisPath() + getInputRootPath();
-    }
-
-    public static String getImgAnalysisOutputPath() {
-        return getImgAnalysisPath() + getOutputRootPath();
-    }
-
-    public static String getImgAnalysisPath() {
+    public static String getImgAnalysisWorkspacePath() {
         return workspaceRootPath + "/image-analysis";
     }
 
     public static String getImgAnalysisH2Path() {
-        return workspaceRootPath + "/h2";
+        return workspaceRootPath + "/h2/h2";
     }
 
     public static String getWorkspaceRootPath() {
         return workspaceRootPath;
     }
 
-    public static String getInputRootPath() {
-        return inputRootPath;
-    }
-
-    public static String getOutputRootPath() {
-        return outputRootPath;
-    }
 }

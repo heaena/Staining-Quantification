@@ -25,7 +25,7 @@ public class RemoteAnalysisPlatformService {
     @Value("${web.analysis-platform.rscript-dir}")
     private String rscriptDir;
 
-    public ResponseWrapper startTask(String taskId, String inputFilePath, String outputFilePath, JSONObject param) {
+    public ResponseWrapper executeTask(String taskId, String inputFilePath, String outputFilePath, JSONObject param) {
         String ROI_fill_thr = param.getString("roi_fill_thr"), stained_thr = param.getString("stained_thr");
         String command = String.join(" ", "Rscript command-batch-processing.R", inputFilePath, outputFilePath, ROI_fill_thr, stained_thr);
         log.info("执行脚本-> {}", command);
@@ -55,4 +55,33 @@ public class RemoteAnalysisPlatformService {
         }
     }
 
+    public ResponseWrapper executeTask(long taskId, String taskName, String imagePath, String outputFolderPath, JSONObject param) {
+        String ROI_fill_thr = param.getString("roi_fill_thr"), stained_thr = param.getString("stained_thr");
+        String command = String.join(" ", "Rscript command-process-one-image.R", imagePath, outputFolderPath, ROI_fill_thr, stained_thr);
+        log.info("执行脚本-> {}", command);
+        Process p = null;
+        try {
+            p = Runtime.getRuntime().exec(command, null, new File(rscriptDir));
+            InputStream is = p.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+            p.waitFor();
+            if (p.exitValue() != 0) {
+                //说明命令执行失败
+                return ResponseWrapper.fail();
+            }
+
+            StringBuilder res = new StringBuilder();
+            String s = null;
+            while ((s = reader.readLine()) != null) {
+                res.append(s);
+            }
+            log.info("执行脚本日志【{}】", res.toString());
+            return ResponseWrapper.success();
+        } catch (Exception e) {
+            log.error("执行脚本异常", e);
+            return ResponseWrapper.fail();
+        } finally {
+            p.destroy();
+        }
+    }
 }

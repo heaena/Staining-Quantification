@@ -1,2 +1,11 @@
 #!/bin/bash
-Rscript -e 'install.packages("readxl",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/")'
+Rscript -e 'install.packages("imager",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/")'
+Rscript -e 'install.packages("opencv",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/")'
+Rscript -e 'install.packages("secr",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/")'
+Rscript -e 'install.packages("plyr",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/")'
+Rscript -e 'install.packages("wvtool",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/")'
+Rscript -e 'install.packages("TSP",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/")'
+Rscript -e 'install.packages("pracma",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/")'
+Rscript -e 'install.packages("EBImage",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/")'
+
+#Rscript -e 'install.packages("Rcpp",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/")'

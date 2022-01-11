@@ -5,6 +5,7 @@ import image.analysis.cloud.app.application.domain.model.FileSystem;
 import image.analysis.cloud.app.application.service.FileSystemService;
 import image.analysis.cloud.app.infra.ResponseWrapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,29 +18,53 @@ import java.util.List;
 @Slf4j
 public class FileSystemController extends BaseController{
 
-    private FileSystemService inputFileSystemService = new FileSystemService(AnalysisConfig.getImgAnalysisInputPath(), WebConfig.getServerContextPath() + AnalysisConfig.getInputRootPath());
+    @Autowired
+    private FileSystemService fileSystemService;
 
-    @GetMapping("/list")
-    public ResponseWrapper list(String parentPath, String name) throws IOException {
-        //如果parentId为null，则查询当前用户的文件夹
-        List<FileSystem> imageList = inputFileSystemService.listByParentPath(parentPath, name);
+    /**
+     * 文件夹查询
+     * @param name 模糊查询
+     * @return
+     * @throws IOException
+     */
+    @GetMapping("/listFolder")
+    public ResponseWrapper listFolder(String name) throws IOException {
+        List<FileSystem> imageList = fileSystemService.listFolder(name);
+        return ResponseWrapper.success(imageList);
+    }
+
+    /**
+     * 图片查询
+     * @param name 模糊查询
+     * @return
+     * @throws IOException
+     */
+    @GetMapping("/listImage")
+    public ResponseWrapper listImage(String folderName, String name) throws IOException {
+        List<FileSystem> imageList = fileSystemService.listImage(folderName, name);
         return ResponseWrapper.success(imageList);
     }
 
     @PostMapping("/addFolder")
-    public ResponseWrapper add(String name, String parentPath) {
-        inputFileSystemService.addFolder(name, parentPath);
+    public ResponseWrapper add(String name) {
+        fileSystemService.addFolder(name);
         return ResponseWrapper.success();
     }
 
     @PostMapping("/uploadFile")
-    public ResponseWrapper upload(@RequestParam("files") MultipartFile[] uploadFiles, String folderId) throws IOException {
-        return inputFileSystemService.addFile(uploadFiles, folderId);
+    public ResponseWrapper upload(@RequestParam("files") MultipartFile[] uploadFiles, String folderName) throws IOException {
+        return fileSystemService.addFile(uploadFiles, folderName);
     }
 
-    @DeleteMapping("/remove")
-    public ResponseWrapper removeFile(@RequestParam("id") String id) throws IOException {
-        inputFileSystemService.removeFile(id);
+    @DeleteMapping("/removeFolder")
+    public ResponseWrapper removeFolder(@RequestParam("folderName") String folderName) {
+        fileSystemService.removeFolder(folderName);
+        return ResponseWrapper.success();
+    }
+
+    @DeleteMapping("/removeImage")
+    public ResponseWrapper removeImage(@RequestParam("folderName") String folderName, @RequestParam("imageName") String imageName) {
+        fileSystemService.removeImage(folderName, imageName);
         return ResponseWrapper.success();
     }
 }

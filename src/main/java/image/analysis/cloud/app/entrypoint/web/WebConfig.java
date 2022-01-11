@@ -28,7 +28,7 @@ public class WebConfig implements InitializingBean {
     @Override
     public void afterPropertiesSet() {
         //设置静态资源路径
-        webProperties.getResources().setStaticLocations(new String[]{"classpath:/resources/dist", "file:" + AnalysisConfig.getImgAnalysisPath() + "/"});
+        webProperties.getResources().setStaticLocations(new String[]{"classpath:/resources/dist", "file:" + AnalysisConfig.getImgAnalysisWorkspacePath() + "/"});
         //context path
         serverProperties.getServlet().setContextPath(serverContextPath);
     }

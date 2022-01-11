@@ -10,6 +10,7 @@ public class FileSystem {
     private String canonicalParentFilePath;
     private String resourcePath;
     private boolean isDir;
+    private long lastModified;
 
     public String getName() {
         return name;
@@ -65,5 +66,13 @@ public class FileSystem {
 
     public void setCanonicalParentFilePath(String canonicalParentFilePath) {
         this.canonicalParentFilePath = canonicalParentFilePath;
+    }
+
+    public long getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(long lastModified) {
+        this.lastModified = lastModified;
     }
 }

@@ -15,6 +15,7 @@ public class AnalysisTask {
     public static final String OUTPUT_PATH = "/output";
     @TableId
     private String id;
+    private long taskId;
     private String fileId;
     private String name;
     private String outputPath;
@@ -38,6 +39,16 @@ public class AnalysisTask {
         this.checkFileExists();
     }
 
+    public AnalysisTask(long taskId, String taskName, String imagePath, String outputFolderPath) {
+        this.id = IdUtil.uuid();
+        this.fileId = fileId;
+        this.outputPath = OUTPUT_PATH + "/" + fileId + "/" + id;
+        this.name = name;
+        this.param = param;
+        this.createDate = new Date();
+        this.checkFileExists();
+    }
+
     private void checkFileExists() {
         File file = new File(getOutputFileSystemPath());
         if (!file.exists()) {
@@ -46,7 +57,7 @@ public class AnalysisTask {
     }
 
     public String getOutputFileSystemPath() {
-        return AnalysisConfig.getImgAnalysisOutputPath();
+        return null;
     }
 
     public String getId() {

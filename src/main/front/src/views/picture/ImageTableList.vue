@@ -7,7 +7,6 @@
           <a-form layout="inline">
             <a-form-item>
               <a-button icon="folder-add" @click="showUploadModal()" type="primary">上传图片</a-button>
-              <a-button icon="folder-add" @click="clickAddFolder()">新建文件夹</a-button>
             </a-form-item>
           </a-form>
         </a-col>
@@ -19,29 +18,26 @@
             <a-form-item>
               <a-button @click="loadData()">查询</a-button>
               <a-button style="margin-left: 8px" @click="() => this.queryParam = {}">重置</a-button>
+              <a-button @click="onClickAnalysis()" type="primary" style="margin-left: 8px;">分析</a-button>
             </a-form-item>
           </a-form>
         </a-col>
       </a-row>
     </div>
-    <!--文件导航-->
-    <a-breadcrumb separator="/">
-      <a-breadcrumb-item v-for="(item, index) in breadcrumb" :key="item.id">
-        <a v-if="index !== breadcrumb.length - 1" @click="onClickBreadcrumb(item)">{{ item.name }}</a>
-        <span v-else>{{ item.name }}</span>
-      </a-breadcrumb-item>
-    </a-breadcrumb>
     <!--文件列表-->
-    <a-table :data-source="dataSource">
+    <a-table :data-source="dataSource" :rowSelection="{ onSelectAll: onSelectAll }">
       <a-table-column key="name" title="文件名" data-index="name" >
         <template slot-scope="text, record">
-          <a @click="onClickItem(record)">
-            <a-icon v-if="record.dir===true" type="folder" style="color: goldenrod;fontSize: 20px;margin-right: 10px;" theme="filled" />
-            <a-icon v-else type="file-text" style="fontSize: 20px;margin-right: 10px;" theme="filled" /><span style="color: black">{{ record.name }}</span>
+          <a @click="onClickItem(record)" style="padding-right: 50px;font-size: 16px;">
+            <a-icon type="file-text" style="fontSize: 20px;margin-right: 10px;" theme="filled" /><span style="color: black">{{ record.name }}</span>
           </a>
         </template>
       </a-table-column>
-      <a-table-column key="createDate" title="修改时间" data-index="createDate" />
+      <a-table-column key="createDate" title="修改时间" data-index="lastModified" >
+        <template slot-scope="text, record">
+          {{ formatDate(record.lastModified) }}
+        </template>
+      </a-table-column>
       <a-table-column key="action" title="操作">
         <template slot-scope="text, record">
           <span>
@@ -66,15 +62,6 @@
       <span style="margin-left: 20px;">文件路径 {{ image.canonicalFilePath }}</span>
       <img :src="image.resourcePath" width="100%"/>
     </a-drawer>
-    <!--新增文件夹-->
-    <a-modal
-      title="新建文件夹"
-      :visible="folder.showModal"
-      @cancel="handleFolderModalCancel"
-      @ok="handleFolderModalOk"
-    >
-      <a-input placeholder="文件夹名称" v-model="folder.name"/>
-    </a-modal>
     <!--上传图片-->
     <a-modal
       title="上传图片"
@@ -128,10 +115,7 @@
         </a-form-item>
         <a-form-item label="染色阈值">
           <a-select
-            v-decorator="[
-          'stained_thr',
-          { rules: [{ required: true, message: 'Please select!' }] },
-        ]"
+            v-decorator="[ 'stained_thr', { rules: [{ required: true, message: 'Please select!' }] }]"
             placeholder="染色区域阈值"
           >
             <a-select-option value="auto">
@@ -179,10 +163,10 @@
   </a-card>
 </template>
 <script>
-import { getRoleList } from '@/api/manage'
-import { getList, addFolder, removeFile } from '@/api/fileSystem'
+import { getImageList, addFolder, removeFile } from '@/api/fileSystem'
 import { startTask, listAnalysisResult } from '@/api/analysis'
 import { message } from 'ant-design-vue'
+import Moment from 'moment'
 export default {
   name: 'TableList',
   data () {
@@ -215,7 +199,6 @@ export default {
       confirmLoading: false,
       // 查询参数
       queryParam: {
-        parentPath: '',
         name: ''
       },
       dataSource: [],
@@ -239,7 +222,6 @@ export default {
   },
   created () {
     this.loadData()
-    getRoleList({ t: new Date() })
   },
   computed: {
     rowSelection () {
@@ -250,6 +232,12 @@ export default {
     }
   },
   methods: {
+    onSelectAll (val) {
+      alert(val)
+    },
+    formatDate (value) {
+      return Moment(value).format('YYYY-MM-DD HH:mm:ss')
+    },
     showUploadModal () {
       this.upload.showModal = true
     },
@@ -263,7 +251,7 @@ export default {
     },
     getUploadData () {
       return {
-        folderId: this.queryParam.parentPath
+        folderName: this.$route.params.folderName
       }
     },
     handleChange (info) {
@@ -302,17 +290,10 @@ export default {
       this.loadData()
     },
     onClickItem (record) {
-      if (record.dir === true) {
-        this.breadcrumb.push(record)
-        this.dataSource = []
-        this.queryParam.parentPath = record.path
-        this.loadData()
-      } else {
-        this.image.name = record.name
-        this.image.resourcePath = record.resourcePath
-        this.image.canonicalFilePath = record.canonicalFilePath
-        this.image.showModal = true
-      }
+      this.image.name = record.name
+      this.image.resourcePath = record.resourcePath
+      this.image.canonicalFilePath = record.canonicalFilePath
+      this.image.showModal = true
     },
     handleImageModalCancel (e) {
       this.image.showModal = false
@@ -325,7 +306,8 @@ export default {
         })
     },
     onClickAnalysis (record) {
-      this.analysisModal.formInitParam.fileId = record.id
+      this.analysisModal.formInitParam.folderName = this.$route.params.folderName
+      this.analysisModal.formInitParam.imageList = JSON.stringify([record.name])
       this.analysisModal.showModal = true
       this.resetAnalysisForm()
     },
@@ -358,11 +340,11 @@ export default {
         if (errors) {
           return false
         } else {
-          const name = values.name
-          const fileId = that.analysisModal.formInitParam.fileId
+          const taskName = values.name
+          const folderName = that.analysisModal.formInitParam.folderName
+          const imageList = that.analysisModal.formInitParam.imageList
           delete values.name
-          delete values.id
-          const requestParameters = { fileId: fileId, taskName: name, param: JSON.stringify(values) }
+          const requestParameters = { taskName: taskName, folderName: folderName, imageList: imageList, param: JSON.stringify(values) }
           startTask(requestParameters)
             .then(res => {
               if (res.code === 0) {
@@ -394,8 +376,8 @@ export default {
       })
     },
     loadData (callback) {
-      const requestParameters = Object.assign({}, this.queryParam)
-      getList(requestParameters)
+      const requestParameters = Object.assign({ folderName: this.$route.params.folderName }, this.queryParam)
+      getImageList(requestParameters)
         .then(res => {
           this.dataSource = res.data
           if (callback) {

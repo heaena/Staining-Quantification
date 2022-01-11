@@ -1,16 +1,25 @@
 import request from '@/utils/request'
 
 const api = {
-  folderList: '/fileSystem/list',
+  folderList: '/fileSystem/listFolder',
+  imageList: '/fileSystem/listImage',
   addFolder: '/fileSystem/addFolder',
   removeFile: '/fileSystem/remove'
 }
 
 export default api
 
-export function getList (parameter) {
+export function getFolderList (parameter) {
   return request({
     url: api.folderList,
+    method: 'get',
+    params: parameter
+  })
+}
+
+export function getImageList (parameter) {
+  return request({
+    url: api.imageList,
     method: 'get',
     params: parameter
   })

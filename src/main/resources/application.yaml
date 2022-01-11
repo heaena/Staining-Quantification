@@ -21,3 +21,7 @@ spring:
     init:
       schema-locations: classpath:db/schema.sql
       mode: always
+  web:
+    resources:
+
+      static-locations:

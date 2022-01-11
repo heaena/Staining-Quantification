@@ -1,93 +1,139 @@
 package image.analysis.cloud.app.application.service;
 
+import image.analysis.cloud.app.application.AnalysisConfig;
+import image.analysis.cloud.app.application.domain.model.AnalysisTask;
 import image.analysis.cloud.app.application.domain.model.FileSystem;
+import image.analysis.cloud.app.application.domain.model.ImageAnalysisTask;
 import image.analysis.cloud.app.entrypoint.web.WebConfig;
 import image.analysis.cloud.app.infra.ResponseWrapper;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
+@Service
 public class FileSystemService {
 
-    private String fileRootPath;
-    private String resourceRootPath;
+    private static final String folderPathName = "/analysis-file";
+    private static final String outputPathName = "/output";
 
-    /**
-     * @param fileRootPath 文件系统根路径
-     * @param resourceRootPath 资源访问根路径
-     */
-    public FileSystemService(String fileRootPath, String resourceRootPath) {
-        this.fileRootPath = fileRootPath;
-        this.resourceRootPath = resourceRootPath;
-    }
-
-    /**
-     * 获取文件可以通过http服务访问的路径
-     * @param file
-     * @return
-     * @throws IOException
-     */
-    private String getResourcePathByFile(File file) throws IOException {
-        String canonicalPath = file.getCanonicalPath();
-        return resourceRootPath + canonicalPath.replace(fileRootPath, "");
-    }
-
-    /**
-     * 获取文件相对路径
-     * @param file
-     * @return
-     */
-    private String getPathByFile(File file) throws IOException {
-        String canonicalPath = file.getCanonicalPath();
-        return canonicalPath.replace(fileRootPath, "");
-    }
-
-    /**
-     * 获取文件系统绝对路径
-     * @param path
-     * @return
-     */
-    private String getCanonicalPath(String path) {
-        if (StringUtils.isEmpty(path)) {
-            path = "";
-        }
-        return fileRootPath + path;
-    }
-
-    public List<FileSystem> listByParentPath(String parentPath, String name) throws IOException {
-        String parentCanonicalPath = getCanonicalPath(parentPath);
-
-        File parentDir = new File(parentCanonicalPath);
-        File[] files = parentDir.listFiles(pathname -> !pathname.isHidden());
+    public List<FileSystem> listFolder(String name) throws IOException {
+        File[] files = listChildFolder(getRootPath(), name);
         List<FileSystem> res = new LinkedList<>();
-        String canonicalParentPath = parentDir.getCanonicalPath();
         if (files != null) {
             for (File file: files) {
                 FileSystem fileSystem = new FileSystem();
                 fileSystem.setName(file.getName());
-                fileSystem.setPath(getPathByFile(file));
-                fileSystem.setParentPath(parentPath);
                 fileSystem.setCanonicalFilePath(file.getCanonicalPath());
-                fileSystem.setCanonicalParentFilePath(canonicalParentPath);
-                fileSystem.setResourcePath(getResourcePathByFile(file));
-                fileSystem.setDir(file.isDirectory());
+                fileSystem.setLastModified(file.lastModified());
                 res.add(fileSystem);
             }
         }
         return res;
     }
 
+    public List<ImageAnalysisTask> getAnalysisTask(String taskName, String folderName, Boolean all, List<String> imageList, String param) {
+        long taskId = getTaskId();
+        List<String> targetImageList;
+        if (all != null && all) {
+            targetImageList = getImageNameListByFolder(folderName);
+        } else {
+            targetImageList = imageList;
+        }
 
+        List<ImageAnalysisTask> tasks = new ArrayList<>();
+        for (String imageName: targetImageList) {
+            String imageCanonicalPath = getSourceImageCanonicalPath(folderName, imageName);
+            String outputFolderPath = getImageAnalysisOutputFolderPath(taskId, taskName, folderName, imageName);
+            ImageAnalysisTask imageAnalysisTask = new ImageAnalysisTask(taskId, taskName, imageCanonicalPath, outputFolderPath);
+            tasks.add(imageAnalysisTask);
+        }
+        return tasks;
+    }
 
-    public ResponseWrapper addFile(MultipartFile[] uploadFiles, String parentPath) throws IOException {
-        String parentCanonicalPath = getCanonicalPath(parentPath);
+    private long getTaskId() {
+        return System.currentTimeMillis();
+    }
+
+    public String getImageAnalysisOutputFolderPath(long taskId, String taskName, String folderName, String imageName) {
+        return getCanonicalPathByFolder(folderName) + "/" + imageName + "/" + outputPathName + "/" + getImageAnalysisOutputFolderName(taskId, taskName);
+    }
+
+    private String getImageAnalysisOutputFolderName(long taskId, String taskName) {
+        return "" + taskId + "-" + taskName;
+    }
+
+    private List<String> getImageNameListByFolder(String folderName) {
+        String folderPath = getCanonicalPathByFolder(folderName);
+        File[] files = listChildFolder(folderPath, null);
+        List<String> imageList = new ArrayList<>();
+        for (File file: files) {
+            String imageName = file.getName();
+            imageList.add(imageName);
+        }
+        return imageList;
+    }
+
+    private File[] listChildFolder(String path, String filterName) {
+        File parentDir = new File(path);
+        return parentDir.listFiles(file -> {
+            if (file.isHidden() || file.isFile()) {
+                return false;
+            }
+            if (StringUtils.isNotEmpty(filterName)) {
+                return file.getName().matches(".*" + filterName + ".*");
+            }
+            return true;
+        });
+    }
+
+    public List<FileSystem> listImage(String folderName, String imageName) throws IOException {
+        File[] files = listChildFolder(getRootPath() + "/" + folderName, imageName);
+        List<FileSystem> res = new LinkedList<>();
+        if (files != null) {
+            for (File file: files) {
+                FileSystem fileSystem = new FileSystem();
+                fileSystem.setName(file.getName());
+                fileSystem.setCanonicalFilePath(getSourceImageCanonicalPath(file));
+                fileSystem.setResourcePath(getSourceImageResourcePath(file));
+                fileSystem.setLastModified(file.lastModified());
+                res.add(fileSystem);
+            }
+        }
+        return res;
+    }
+
+    private String getCanonicalPathByFolder(String folderName) {
+        return getRootPath() + "/" + folderName;
+    }
+
+    private String getSourceImageCanonicalPath(File file) throws IOException {
+        return file.getCanonicalPath() + "/" + file.getName();
+    }
+
+    private String getRootPath() {
+        return AnalysisConfig.getImgAnalysisWorkspacePath() + folderPathName;
+    }
+
+    private String getSourceImageCanonicalPath(String folderName, String imageName) {
+        return getCanonicalPathByFolder(folderName) + "/" + imageName + "/" + imageName;
+    }
+
+    private String getSourceImageResourcePath(File file) throws IOException {
+        return WebConfig.getServerContextPath() + file.getCanonicalPath().replace(AnalysisConfig.getImgAnalysisWorkspacePath(), "") + "/" + file.getName();
+    }
+
+    public ResponseWrapper addFile(MultipartFile[] uploadFiles, String folderName) throws IOException {
+        String parentCanonicalPath = getRootPath() + "/" + folderName;
         for (MultipartFile uploadFile:uploadFiles) {
-            String path = parentCanonicalPath + "/" + uploadFile.getOriginalFilename();
-            File file = new File(path, uploadFile.getOriginalFilename());
+            String savePath = parentCanonicalPath + "/" + uploadFile.getOriginalFilename();
+            File file = new File(savePath, uploadFile.getOriginalFilename());
             file.mkdirs();
             uploadFile.transferTo(file);
         }
@@ -96,19 +142,31 @@ public class FileSystemService {
 
     /**
      * 新增文件夹
-     * @param name
-     * @param parentPath
+     * @param name 文件夹名称
      */
-    public void addFolder(String name, String parentPath) {
-        String parentCanonicalPath = getCanonicalPath(parentPath);
-        String folderPath = parentCanonicalPath + "/" + name;
+    public void addFolder(String name) {
+        String folderPath = getRootPath() + "/" + name;
         File file = new File(folderPath);
         file.mkdirs();
     }
 
-    public void removeFile(String path) {
-        String canonicalPath = getCanonicalPath(path);
+    public void removeImage(String folderName, String name) {
+        String canonicalPath = getImageCanonicalPath(folderName, name);
         File file = new File(canonicalPath);
         file.delete();
     }
+
+    private String getImageCanonicalPath(String folderName, String imageName) {
+        return getFolderCanonicalPath(folderName) + "/" + imageName;
+    }
+
+    private String getFolderCanonicalPath(String folderName) {
+        return getRootPath() + "/" + folderName;
+    }
+    public void removeFolder(String folderName) {
+        String canonicalPath = getFolderCanonicalPath(folderName);
+        File file = new File(canonicalPath);
+        file.delete();
+    }
+
 }
