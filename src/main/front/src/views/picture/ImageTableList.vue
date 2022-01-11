@@ -334,6 +334,7 @@ export default {
     onClickAnalysisModalCancel () {
       this.analysisModal.showModal = false
     },
+    /** 执行上传 */
     onClickAnalysisModalOk () {
       const that = this
       this.analysisForm.validateFields(function (errors, values) {

@@ -6,7 +6,7 @@
         <a-col :md="10" :sm="24">
           <a-form layout="inline">
             <a-form-item>
-              <a-button icon="folder-add" @click="clickAddFolder()">新建文件夹</a-button>
+              <a-button type="primary" icon="folder-add" @click="clickAddFolder()">新建文件夹</a-button>
             </a-form-item>
           </a-form>
         </a-col>

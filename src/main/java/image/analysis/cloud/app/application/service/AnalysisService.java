@@ -28,7 +28,7 @@ public class AnalysisService {
     @Resource
     private FileSystemService fileSystemService;
 
-    private ExecutorService executorService = Executors.newFixedThreadPool(100);
+    private ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
     public List<AnalysisTask> listParams(String name) {
         QueryWrapper queryWrapper = new QueryWrapper();

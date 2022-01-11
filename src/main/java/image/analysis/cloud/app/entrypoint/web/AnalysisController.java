@@ -1,10 +1,12 @@
 package image.analysis.cloud.app.entrypoint.web;
 
+import com.alibaba.fastjson.JSONObject;
 import image.analysis.cloud.app.application.domain.model.AnalysisTask;
 import image.analysis.cloud.app.application.service.AnalysisService;
 import image.analysis.cloud.app.application.service.FileSystemService;
 import image.analysis.cloud.app.infra.ResponseWrapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -48,13 +50,12 @@ public class AnalysisController extends BaseController{
     }
 
     @PostMapping("/startTask")
-    public ResponseWrapper startTask(
-            @RequestParam("taskName")String taskName,
-            @RequestParam("folderName")String folderName,
-            Boolean all,
-            String imageList,
-            @RequestParam("param") String param) {
-        analysisService.startTask(taskName, folderName, all, null, param);
+    public ResponseWrapper startTask(@RequestBody TaskRequestParam taskRequestParam) {
+        List<String> imageListObj = null;
+        if (StringUtils.isNotEmpty(taskRequestParam.getImageList())) {
+            imageListObj = JSONObject.parseArray(taskRequestParam.getImageList()).toJavaList(String.class);
+        }
+        analysisService.startTask(taskRequestParam.getTaskName(), taskRequestParam.getFolderName(), taskRequestParam.getAll(), imageListObj, taskRequestParam.getParam());
         return ResponseWrapper.success();
     }
 

@@ -1,7 +1,6 @@
 package image.analysis.cloud.app.application.service;
 
 import image.analysis.cloud.app.application.AnalysisConfig;
-import image.analysis.cloud.app.application.domain.model.AnalysisTask;
 import image.analysis.cloud.app.application.domain.model.FileSystem;
 import image.analysis.cloud.app.application.domain.model.ImageAnalysisTask;
 import image.analysis.cloud.app.entrypoint.web.WebConfig;
@@ -15,7 +14,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class FileSystemService {
@@ -62,7 +60,7 @@ public class FileSystemService {
     }
 
     public String getImageAnalysisOutputFolderPath(long taskId, String taskName, String folderName, String imageName) {
-        return getCanonicalPathByFolder(folderName) + "/" + imageName + "/" + outputPathName + "/" + getImageAnalysisOutputFolderName(taskId, taskName);
+        return getCanonicalPathByFolder(folderName) + "/" + imageName + outputPathName + "/" + getImageAnalysisOutputFolderName(taskId, taskName);
     }
 
     private String getImageAnalysisOutputFolderName(long taskId, String taskName) {

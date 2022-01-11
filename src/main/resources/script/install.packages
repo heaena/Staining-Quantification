@@ -7,5 +7,4 @@ Rscript -e 'install.packages("wvtool",repos="https://mirrors.tuna.tsinghua.edu.c
 Rscript -e 'install.packages("TSP",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/")'
 Rscript -e 'install.packages("pracma",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/")'
 Rscript -e 'install.packages("EBImage",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/")'
-
-#Rscript -e 'install.packages("Rcpp",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/")'
+Rscript -e 'install.packages("Rcpp",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/")'
