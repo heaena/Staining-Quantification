@@ -27,8 +27,6 @@ public class AnalysisService {
     private FileSystemRepo fileSystemRepo;
     @Resource
     private FileSystemService fileSystemService;
-    @Resource
-    private RemoteAnalysisPlatformService remoteAnalysisPlatformService;
 
     private ExecutorService executorService = Executors.newFixedThreadPool(100);
 
@@ -46,29 +44,6 @@ public class AnalysisService {
 
     public void removeParam(String id) {
         analysisTaskRepo.removeById(id);
-    }
-
-    private String getCanonicalPath(String path) {
-        return null; //todo
-    }
-
-    public ResponseWrapper startTask(String taskName, String param, String path) {
-        String canonicalPath = getCanonicalPath(path);
-        File file = new File(getCanonicalPath(path));
-        if (file.isFile()) {
-        }
-        String inputPath = canonicalPath;
-        String outputPath = file.getParent();
-        String taskId = inputPath;
-        executorService.submit(() -> {
-            ResponseWrapper response = remoteAnalysisPlatformService.executeTask(taskId, inputPath, outputPath, JSONObject.parseObject(param));
-            if (response.isSuccess()) {
-
-            } else {
-
-            }
-        });
-        return ResponseWrapper.success("任务已提交，请稍后查看结果");
     }
 
     public List<AnalysisTask> getAnalysisTask(String fileId) {
@@ -103,7 +78,7 @@ public class AnalysisService {
                 if (!outputFolder.exists()) {
                     outputFolder.mkdirs();
                 }
-                ResponseWrapper response = remoteAnalysisPlatformService.executeTask(item.getTaskId(), item.getTaskName(), item.getImagePath(), item.getOutputFolderPath(), JSONObject.parseObject(param));
+                ResponseWrapper response = RemoteAnalysisPlatformService.executeTask(item.getTaskId(), item.getTaskName(), item.getImagePath(), item.getOutputFolderPath(), JSONObject.parseObject(param));
                 if (response.isSuccess()) {
 
                 } else {
