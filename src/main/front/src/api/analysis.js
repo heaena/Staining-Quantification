@@ -1,5 +1,4 @@
 import request from '@/utils/request'
-import axios from 'axios'
 
 const api = {
   saveParam: '/analysis/param/save',
@@ -36,7 +35,11 @@ export function listParam (parameter) {
 }
 
 export function startTask (data) {
-  return axios.post('/api' + api.startTask, data)
+  return request({
+    url: api.startTask,
+    method: 'post',
+    data: data
+  })
 }
 
 export function listAnalysisResult (parameter) {

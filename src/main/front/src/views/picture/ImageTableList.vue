@@ -25,10 +25,10 @@
       </a-row>
     </div>
     <!--文件列表-->
-    <a-table :data-source="dataSource" :rowSelection="{ onSelectAll: onSelectAll }">
+    <a-table :data-source="dataSource" :rowSelection="rowSelection" rowKey="name">
       <a-table-column key="name" title="文件名" data-index="name" >
         <template slot-scope="text, record">
-          <a @click="onClickItem(record)" style="padding-right: 50px;font-size: 16px;">
+          <a @click="onClickImage(record.name, record.resourcePath, record.canonicalFilePath)" style="padding-right: 50px;font-size: 16px;">
             <a-icon type="file-text" style="fontSize: 20px;margin-right: 10px;" theme="filled" /><span style="color: black">{{ record.name }}</span>
           </a>
         </template>
@@ -109,7 +109,7 @@
             :max="10"
             placeholder="组织区域阈值"
             style="width: 100%"
-            v-decorator="['roi_fill_thr', { rules: [{ required: true, message: 'Please select!' }] }]"
+            v-decorator="['ROI_fill_thr', { rules: [{ required: true, message: 'Please select!' }] }]"
           />
           默认值7，可选值>=1
         </a-form-item>
@@ -140,17 +140,27 @@
       :visible="analysisResult.showModal"
       @close="handleAnalysisResultModalClose"
     >
-      <div v-for="(item, i) in analysisResult.analysisResultDataSource" :key="i">
-        <a-card :title="getAnalysisResultItemTitle(item)">
-          <a-button slot="extra">删除</a-button>
+      <div>
+        <strong style="font-size: 18px;">源图：{{ analysisResult.result.imageName }}</strong>
+        （ 分析结果系统路径 {{ analysisResult.result.outputPath }} ）
+      </div>
+
+      <a-card title="范德萨" :hoverable="true">
+        <div style="max-height: 500px;">
+          <img :src="analysisResult.result.imageResourcePath" slot="cover" @click="onClickImage(analysisResult.result.name, analysisResult.result.imageResourcePath, analysisResult.result.imageCanonicalPath)"/>
+        </div>
+        </a-card>
+      <div v-for="(item, i) in analysisResult.result.outputItemList" :key="i">
+        <a-card :title="getAnalysisResultItemTitle(item)" style="margin-top: 20px;">
+<!--          <a-button slot="extra">删除</a-button>-->
           <div style="max-height:500px; overflow-y: auto;">
             <a-row :gutter="[16,16]">
-              <a-col v-for="img in item.imageList" :key="img.path" :span="6">
+              <a-col v-for="outputFile in item.outputFiles" :key="outputFile.name" :span="6">
                 <a-card :hoverable="true">
-                  <img onclick="onClickItem()" slot="cover" :src="getImagePath(img)"/>
+                  <img @click="onClickImage(outputFile.name, outputFile.resourcePath, outputFile.canonicalPath)" slot="cover" :src="outputFile.resourcePath"/>
                   <a-card-meta>
                     <template slot="description">
-                      {{ img.name }}
+                      {{ outputFile.name }}
                     </template>
                   </a-card-meta>
                 </a-card>
@@ -171,6 +181,7 @@ export default {
   name: 'TableList',
   data () {
     return {
+      collapseActiveKey: ['1'],
       analysisForm: this.$form.createForm(this, { name: 'coordinated' }),
       fileList: [],
       headers: {
@@ -206,7 +217,7 @@ export default {
         showModal: false,
         formInitParam: {
           name: '',
-          roi_fill_thr: 7,
+          ROI_fill_thr: 7,
           stained_thr: 'auto'
         }
       },
@@ -214,8 +225,9 @@ export default {
         showModal: false,
         fileId: '',
         showId: ['1'],
-        analysisResultDataSource: []
-      }
+        result: []
+      },
+      selectedRowKeys: []
     }
   },
   filters: {
@@ -226,14 +238,13 @@ export default {
   computed: {
     rowSelection () {
       return {
-        selectedRowKeys: this.selectedRowKeys,
         onChange: this.onSelectChange
       }
     }
   },
   methods: {
-    onSelectAll (val) {
-      alert(val)
+    onSelectChange (selectedRowKeys) {
+      this.selectedRowKeys = selectedRowKeys
     },
     formatDate (value) {
       return Moment(value).format('YYYY-MM-DD HH:mm:ss')
@@ -289,10 +300,10 @@ export default {
       }
       this.loadData()
     },
-    onClickItem (record) {
-      this.image.name = record.name
-      this.image.resourcePath = record.resourcePath
-      this.image.canonicalFilePath = record.canonicalFilePath
+    onClickImage (name, resourcePath, canonicalFilePath) {
+      this.image.name = name
+      this.image.resourcePath = resourcePath
+      this.image.canonicalFilePath = canonicalFilePath
       this.image.showModal = true
     },
     handleImageModalCancel (e) {
@@ -306,22 +317,31 @@ export default {
         })
     },
     onClickAnalysis (record) {
+      if (record) {
+        this.analysisModal.formInitParam.imageList = [record.name]
+      } else {
+        if (!this.selectedRowKeys || this.selectedRowKeys.length === 0) {
+          this.messageConfirm('请选择')
+          return
+        }
+        this.analysisModal.formInitParam.imageList = this.selectedRowKeys
+      }
       this.analysisModal.formInitParam.folderName = this.$route.params.folderName
-      this.analysisModal.formInitParam.imageList = JSON.stringify([record.name])
       this.analysisModal.showModal = true
       this.resetAnalysisForm()
     },
     onClickAnalysisResult (record) {
       this.analysisResult.showModal = true
-      this.analysisResult.fileId = record.id
-      this.loadAnalysisResult()
+      this.loadAnalysisResult(record)
     },
-    loadAnalysisResult () {
-      const requestParameters = { fileId: this.analysisResult.fileId }
+    loadAnalysisResult (record) {
+      const requestParameters = { folderName: this.$route.params.folderName, imageName: record.name }
       listAnalysisResult(requestParameters)
         .then(res => {
           if (res.code === 0) {
-            this.analysisResult.analysisResultDataSource = res.data
+            this.analysisResult.result = res.data
+          } else {
+            this.$message.error('系统异常，请联系管理员！')
           }
         })
     },
@@ -329,12 +349,12 @@ export default {
       return '/api' + item.path
     },
     getAnalysisResultItemTitle (item) {
-      return '任务名称：' + item.name + '，任务时间：' + item.createDate
+      return '任务名称：' + item.taskName
     },
     onClickAnalysisModalCancel () {
       this.analysisModal.showModal = false
     },
-    /** 执行上传 */
+    /** 执行分析 */
     onClickAnalysisModalOk () {
       const that = this
       this.analysisForm.validateFields(function (errors, values) {
@@ -345,12 +365,15 @@ export default {
           const folderName = that.analysisModal.formInitParam.folderName
           const imageList = that.analysisModal.formInitParam.imageList
           delete values.name
-          const requestParameters = { taskName: taskName, folderName: folderName, imageList: imageList, param: JSON.stringify(values) }
+          const requestParameters = { taskName: taskName, folderName: folderName, imageList: JSON.stringify(imageList), param: JSON.stringify(values) }
           startTask(requestParameters)
             .then(res => {
+              debugger
               if (res.code === 0) {
                 that.onClickAnalysisModalCancel()
-                that.messageConfirm('任务执行中，请稍后查看分析结果')
+                that.messageConfirm('任务正在执行中，请稍后查看分析结果')
+              } else {
+                that.$message.error('任务执行失败，请重试！或请联系管理员！')
               }
             })
         }
@@ -368,6 +391,18 @@ export default {
       const h = this.$createElement
       this.$success({
         title: '提示',
+        content: h('div', {}, [
+          h('p', msg)
+        ]),
+        onOk () {
+
+        }
+      })
+    },
+    messageError (msg) {
+      const h = this.$createElement
+      this.$error({
+        title: '异常',
         content: h('div', {}, [
           h('p', msg)
         ]),

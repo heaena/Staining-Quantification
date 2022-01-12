@@ -2,6 +2,7 @@ package image.analysis.cloud.app.entrypoint.web;
 
 import com.alibaba.fastjson.JSONObject;
 import image.analysis.cloud.app.application.domain.model.AnalysisTask;
+import image.analysis.cloud.app.application.domain.model.ImageAnalysisResult;
 import image.analysis.cloud.app.application.service.AnalysisService;
 import image.analysis.cloud.app.application.service.FileSystemService;
 import image.analysis.cloud.app.infra.ResponseWrapper;
@@ -11,13 +12,14 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping("/analysis")
 @Slf4j
 public class AnalysisController extends BaseController{
-
+    @Resource
     private FileSystemService fileSystemService;
     @Resource
     private AnalysisService analysisService;
@@ -51,17 +53,17 @@ public class AnalysisController extends BaseController{
 
     @PostMapping("/startTask")
     public ResponseWrapper startTask(@RequestBody TaskRequestParam taskRequestParam) {
-        List<String> imageListObj = null;
+        List<String> imageListObj = new ArrayList<>();
         if (StringUtils.isNotEmpty(taskRequestParam.getImageList())) {
             imageListObj = JSONObject.parseArray(taskRequestParam.getImageList()).toJavaList(String.class);
         }
-        analysisService.startTask(taskRequestParam.getTaskName(), taskRequestParam.getFolderName(), taskRequestParam.getAll(), imageListObj, taskRequestParam.getParam());
+        analysisService.startTask(taskRequestParam.getTaskName(), taskRequestParam.getFolderName(), imageListObj, taskRequestParam.getParam());
         return ResponseWrapper.success();
     }
 
     @GetMapping("/listAnalysisResult")
-    public ResponseWrapper listAnalysisResult(@RequestParam("fileId") String fileId) {
-        List<AnalysisTask> list = analysisService.getAnalysisTask(fileId);
-        return ResponseWrapper.success(list);
+    public ResponseWrapper<ImageAnalysisResult> listAnalysisResult(@RequestParam("folderName") String folderName, @RequestParam("imageName") String imageName) throws IOException {
+        ImageAnalysisResult imageAnalysisResult = fileSystemService.getAnalysisResult(folderName, imageName);
+        return ResponseWrapper.success(imageAnalysisResult);
     }
 }

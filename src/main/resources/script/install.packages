@@ -1,4 +1,5 @@
 #!/bin/bash
+Rscript -e 'install.packages("rjson",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/")'
 Rscript -e 'install.packages("imager",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/")'
 Rscript -e 'install.packages("opencv",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/")'
 Rscript -e 'install.packages("secr",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/")'

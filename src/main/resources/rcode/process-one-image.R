@@ -6,12 +6,18 @@ library(wvtool)
 library(TSP)
 library(pracma)
 library(EBImage)
+library(rjson)
 
 ########################################################################
 ############  create user-defined function to image processing in loop
 ########################################################################
-im_process <- function(inputFile, outputPath, ROI.fill.thr, stained.thr){
+im_process <- function(inputFile, outputPath, param){
+
   ### check param
+  print(param)
+  jsonParam <- fromJSON(param)
+  ROI.fill.thr <- jsonParam$ROI.fill.thr
+  stained.thr <- jsonParam$stained.thr
   if(is.null(ROI.fill.thr)){
     ROI.fill.thr <- 7
   }else{

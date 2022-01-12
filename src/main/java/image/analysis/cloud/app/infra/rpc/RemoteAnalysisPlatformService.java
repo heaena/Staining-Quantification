@@ -35,9 +35,7 @@ public class RemoteAnalysisPlatformService {
     }
 
     public static ResponseWrapper executeTask(long taskId, String taskName, String inputPath, String outputFolderPath, JSONObject param) {
-        String roi_fill_thr = param.getString("roi_fill_thr"), stained_thr = param.getString("stained_thr");
-
-        String command = String.join(" ", "Rscript", commandFileName, inputPath, outputFolderPath, roi_fill_thr, stained_thr);
+        String command = String.join(" ", "Rscript", commandFileName, inputPath, outputFolderPath, param.toJSONString());
         log.info("执行脚本-> {}", command);
         Process p = null;
         try {
@@ -55,7 +53,7 @@ public class RemoteAnalysisPlatformService {
             while ((s = reader.readLine()) != null) {
                 res.append(s);
             }
-            log.info("执行脚本日志【{}】", res.toString());
+            log.info("执行脚本日志【{}】", res);
             return ResponseWrapper.success();
         } catch (Exception e) {
             log.error("执行脚本异常", e);

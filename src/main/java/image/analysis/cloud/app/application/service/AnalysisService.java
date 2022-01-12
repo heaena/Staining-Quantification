@@ -70,8 +70,8 @@ public class AnalysisService {
         return analysisTaskList;
     }
 
-    public void startTask(String taskName, String folderName, Boolean all, List<String> imageList, String param) {
-        List<ImageAnalysisTask> imageAnalysisTasks = fileSystemService.getAnalysisTask(taskName, folderName, all, imageList, param);
+    public void startTask(String taskName, String folderName, List<String> imageList, String param) {
+        List<ImageAnalysisTask> imageAnalysisTasks = fileSystemService.getAnalysisTask(taskName, folderName, imageList, param);
         imageAnalysisTasks.stream().forEach(item -> {
             executorService.submit(() -> {
                 File outputFolder = new File(item.getOutputFolderPath());

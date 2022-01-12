@@ -3,6 +3,5 @@ source("./process-one-image.R")
 args<-commandArgs(TRUE)
 inputPath <- args[1]
 outputPath <- args[2]
-ROI.fill.thr <- args[3]
-stained.thr <- args[4]
-im_process(inputPath,outputPath,ROI.fill.thr,stained.thr)
+param <- args[3]
+im_process(inputPath,outputPath,param)
