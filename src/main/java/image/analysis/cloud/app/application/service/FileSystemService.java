@@ -4,7 +4,6 @@ import image.analysis.cloud.app.application.AnalysisConfig;
 import image.analysis.cloud.app.application.domain.model.FileSystem;
 import image.analysis.cloud.app.application.domain.model.ImageAnalysisResult;
 import image.analysis.cloud.app.application.domain.model.ImageAnalysisTask;
-import image.analysis.cloud.app.entrypoint.web.WebConfig;
 import image.analysis.cloud.app.infra.ResponseWrapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -108,11 +107,11 @@ public class FileSystemService {
     }
 
     private String getSourceImageResourcePath(File file) throws IOException {
-        return WebConfig.getServerContextPath() + file.getCanonicalPath().replace(AnalysisConfig.getImgAnalysisWorkspacePath(), "") + "/" + file.getName();
+        return file.getCanonicalPath().replace(AnalysisConfig.getImgAnalysisWorkspacePath(), "") + "/" + file.getName();
     }
 
     private String getOutputResourcePath(File file) throws IOException {
-        return WebConfig.getServerContextPath() + file.getCanonicalPath().replace(AnalysisConfig.getImgAnalysisWorkspacePath(), "");
+        return file.getCanonicalPath().replace(AnalysisConfig.getImgAnalysisWorkspacePath(), "");
     }
 
     public ResponseWrapper addFile(MultipartFile[] uploadFiles, String folderName) throws IOException {

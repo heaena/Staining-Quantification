@@ -1,6 +1,5 @@
 package image.analysis.cloud.app.entrypoint.web;
 
-import image.analysis.cloud.app.application.AnalysisConfig;
 import image.analysis.cloud.app.application.domain.model.FileSystem;
 import image.analysis.cloud.app.application.service.FileSystemService;
 import image.analysis.cloud.app.infra.ResponseWrapper;
@@ -9,12 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/fileSystem")
+@RequestMapping(WebConfig.restApiContextPath + "/fileSystem")
 @Slf4j
 public class FileSystemController extends BaseController{
 

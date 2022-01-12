@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/analysis")
+@RequestMapping(WebConfig.restApiContextPath + "/analysis")
 @Slf4j
 public class AnalysisController extends BaseController{
     @Resource

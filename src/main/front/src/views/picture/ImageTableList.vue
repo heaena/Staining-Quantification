@@ -139,20 +139,17 @@
       width="90%"
       :visible="analysisResult.showModal"
       @close="handleAnalysisResultModalClose"
+      :bodyStyle="{background:'#f0f2f5'}"
     >
-      <div>
-        <strong style="font-size: 18px;">源图：{{ analysisResult.result.imageName }}</strong>
+      <a-card title="源图片" :hoverable="true">
+        <strong style="font-size: 18px;">{{ analysisResult.result.imageName }}</strong>
         （ 分析结果系统路径 {{ analysisResult.result.outputPath }} ）
-      </div>
-
-      <a-card title="范德萨" :hoverable="true">
         <div style="max-height: 500px;">
-          <img :src="analysisResult.result.imageResourcePath" slot="cover" @click="onClickImage(analysisResult.result.name, analysisResult.result.imageResourcePath, analysisResult.result.imageCanonicalPath)"/>
+          <img style="max-height: 500px;" :src="analysisResult.result.imageResourcePath" slot="cover" @click="onClickImage(analysisResult.result.name, analysisResult.result.imageResourcePath, analysisResult.result.imageCanonicalPath)"/>
         </div>
         </a-card>
       <div v-for="(item, i) in analysisResult.result.outputItemList" :key="i">
         <a-card :title="getAnalysisResultItemTitle(item)" style="margin-top: 20px;">
-<!--          <a-button slot="extra">删除</a-button>-->
           <div style="max-height:500px; overflow-y: auto;">
             <a-row :gutter="[16,16]">
               <a-col v-for="outputFile in item.outputFiles" :key="outputFile.name" :span="6">
@@ -368,7 +365,6 @@ export default {
           const requestParameters = { taskName: taskName, folderName: folderName, imageList: JSON.stringify(imageList), param: JSON.stringify(values) }
           startTask(requestParameters)
             .then(res => {
-              debugger
               if (res.code === 0) {
                 that.onClickAnalysisModalCancel()
                 that.messageConfirm('任务正在执行中，请稍后查看分析结果')

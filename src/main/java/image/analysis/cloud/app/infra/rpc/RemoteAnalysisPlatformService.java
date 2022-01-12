@@ -4,12 +4,8 @@ import com.alibaba.fastjson.JSONObject;
 import image.analysis.cloud.app.infra.ResponseWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
-import javax.annotation.Resource;
 import java.io.*;
 import java.util.Arrays;
 
