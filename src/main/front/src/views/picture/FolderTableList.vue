@@ -42,7 +42,7 @@
         <template slot-scope="text, record">
           <span>
             <a-button @click="deleteFolder(record)">删除</a-button>
-            <a-button type="primary" @click="enterFolder(record)" style="margin-left: 10px;">进入</a-button>
+            <a-button type="primary" @click="enterFolder(record)" style="margin-left: 10px;">进入图片分析</a-button>
           </span>
         </template>
       </a-table-column>

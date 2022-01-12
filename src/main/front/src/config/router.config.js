@@ -16,9 +16,9 @@ export const asyncRouterMap = [
       },
       {
         path: '/images/:folderName',
-        name: '图片',
+        name: '图片分析',
         component: () => import('@/views/picture/ImageTableList'),
-        meta: { title: '图片', keepAlive: false, icon: 'line-chart' }
+        meta: { title: '图片分析', keepAlive: false, icon: 'line-chart' }
       }
     ]
   },

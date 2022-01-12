@@ -23,7 +23,7 @@ export default {
   menu: {
     locale: false
   },
-  title: '图片分析',
+  title: 'ImageAnalysis',
   pwa: false,
   iconfontUrl: '',
   production: process.env.NODE_ENV === 'production' && process.env.VUE_APP_PREVIEW !== 'true'
