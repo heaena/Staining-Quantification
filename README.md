@@ -39,3 +39,22 @@ Error: package or namespace load failed for 'imager' in dyn.load(file, DLLpath =
 todo
 ```
 
+
+1、app 电脑独立运行
+java 集成（前端UI、R脚本）=》app （xxx.dmg, xxx.exe）
+2、app安装及使用
+四、todo list
+李
+1、提供参数及说明 *****
+2、csv文件已提供
+3、持久化R脚本执行的时间、过程日志(包括错误日志)，文件格式：文本文件，文件内容：key=value ****
+4、按照/src/main/resources/rcode/process-one-image.R格式编写单张图片的处理函数 *****
+5、按照src/main/resources/script/install.packages格式提供安装依赖的脚本 *****
+
+张凯
+1、在分析结果页面，根据分析结果，调整参数，再次执行分析 ****
+2、在图片页面，按照图片名称和分析任务，导出分析结果 ***
+3、展示数据结果 *****
+4、页面增加参数 *****（参数支持滑动***）
+5、分析执行的状态、消耗时间、执行日志(包括错误日志) ***
+6、在windows系统打包app测试 *****
