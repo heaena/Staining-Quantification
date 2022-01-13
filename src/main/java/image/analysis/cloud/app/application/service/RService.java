@@ -30,7 +30,7 @@ public class RService {
                 }
             });
         } catch (Exception e) {
-            e.printStackTrace();
+            log.append(e.toString());
             return false;
         }
     }

@@ -24,7 +24,7 @@ public class GuiApp extends JFrame {
         JPanel panel = new JPanel();
 
         //安装依赖按钮
-//        addInstallPackagesBtn(panel);
+        addInstallPackagesBtn(panel);
         addInstalledPackagesBtn(panel);
         //首页按钮
         addHomeBtn(panel);
@@ -37,10 +37,10 @@ public class GuiApp extends JFrame {
     }
 
     /**在面板中的索引*/
-    final int INDEX_INSTALL_PACKAGES_BTN = 0;
-    final int INDEX_INSTALLED_PACKAGES_BTN = 0;
-    final int INDEX_HOME_BTN = 1;
-    final int INDEX_LOG_AREA = 2;
+    final int INDEX_INSTALL_PACKAGES_BTN = -0;
+    final int INDEX_INSTALLED_PACKAGES_BTN = 1;
+    final int INDEX_HOME_BTN = 2;
+    final int INDEX_LOG_AREA = 3;
 
     private static JTextArea log;
 
@@ -49,14 +49,14 @@ public class GuiApp extends JFrame {
      * @param panel 面板
      * @return
      */
-    /*private void addInstallPackagesBtn(JPanel panel) {
+    private void addInstallPackagesBtn(JPanel panel) {
         final JButton installPackagesBtn = new JButton("安装R依赖");
         installPackagesBtn.addActionListener(e -> {
             cleanAndBeginLog("install.packages");
             new Thread(() -> RService.installPackages(getLog())).start();
         });
         panel.add(installPackagesBtn, INDEX_INSTALL_PACKAGES_BTN);
-    }*/
+    }
 
     /**
      * 点击按钮，查询已安装R依赖
