@@ -12,7 +12,6 @@ list=(
 'install.packages("Rcpp",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/")'
 )
 for element in ${list[*]}
-#也可以写成for element in ${array[*]}
 do
 echo "Rscript -e '$element'"
 Rscript -e "$element"
