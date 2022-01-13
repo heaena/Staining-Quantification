@@ -32,7 +32,8 @@ public class ProcessUtil {
     public static boolean exec(String scriptPath, Consumer< String > consumer) {
         try {
             Process process = Runtime.getRuntime().exec(systemCommand + " " + scriptPath);
-            BufferedReader inr = new BufferedReader(new InputStreamReader(process.getInputStream(),"UTF-8"));
+            SequenceInputStream sequenceInputStream = new SequenceInputStream(process.getInputStream(), process.getErrorStream());
+            BufferedReader inr = new BufferedReader(new InputStreamReader(sequenceInputStream,"UTF-8"));
             String line = null;
             while ((line = inr.readLine()) != null) {
                 consumer.accept(line);

@@ -1,11 +1,20 @@
 #!/bin/bash
-Rscript -e 'install.packages("rjson",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/")'
-Rscript -e 'install.packages("imager",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/")'
-Rscript -e 'install.packages("opencv",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/")'
-Rscript -e 'install.packages("secr",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/")'
-Rscript -e 'install.packages("plyr",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/")'
-Rscript -e 'install.packages("wvtool",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/")'
-Rscript -e 'install.packages("TSP",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/")'
-Rscript -e 'install.packages("pracma",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/")'
-Rscript -e 'install.packages("EBImage",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/")'
-Rscript -e 'install.packages("Rcpp",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/")'
+list=(
+'install.packages("rjson",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/")'
+'install.packages("imager",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/")'
+'install.packages("opencv",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/")'
+'install.packages("secr",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/")'
+'install.packages("plyr",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/")'
+'install.packages("wvtool",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/")'
+'install.packages("TSP",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/")'
+'install.packages("pracma",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/")'
+'install.packages("EBImage",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/")'
+'install.packages("Rcpp",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/")'
+)
+for element in ${list[*]}
+#也可以写成for element in ${array[*]}
+do
+echo "Rscript -e '$element'"
+Rscript -e "$element"
+echo "\n"
+done
