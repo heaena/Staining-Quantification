@@ -2,7 +2,11 @@ package image.analysis.cloud.app.application;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
+
+import java.io.File;
+import java.io.IOException;
 
 @Component
 @ConfigurationProperties(prefix = "image.analysis.cloud.app")
@@ -10,6 +14,18 @@ public class AnalysisConfig {
     private static String workspaceRootPath;
     private static String workspaceName = ".image-analysis-cloud-app";
     private static String analysisWorkspaceName = "image-analysis";
+    private static String testImagePath = "";
+
+    static {
+        File inputFile = null;
+        try {
+            inputFile = new ClassPathResource("rcode/test.jpg").getFile();
+            testImagePath = inputFile.getCanonicalPath();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(3);
+        }
+    }
 
     @Value("${user.home}")
     public void setUserHome(String userHome) {
@@ -32,6 +48,14 @@ public class AnalysisConfig {
 
     public static String getWorkspaceRootPath() {
         return workspaceRootPath;
+    }
+
+    public static String getTestRscriptOutputPath() {
+        return workspaceRootPath + "/test";
+    }
+
+    public static String getTestImagePath() {
+        return testImagePath;
     }
 
 }

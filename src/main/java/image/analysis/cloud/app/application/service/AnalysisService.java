@@ -78,7 +78,7 @@ public class AnalysisService {
                 if (!outputFolder.exists()) {
                     outputFolder.mkdirs();
                 }
-                ResponseWrapper response = RemoteAnalysisPlatformService.executeTask(item.getTaskId(), item.getTaskName(), item.getImagePath(), item.getOutputFolderPath(), JSONObject.parseObject(param));
+                ResponseWrapper response = RemoteAnalysisPlatformService.executeTask(item.getTaskId(), item.getTaskName(), item.getImagePath(), item.getOutputFolderPath(), JSONObject.parseObject(param), null);
                 if (response.isSuccess()) {
 
                 } else {

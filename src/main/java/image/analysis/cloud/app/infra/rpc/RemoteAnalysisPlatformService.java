@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 
+import javax.swing.*;
 import java.io.*;
 import java.util.Arrays;
 
@@ -30,26 +31,50 @@ public class RemoteAnalysisPlatformService {
         }
     }
 
-    public static ResponseWrapper executeTask(long taskId, String taskName, String inputPath, String outputFolderPath, JSONObject param) {
+    public static ResponseWrapper executeTask(long taskId, String taskName, String inputPath, String outputFolderPath, JSONObject param, JTextArea jTextArea) {
         String command = String.join(" ", "Rscript", commandFileName, inputPath, outputFolderPath, param.toJSONString());
         log.info("执行脚本-> {}", command);
         Process p = null;
         try {
             p = Runtime.getRuntime().exec(command, null, commandDir);
-            InputStream is = p.getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
             p.waitFor();
+            //读取结果
+            BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream(), "UTF-8"));
+            StringBuilder res = new StringBuilder();
+            String s = null;
+            while ((s = input.readLine()) != null) {
+                res.append(s);
+                if (jTextArea != null) {
+                    jTextArea.append(s + "\n");
+                }
+            }
+            input.close();
+            log.info("执行脚本日志【{}】", res);
+
+            //读取异常
+            BufferedReader err = new BufferedReader(new InputStreamReader(p.getErrorStream(), "UTF-8"));
+            StringBuilder errRes = new StringBuilder();
+            String errStr = null;
+            while ((errStr = err.readLine()) != null) {
+                errRes.append(errStr);
+                if (jTextArea != null) {
+                    jTextArea.append(errStr + "\n");
+                }
+            }
+            err.close();
+            if (!errRes.isEmpty()) {
+                log.error("执行脚本异常【{}】", errRes);
+                if (jTextArea != null) {
+                    jTextArea.append("执行异常，请联系管理员！");
+                }
+                return ResponseWrapper.fail();
+            }
+
             if (p.exitValue() != 0) {
                 //说明命令执行失败
                 return ResponseWrapper.fail();
             }
 
-            StringBuilder res = new StringBuilder();
-            String s = null;
-            while ((s = reader.readLine()) != null) {
-                res.append(s);
-            }
-            log.info("执行脚本日志【{}】", res);
             return ResponseWrapper.success();
         } catch (Exception e) {
             log.error("执行脚本异常", e);
@@ -81,10 +106,10 @@ public class RemoteAnalysisPlatformService {
         outputFolder.mkdir();
 
         JSONObject param = new JSONObject();
-        param.put("roi_fill_thr", "7");
+        param.put("ROI_fill_thr", "7");
         param.put("stained_thr", "0.7");
 
-        executeTask(1, "task-1", inputPath, outputPath, param);
+        executeTask(1, "task-1", inputPath, outputPath, param, null);
 
     }
 }

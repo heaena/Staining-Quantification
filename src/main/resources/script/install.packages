@@ -13,7 +13,9 @@ list=(
 )
 for element in ${list[*]}
 do
-echo "Rscript -e '$element'"
+echo "#########################################\n"
+echo "Rscript -e '$element'\n"
 Rscript -e "$element"
-echo "\n"
 done
+
+echo "End"

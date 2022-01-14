@@ -32,13 +32,23 @@ public class ProcessUtil {
     public static boolean exec(String scriptPath, Consumer< String > consumer) {
         try {
             Process process = Runtime.getRuntime().exec(systemCommand + " " + scriptPath);
-            SequenceInputStream sequenceInputStream = new SequenceInputStream(process.getInputStream(), process.getErrorStream());
-            BufferedReader inr = new BufferedReader(new InputStreamReader(sequenceInputStream,"UTF-8"));
+            BufferedReader inr = new BufferedReader(new InputStreamReader(process.getInputStream(),"UTF-8"));
             String line = null;
             while ((line = inr.readLine()) != null) {
                 consumer.accept(line);
             }
             inr.close();
+
+            BufferedReader err = new BufferedReader(new InputStreamReader(process.getErrorStream(),"UTF-8"));
+            String errLine = null;
+            while ((errLine = err.readLine()) != null) {
+                consumer.accept(errLine);
+            }
+            err.close();
+            if (errLine != null) {
+                consumer.accept("执行异常，请联系管理员！");
+            }
+
             //返回值为0表示调用成功
             int re = process.waitFor();
             return re == 0;

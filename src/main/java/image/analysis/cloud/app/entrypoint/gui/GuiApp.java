@@ -1,16 +1,24 @@
 package image.analysis.cloud.app.entrypoint.gui;
 
+import com.alibaba.fastjson.JSONObject;
 import image.analysis.cloud.app.ImageAnalysisApp;
+import image.analysis.cloud.app.application.AnalysisConfig;
 import image.analysis.cloud.app.application.service.RService;
+import image.analysis.cloud.app.infra.rpc.RemoteAnalysisPlatformService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 import java.net.URI;
 import java.net.URL;
 
 @Component
 public class GuiApp extends JFrame {
+
+    @Value("${server.port}")
+    private int serverPort;
 
     public void start() {
         init();
@@ -26,6 +34,8 @@ public class GuiApp extends JFrame {
         //安装依赖按钮
         addInstallPackagesBtn(panel);
         addInstalledPackagesBtn(panel);
+        //测试R环境按钮
+        addTestRscriptBtn(panel);
         //首页按钮
         addHomeBtn(panel);
         //日志区域
@@ -37,12 +47,31 @@ public class GuiApp extends JFrame {
     }
 
     /**在面板中的索引*/
-    final int INDEX_INSTALL_PACKAGES_BTN = -0;
+    final int INDEX_INSTALL_PACKAGES_BTN = 0;
     final int INDEX_INSTALLED_PACKAGES_BTN = 1;
-    final int INDEX_HOME_BTN = 2;
-    final int INDEX_LOG_AREA = 3;
+    final int INDEX_TEST_BTN = 2;
+    final int INDEX_HOME_BTN = 3;
+    final int INDEX_LOG_AREA = 4;
 
-    private static JTextArea log;
+    private static volatile JTextArea log;
+
+    private void addTestRscriptBtn(JPanel panel) {
+        final JButton btn = new JButton("测试R环境");
+        JSONObject param = new JSONObject();
+        param.put("ROI_fill_thr", "7");
+        param.put("stained_thr", "0.7");
+        String testRscriptPath = AnalysisConfig.getTestRscriptOutputPath();
+        File testRscriptPathDir = new File(testRscriptPath);
+        if (!testRscriptPathDir.exists()) {
+            testRscriptPathDir.mkdirs();
+        }
+        btn.addActionListener(e -> {
+            cleanAndBeginLog("测试R环境");
+            new Thread(() -> RemoteAnalysisPlatformService.executeTask(-1, "test", AnalysisConfig.getTestImagePath(), testRscriptPath, param, log)).start();
+
+        });
+        panel.add(btn, INDEX_TEST_BTN);
+    }
 
     /**
      * 点击按钮，安装R依赖
@@ -84,6 +113,7 @@ public class GuiApp extends JFrame {
      * 清除日志
      */
     private void cleanAndBeginLog(String title) {
+        log.removeAll();
         log.setText("> " + title + "\n================================\n");
     }
 
@@ -116,10 +146,10 @@ public class GuiApp extends JFrame {
         panel.add(homeBtn, INDEX_HOME_BTN);
     }
 
-    private static void openBrowse(String path) {
+    private void openBrowse(String path) {
         URI uri = null;
         try {
-            uri = new URL("http://localhost").toURI();
+            uri = new URL("http://localhost:" + serverPort).toURI();
             Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
 
             if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
