@@ -109,7 +109,7 @@ const vueConfig = {
     // If you want to turn on the proxy, please remove the mockjs /src/main.jsL11
     proxy: {
       '/api': {
-        target: 'http://localhost:80',
+        target: 'http://localhost:28084',
         ws: false,
         changeOrigin: true,
         // pathRewrite: {
@@ -117,7 +117,7 @@ const vueConfig = {
         // }
       },
       '/analysis-file': {
-        target: 'http://localhost:80',
+        target: 'http://localhost:28084',
         ws: false,
         changeOrigin: true,
         // pathRewrite: {

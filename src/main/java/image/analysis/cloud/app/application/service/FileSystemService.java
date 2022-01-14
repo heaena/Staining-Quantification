@@ -1,5 +1,7 @@
 package image.analysis.cloud.app.application.service;
 
+import au.com.bytecode.opencsv.CSVReader;
+import com.alibaba.fastjson.JSONObject;
 import image.analysis.cloud.app.application.AnalysisConfig;
 import image.analysis.cloud.app.application.domain.model.FileSystem;
 import image.analysis.cloud.app.application.domain.model.ImageAnalysisResult;
@@ -9,8 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -191,12 +192,25 @@ public class FileSystemService {
                 return true;
             });
 
+            //输出的文件
             for (File outputFileItem: outputFileList) {
+                String fileName = outputFileItem.getName();
                 ImageAnalysisResult.OutputFile outputFile = new ImageAnalysisResult.OutputFile();
-                outputFile.setName(outputFileItem.getName());
+                outputFile.setName(fileName);
                 outputFile.setCanonicalPath(outputFileItem.getCanonicalPath());
                 outputFile.setResourcePath(getOutputResourcePath(outputFileItem));
-                outputItem.addOutputFile(outputFile);
+                if (fileName.startsWith("stained")) {
+                    outputItem.putOutputFile("stained", outputFile);
+                } else if (fileName.startsWith("total")) {
+                    outputItem.putOutputFile("total", outputFile);
+                } else if (fileName.startsWith("data")) {
+                    outputItem.putOutputFile("data", outputFile);
+                    outputFile.setData(JSONObject.toJSONString(parseCsv(outputFileItem)));
+                } else if (fileName.startsWith("log")) {
+                    outputItem.putOutputFile("log", outputFile);
+                    outputFile.setData(JSONObject.toJSONString(parseCsv(outputFileItem)));
+                }
+
             }
 
 
@@ -206,5 +220,10 @@ public class FileSystemService {
 
     private String getImageAnalysisOutputRootFolderPath(String folderName, String imageName) {
         return getCanonicalPathByFolder(folderName) + "/" + imageName + outputPathName;
+    }
+
+    private List<String []> parseCsv(File file) throws IOException {
+        DataInputStream dataInputStream = new DataInputStream(new FileInputStream(file));
+        return new CSVReader(new InputStreamReader(dataInputStream,"UTF-8")).readAll();
     }
 }

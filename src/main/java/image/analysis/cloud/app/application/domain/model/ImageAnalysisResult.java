@@ -1,7 +1,9 @@
 package image.analysis.cloud.app.application.domain.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ImageAnalysisResult {
     private String folderName;
@@ -61,7 +63,7 @@ public class ImageAnalysisResult {
 
     public static class OutputItem {
         private String taskName;
-        private List<OutputFile> outputFiles = new ArrayList<>();
+        private Map<String, OutputFile> fileMap = new HashMap<>();
 
         public String getTaskName() {
             return taskName;
@@ -71,17 +73,16 @@ public class ImageAnalysisResult {
             this.taskName = taskName;
         }
 
-        public List<OutputFile> getOutputFiles() {
-            return outputFiles;
+        public Map<String, OutputFile> getFileMap() {
+            return fileMap;
         }
 
-        public void addOutputFile(OutputFile outputFile) {
-            this.outputFiles.add(outputFile);
+        public void putOutputFile(String key, OutputFile outputFile) {
+            this.fileMap.put(key, outputFile);
         }
     }
 
     public static class OutputFile {
-        private int type;
         private String name;
         private String canonicalPath;
         private String resourcePath;
@@ -93,14 +94,6 @@ public class ImageAnalysisResult {
 
         public void setCanonicalPath(String canonicalPath) {
             this.canonicalPath = canonicalPath;
-        }
-
-        public int getType() {
-            return type;
-        }
-
-        public void setType(int type) {
-            this.type = type;
         }
 
         public String getName() {

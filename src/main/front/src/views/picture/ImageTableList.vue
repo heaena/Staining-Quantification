@@ -25,7 +25,13 @@
       </a-row>
     </div>
     <!--文件列表-->
-    <a-table :data-source="dataSource" :rowSelection="rowSelection" rowKey="name">
+    <a-table
+      :bordered="true"
+      :data-source="dataSource"
+      :rowSelection="rowSelection"
+      :pagination="false"
+      rowKey="name"
+      size="middle">
       <a-table-column key="name" title="文件名" data-index="name" >
         <template slot-scope="text, record">
           <a @click="onClickImage(record.name, record.resourcePath, record.canonicalFilePath)" style="padding-right: 50px;font-size: 16px;">
@@ -147,21 +153,46 @@
         <div style="max-height: 500px;">
           <img style="max-height: 500px;" :src="analysisResult.result.imageResourcePath" slot="cover" @click="onClickImage(analysisResult.result.name, analysisResult.result.imageResourcePath, analysisResult.result.imageCanonicalPath)"/>
         </div>
-        </a-card>
+      </a-card>
       <div v-for="(item, i) in analysisResult.result.outputItemList" :key="i">
         <a-card :title="getAnalysisResultItemTitle(item)" style="margin-top: 20px;">
           <div style="max-height:500px; overflow-y: auto;">
-            <a-row :gutter="[16,16]">
-              <a-col v-for="outputFile in item.outputFiles" :key="outputFile.name" :span="6">
+            <a-row :gutter="[32,16]">
+              <a-col v-if="item.fileMap.total" :span="12">
                 <a-card :hoverable="true">
-                  <img @click="onClickImage(outputFile.name, outputFile.resourcePath, outputFile.canonicalPath)" slot="cover" :src="outputFile.resourcePath"/>
+                  <img @click="onClickImage(item.fileMap.total.name, item.fileMap.total.resourcePath, item.fileMap.total.canonicalPath)" slot="cover" :src="item.fileMap.total.resourcePath"/>
                   <a-card-meta>
                     <template slot="description">
-                      {{ outputFile.name }}
+                      {{ item.fileMap.total.name }}
                     </template>
                   </a-card-meta>
                 </a-card>
               </a-col>
+              <a-col v-if="item.fileMap.stained" :span="12">
+                <a-card :hoverable="true">
+                  <img @click="onClickImage(item.fileMap.stained.name, item.fileMap.stained.resourcePath, item.fileMap.stained.canonicalPath)" slot="cover" :src="item.fileMap.stained.resourcePath"/>
+                  <a-card-meta>
+                    <template slot="description">
+                      {{ item.fileMap.stained.name }}
+                    </template>
+                  </a-card-meta>
+                </a-card>
+              </a-col>
+              <a-col v-if="item.fileMap.data" :span="12" style="overflow: auto;">
+                <table border="1" class="sample-table">
+                  <tr v-for="(dataRow, a) in str2JSON(item.fileMap.data.data)" :key="a">
+                    <td v-for="(dataCol, j) in dataRow" :key="j">{{ dataCol }}</td>
+                  </tr>
+                </table>
+              </a-col>
+              <a-col v-if="item.fileMap.log" :span="12" style="overflow: auto;">
+                <table border="1" class="sample-table">
+                  <tr v-for="(dataRow, a) in str2JSON(item.fileMap.log.data)" :key="a">
+                    <td v-for="(dataCol, j) in dataRow" :key="j">{{ dataCol }}</td>
+                  </tr>
+                </table>
+              </a-col>
+
             </a-row>
           </div>
         </a-card>
@@ -240,6 +271,9 @@ export default {
     }
   },
   methods: {
+    str2JSON (str) {
+      return JSON.parse(str)
+    },
     onSelectChange (selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys
     },
@@ -423,3 +457,11 @@ export default {
   }
 }
 </script>
+<style scoped lang="less">
+.sample-table {
+  td {
+    text-align: left;
+    padding: 5px;
+  }
+}
+</style>

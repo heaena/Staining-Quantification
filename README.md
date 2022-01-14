@@ -47,7 +47,7 @@ java 集成（前端UI、R脚本）=》app （xxx.dmg, xxx.exe）
 李
 1、提供参数及说明 *****
 2、csv文件已提供
-3、持久化R脚本执行的时间、过程日志(包括错误日志)，文件格式：文本文件，文件内容：key=value ****
+3、持久化R脚本执行的时间、过程日志(包括错误日志)，文件格式：log-[name].csv
 4、按照/src/main/resources/rcode/process-one-image.R格式编写单张图片的处理函数 *****
 5、按照src/main/resources/script/install.packages格式提供安装依赖的脚本 *****
 
