@@ -158,7 +158,7 @@
         <a-card :title="getAnalysisResultItemTitle(item)" style="margin-top: 20px;">
           <div style="max-height:500px; overflow-y: auto;">
             <a-row :gutter="[32,16]">
-              <a-col v-if="item.fileMap.total" :span="12">
+              <a-col v-if="item.fileMap.total" :span="8">
                 <a-card :hoverable="true">
                   <img @click="onClickImage(item.fileMap.total.name, item.fileMap.total.resourcePath, item.fileMap.total.canonicalPath)" slot="cover" :src="item.fileMap.total.resourcePath"/>
                   <a-card-meta>
@@ -168,7 +168,7 @@
                   </a-card-meta>
                 </a-card>
               </a-col>
-              <a-col v-if="item.fileMap.stained" :span="12">
+              <a-col v-if="item.fileMap.stained" :span="8">
                 <a-card :hoverable="true">
                   <img @click="onClickImage(item.fileMap.stained.name, item.fileMap.stained.resourcePath, item.fileMap.stained.canonicalPath)" slot="cover" :src="item.fileMap.stained.resourcePath"/>
                   <a-card-meta>
