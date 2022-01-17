@@ -1,4 +1,11 @@
-### 启动app
+### 打包App
+```text
+1、执行package
+2、自行jpackage
+```
+
+
+### 启动App
 
 ### 安装环境
 ```text

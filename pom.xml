@@ -210,7 +210,7 @@
                 <version>1.4.0</version>
                 <configuration>
                     <name>ImageAnalysisApp</name>
-                    <type>DMG</type>
+                    <type>EXE</type>
                     <appVersion>1.0.0</appVersion>
                     <mainJar>${package.mainJar.filename}.jar</mainJar>
                     <input>${package.content.dir}</input>
