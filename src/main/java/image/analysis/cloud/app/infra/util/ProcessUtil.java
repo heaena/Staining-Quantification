@@ -47,6 +47,8 @@ public class ProcessUtil {
             err.close();
             if (errLine != null) {
                 consumer.accept("执行异常，请联系管理员！");
+            } else {
+                consumer.accept("### End ###");
             }
 
             //返回值为0表示调用成功

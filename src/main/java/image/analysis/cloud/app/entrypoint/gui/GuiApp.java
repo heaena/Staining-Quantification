@@ -56,7 +56,7 @@ public class GuiApp extends JFrame {
     private static volatile JTextArea log;
 
     private void addTestRscriptBtn(JPanel panel) {
-        final JButton btn = new JButton("测试R环境");
+        final JButton btn = new JButton("测试R脚本");
         JSONObject param = new JSONObject();
         param.put("ROI_fill_thr", "7");
         param.put("stained_thr", "0.7");
@@ -66,7 +66,7 @@ public class GuiApp extends JFrame {
             testRscriptPathDir.mkdirs();
         }
         btn.addActionListener(e -> {
-            cleanAndBeginLog("测试R环境");
+            cleanAndBeginLog("测试R脚本");
             new Thread(() -> RemoteAnalysisPlatformService.executeTask(-1, "test", AnalysisConfig.getTestImagePath(), testRscriptPath, param, log)).start();
 
         });

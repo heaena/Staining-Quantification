@@ -32,7 +32,7 @@ public class RemoteAnalysisPlatformService {
     }
 
     public static ResponseWrapper executeTask(long taskId, String taskName, String inputPath, String outputFolderPath, JSONObject param, JTextArea jTextArea) {
-        String command = String.join(" ", "cmd Rscript", commandFileName, inputPath, outputFolderPath, param.toJSONString());
+        String command = String.join(" ", "Rscript", commandFileName, inputPath, outputFolderPath, param.toJSONString());
         log.info("执行脚本-> {}", command);
         Process p = null;
         try {
