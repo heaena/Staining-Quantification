@@ -1,7 +1,5 @@
 package image.analysis.cloud.app;
 
-import image.analysis.cloud.app.entrypoint.gui.GuiApp;
-import image.analysis.cloud.app.infra.util.ServerPortUtil;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -17,8 +15,8 @@ public class ImageAnalysisApp {
                 .headless(false)
                 .run(args);
         //start gui
-        GuiApp guiApp = context.getBean(GuiApp.class);
-        guiApp.start();
+//        GuiApp guiApp = context.getBean(GuiApp.class);
+//        guiApp.start();
     }
 
 }
