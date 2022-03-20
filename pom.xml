@@ -15,8 +15,8 @@
     </parent>
 
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
         <javafx.version>17.0.1</javafx.version>
         <mainClass>image.analysis.cloud.app.ImageAnalysisApp</mainClass>
         <package.content.dir>${project.basedir}/package-content</package.content.dir>
