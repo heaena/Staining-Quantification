@@ -10,7 +10,7 @@ public class ImageAnalysisApp {
     public static void main(String[] args) {
         //start web
 //        System.getProperties().put( "server.port", ServerPortUtil.getAvailablePort());
-        System.getProperties().put( "server.port", "28084");
+//        System.getProperties().put( "server.port", "28084");
         ConfigurableApplicationContext context = new SpringApplicationBuilder(ImageAnalysisApp.class)
                 .headless(false)
                 .run(args);

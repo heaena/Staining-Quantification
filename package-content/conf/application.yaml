@@ -1,0 +1,22 @@
+
+logging:
+  file:
+    path: /Users/zhangkai/logs/image-app
+
+web:
+  file-root: /Users/zhangkai/tmp
+  analysis-platform:
+    rscript-dir: /Users/zhangkai/IdeaProjects/picture-analysis-admin/R
+spring:
+  h2:
+    console:
+      path: /h2
+      enabled: true
+      settings:
+        web-allow-others: true
+  sql:
+    init:
+      schema-locations: classpath:db/schema.sql
+      mode: always
+server:
+  port: 80

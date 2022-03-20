@@ -7,20 +7,27 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 
 import javax.swing.*;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 
 public class RemoteAnalysisPlatformService {
 
     private static Logger log = LoggerFactory.getLogger(RemoteAnalysisPlatformService.class);
 
+    private static String commandFilePath = null;
     private static final String commandFileName = "command-process-one-image.R";
 
     private static File commandDir;
 
     static {
         try {
-            commandDir = new ClassPathResource("rcode/" + commandFileName).getFile().getParentFile();
+            commandDir = new ClassPathResource("/rcode/").getFile();
+//            File absoluteFile = ResourceUtils.getFile("/rcode/").getAbsoluteFile();
+//            File canonicalFile = ResourceUtils.getFile("/rcode/").getCanonicalFile();
+//            commandFilePath = ResourceUtils.getFile("/rcode/").getAbsolutePath() + "/" + commandFileName;
             if (commandDir == null) {
                 log.error("没有找到脚本目录");
                 System.exit(2);
@@ -33,9 +40,11 @@ public class RemoteAnalysisPlatformService {
 
     public static ResponseWrapper executeTask(long taskId, String taskName, String inputPath, String outputFolderPath, JSONObject param, JTextArea jTextArea) {
         String command = String.join(" ", "Rscript", commandFileName, inputPath, outputFolderPath, param.toJSONString());
+//        String command = String.join(" ", "Rscript", commandDir.getCanonicalPath() + "/" + commandFileName, inputPath, outputFolderPath, param.toJSONString());
         log.info("执行脚本-> {}", command);
         Process p = null;
         try {
+//            p = Runtime.getRuntime().exec(command);
             p = Runtime.getRuntime().exec(command, null, commandDir);
             p.waitFor();
             //读取结果

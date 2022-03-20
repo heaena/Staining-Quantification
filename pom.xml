@@ -92,6 +92,7 @@
         </dependency>
     </dependencies>
 
+
     <build>
         <finalName>${package.mainJar.filename}</finalName>
         <plugins>
@@ -101,19 +102,6 @@
                 <configuration>
                     <source>${maven.compiler.source}</source>
                     <target>${maven.compiler.target}</target>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-clean-plugin</artifactId>
-                <version>2.4.1</version>
-                <configuration>
-                    <followSymLinks>false</followSymLinks>
-                    <filesets>
-                        <fileset>
-                            <directory>${basedir}/war</directory>
-                        </fileset>
-                    </filesets>
                 </configuration>
             </plugin>
             <plugin>
@@ -203,24 +191,6 @@
                     </execution>
                 </executions>
             </plugin>
-
-            <plugin>
-                <groupId>org.panteleyev</groupId>
-                <artifactId>jpackage-maven-plugin</artifactId>
-                <version>1.4.0</version>
-                <configuration>
-                    <name>ImageAnalysisApp</name>
-                    <type>EXE</type>
-                    <appVersion>1.0.0</appVersion>
-                    <mainJar>${package.mainJar.filename}.jar</mainJar>
-                    <input>${package.content.dir}</input>
-                    <destination>${package.output.dir}</destination>
-                    <javaOptions>
-                        <option>-Dfile.encoding=UTF-8</option>
-                    </javaOptions>
-                </configuration>
-            </plugin>
-
         </plugins>
 
         <resources>

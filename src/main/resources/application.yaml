@@ -1,3 +1,4 @@
+
 logging:
   file:
     path: /Users/zhangkai/logs/image-app
@@ -17,3 +18,5 @@ spring:
     init:
       schema-locations: classpath:db/schema.sql
       mode: always
+server:
+  port: 80
