@@ -1,8 +1,0 @@
-Rscript -e 'install.packages("imager",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/")'
-Rscript -e 'install.packages("plyr",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/")'
-Rscript -e 'install.packages("imagerExtra",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/")'
-Rscript -e 'install.packages("Rcpp",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/")'
-Rscript -e 'install.packages("dbscan",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/")'
-Rscript -e 'if (!requireNamespace("BiocManager", quietly = TRUE))
-              install.packages("BiocManager")
-            BiocManager::install("EBImage")'

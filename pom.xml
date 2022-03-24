@@ -15,8 +15,8 @@
     </parent>
 
     <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <javafx.version>17.0.1</javafx.version>
         <mainClass>image.analysis.cloud.app.ImageAnalysisApp</mainClass>
         <package.content.dir>${project.basedir}/package-content</package.content.dir>
@@ -92,7 +92,6 @@
         </dependency>
     </dependencies>
 
-
     <build>
         <finalName>${package.mainJar.filename}</finalName>
         <plugins>
@@ -107,12 +106,15 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-clean-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>3.1.0</version>
                 <configuration>
                     <filesets>
                         <fileset>
                             <directory>${package.content.dir}</directory>
                             <followSymlinks>false</followSymlinks>
+                            <excludes>
+                                <exclude>R/</exclude>
+                            </excludes>
                         </fileset>
                     </filesets>
                 </configuration>
@@ -191,6 +193,24 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <plugin>
+                <groupId>org.panteleyev</groupId>
+                <artifactId>jpackage-maven-plugin</artifactId>
+                <version>1.4.0</version>
+                <configuration>
+                    <name>ImageAnalysisApp</name>
+                    <type>EXE</type>
+                    <appVersion>1.0.0</appVersion>
+                    <mainJar>${package.mainJar.filename}.jar</mainJar>
+                    <input>${package.content.dir}</input>
+                    <destination>${package.output.dir}</destination>
+                    <javaOptions>
+                        <option>-Dfile.encoding=UTF-8</option>
+                    </javaOptions>
+                </configuration>
+            </plugin>
+
         </plugins>
 
         <resources>

@@ -32,14 +32,14 @@ public class GuiApp extends JFrame {
         JPanel panel = new JPanel();
 
         //安装依赖按钮
-        addInstallPackagesBtn(panel);
-        addInstalledPackagesBtn(panel);
+//        addInstallPackagesBtn(panel);
+//        addInstalledPackagesBtn(panel);
         //测试R环境按钮
-        addTestRscriptBtn(panel);
+//        addTestRscriptBtn(panel);
         //首页按钮
         addHomeBtn(panel);
         //日志区域
-        addLogTextArea(panel);
+//        addLogTextArea(panel);
 
         setContentPane(panel);
         setVisible(true);
@@ -50,7 +50,7 @@ public class GuiApp extends JFrame {
     final int INDEX_INSTALL_PACKAGES_BTN = 0;
     final int INDEX_INSTALLED_PACKAGES_BTN = 1;
     final int INDEX_TEST_BTN = 2;
-    final int INDEX_HOME_BTN = 3;
+    final int INDEX_HOME_BTN = 0;
     final int INDEX_LOG_AREA = 4;
 
     private static volatile JTextArea log;
