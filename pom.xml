@@ -143,6 +143,7 @@
                     <excludes>
                         <exclude>script/**/**</exclude>
                         <exclude>rcode/**/**</exclude>
+                        <exclude>R/**/**</exclude>
                     </excludes>
                 </configuration>
             </plugin>
@@ -200,7 +201,7 @@
                 <version>1.4.0</version>
                 <configuration>
                     <name>ImageAnalysisApp</name>
-                    <type>EXE</type>
+                    <type>DMG</type>
                     <appVersion>1.0.0</appVersion>
                     <mainJar>${package.mainJar.filename}.jar</mainJar>
                     <input>${package.content.dir}</input>

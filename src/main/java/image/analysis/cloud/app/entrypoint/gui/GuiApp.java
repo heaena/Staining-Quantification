@@ -6,11 +6,13 @@ import image.analysis.cloud.app.application.AnalysisConfig;
 import image.analysis.cloud.app.application.service.RService;
 import image.analysis.cloud.app.infra.rpc.RemoteAnalysisPlatformService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 
@@ -141,9 +143,15 @@ public class GuiApp extends JFrame {
      * @return
      */
     private void addHomeBtn(JPanel panel) {
-        final JButton homeBtn = new JButton("首页");
-        homeBtn.addActionListener(e -> openBrowse("/"));
-        panel.add(homeBtn, INDEX_HOME_BTN);
+        try {
+            String canonicalPath = new ClassPathResource("/rcode/").getFile().getCanonicalPath();
+            final JButton homeBtn = new JButton(canonicalPath);
+            homeBtn.addActionListener(e -> openBrowse("/"));
+            panel.add(homeBtn, INDEX_HOME_BTN);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void openBrowse(String path) {

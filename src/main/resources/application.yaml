@@ -1,7 +1,6 @@
-
 logging:
   file:
-    path: /Users/zhangkai/logs/image-app
+    name: image-app.log
 
 web:
   file-root: /Users/zhangkai/tmp

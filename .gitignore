@@ -8,3 +8,4 @@
 ./package-script/*.exe
 **/**/node_modules
 ./temp
+*.log
