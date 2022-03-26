@@ -1,6 +1,7 @@
 package image.analysis.cloud.app.infra.rpc;
 
 import com.alibaba.fastjson.JSONObject;
+import image.analysis.cloud.app.application.AnalysisConfig;
 import image.analysis.cloud.app.infra.ResponseWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,23 +39,8 @@ public class RemoteAnalysisPlatformService {
         }
     }
 
-    public static String getCurrentJarPath()
-    {
-        String path = RemoteAnalysisPlatformService.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-        if(System.getProperty("os.name").contains("dows"))
-        {
-            path = path.substring(1,path.length());
-        }
-        if(path.contains("jar"))
-        {
-            path = path.substring(0,path.lastIndexOf("."));
-            return path.substring(0,path.lastIndexOf("/"));
-        }
-        return path.replace("target/classes/", "");
-    }
-
     public static ResponseWrapper executeTask(long taskId, String taskName, String inputPath, String outputFolderPath, JSONObject param, JTextArea jTextArea) {
-        String command = String.join(" ", "Rscript", commandFileName, inputPath, outputFolderPath, param.toJSONString());
+        String command = String.join(" ", AnalysisConfig.getRscript(), commandFileName, inputPath, outputFolderPath, param.toJSONString());
 //        String command = String.join(" ", "Rscript", commandDir.getCanonicalPath() + "/" + commandFileName, inputPath, outputFolderPath, param.toJSONString());
         log.info("执行脚本-> {}", command);
         Process p = null;

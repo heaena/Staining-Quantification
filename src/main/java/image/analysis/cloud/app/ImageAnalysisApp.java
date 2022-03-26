@@ -6,11 +6,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.util.ResourceUtils;
-
-import java.io.File;
-import java.io.IOException;
 
 @SpringBootApplication
 public class ImageAnalysisApp {
@@ -18,9 +13,8 @@ public class ImageAnalysisApp {
     static Logger logger = LoggerFactory.getLogger(ImageAnalysisApp.class);
 
     public static void main(String[] args) {
+        logger.info("==========start=========");
         //start web
-//        System.getProperties().put( "server.port", ServerPortUtil.getAvailablePort());
-        System.getProperties().put( "server.port", "28084");
         ConfigurableApplicationContext context = new SpringApplicationBuilder(ImageAnalysisApp.class)
                 .headless(false)
                 .run(args);

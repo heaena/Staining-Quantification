@@ -5,22 +5,21 @@ import image.analysis.cloud.app.ImageAnalysisApp;
 import image.analysis.cloud.app.application.AnalysisConfig;
 import image.analysis.cloud.app.application.service.RService;
 import image.analysis.cloud.app.infra.rpc.RemoteAnalysisPlatformService;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.boot.web.context.WebServerInitializedEvent;
+import org.springframework.boot.web.server.WebServer;
+import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
-import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 
 @Component
-public class GuiApp extends JFrame {
+public class GuiApp extends JFrame implements ApplicationListener<WebServerInitializedEvent> {
 
-    @Value("${server.port}")
-    private int serverPort;
+    private WebServer webServer;
 
     public void start() {
         init();
@@ -143,21 +142,15 @@ public class GuiApp extends JFrame {
      * @return
      */
     private void addHomeBtn(JPanel panel) {
-        try {
-            String canonicalPath = new ClassPathResource("/rcode/").getFile().getCanonicalPath();
-            final JButton homeBtn = new JButton(canonicalPath);
-            homeBtn.addActionListener(e -> openBrowse("/"));
-            panel.add(homeBtn, INDEX_HOME_BTN);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        final JButton homeBtn = new JButton("首页");
+        homeBtn.addActionListener(e -> openBrowse("/"));
+        panel.add(homeBtn, INDEX_HOME_BTN);
     }
 
     private void openBrowse(String path) {
         URI uri = null;
         try {
-            uri = new URL("http://localhost:" + serverPort).toURI();
+            uri = new URL("http://localhost:" + webServer.getPort()).toURI();
             Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
 
             if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
@@ -166,5 +159,10 @@ public class GuiApp extends JFrame {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void onApplicationEvent(WebServerInitializedEvent event) {
+        this.webServer = event.getWebServer();
     }
 }

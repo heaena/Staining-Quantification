@@ -2,12 +2,14 @@ package image.analysis.cloud.app.infra.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Configuration;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.SequenceInputStream;
 import java.util.function.Consumer;
 
+@Configuration
 public class ProcessUtil {
 
     private static final Logger log = LoggerFactory.getLogger(ProcessUtil.class);

@@ -1,0 +1,12 @@
+server:
+  port: 8888
+
+
+image:
+  analysis:
+    cloud:
+      app:
+        rscript: Rscript
+        available-port: false
+logging:
+  config: classpath:logback-dev.xml

@@ -1,20 +1,33 @@
 package image.analysis.cloud.app.application;
 
+import image.analysis.cloud.app.infra.util.ServerPortUtil;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ResourceUtils;
 
 import java.io.File;
 import java.io.IOException;
 
+@Configuration
 @Component
 @ConfigurationProperties(prefix = "image.analysis.cloud.app")
+@AutoConfigureBefore(ServerProperties.class)
 public class AnalysisConfig {
+
+    private Boolean availablePort = false;
+
     private static String workspaceRootPath;
     private static String workspaceName = ".image-analysis-cloud-app";
     private static String analysisWorkspaceName = "image-analysis";
     private static String testImagePath = "";
+    private static String rscript = "Rscript";
 
     static {
         File inputFile = null;
@@ -33,7 +46,29 @@ public class AnalysisConfig {
         workspaceRootPath = userHome + "/" + workspaceName;
     }
 
+    @Bean
+    public TomcatServletWebServerFactory servletContainer() {
+        if (availablePort != null && availablePort) {
+            return new TomcatServletWebServerFactory(ServerPortUtil.getAvailablePort());
+        } else {
+            return new TomcatServletWebServerFactory();
+        }
 
+    }
+
+    public void setAvailablePort(Boolean availablePort) {
+        this.availablePort = availablePort;
+    }
+
+    public void setRscript(String rscript) throws IOException {
+        if (rscript != null) {
+            if ("inner".equals(rscript)) {
+                AnalysisConfig.rscript = new ClassPathResource("/rcode/").getFile().getParentFile().getCanonicalPath() + "/bin/Rscript";
+            } else {
+                AnalysisConfig.rscript = rscript;
+            }
+        }
+    }
 
     public static String getLogsPath() {
         return workspaceRootPath + "/logs";
@@ -59,4 +94,7 @@ public class AnalysisConfig {
         return testImagePath;
     }
 
+    public static String getRscript() {
+        return rscript;
+    }
 }
