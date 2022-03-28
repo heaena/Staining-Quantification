@@ -202,6 +202,13 @@
                 <configuration>
                     <name>ImageAnalysisApp</name>
                     <type>EXE</type>
+                    <vendor>LiXinRui</vendor>
+                    <verbose>true</verbose>
+                    <winConsole>true</winConsole>
+                    <winMenuGroup>ImageAnalysis</winMenuGroup>
+                    <winMenu>true</winMenu>
+                    <winDirChooser>true</winDirChooser>
+                    <winShortcut>true</winShortcut>
                     <appVersion>1.0.0</appVersion>
                     <mainJar>${package.mainJar.filename}.jar</mainJar>
                     <input>${package.content.dir}</input>
