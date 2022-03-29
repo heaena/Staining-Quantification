@@ -270,4 +270,22 @@ public class FileSystemService {
         }
         return res;
     }
+
+    public void removeFile(String path) throws Exception {
+        File file = new File(getRootPath() + "/" + path);
+        removeCurrentAndChild(file);
+    }
+
+    public static void removeCurrentAndChild(File file) throws Exception {
+
+        if (file.exists()) {
+            File[] files = file.listFiles();
+            if (files != null) {
+                for (File innerFile : files) {
+                    removeCurrentAndChild(innerFile);
+                }
+            }
+            file.delete();
+        }
+    }
 }

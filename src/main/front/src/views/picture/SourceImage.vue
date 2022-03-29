@@ -292,9 +292,10 @@ export default {
       this.folder.showModal = true
     },
     onClickBreadcrumb (item) {
-      this.queryParam.parentPath = item.id
+      debugger
+      this.queryParam.parentPath = item.path
       for (var i = 0; i < this.breadcrumb.length; i++) {
-        if (this.breadcrumb[i].id === item.id) {
+        if (this.breadcrumb[i].path === item.path) {
           this.breadcrumb.splice(i + 1, this.breadcrumb.length)
           break
         }
@@ -303,7 +304,6 @@ export default {
     },
     onClickItem (record) {
       if (record.dir === true) {
-        debugger
         this.breadcrumb.push(record)
         this.dataSource = []
         this.queryParam.parentPath = record.path
@@ -319,7 +319,7 @@ export default {
       this.image.showModal = false
     },
     deleteFile (record) {
-      const requestParameters = { id: record.id }
+      const requestParameters = { path: record.path }
       removeFile(requestParameters)
         .then(res => {
           this.loadData()

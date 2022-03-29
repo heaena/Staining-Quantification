@@ -72,4 +72,10 @@ public class FileSystemController extends BaseController{
         fileSystemService.removeImage(folderName, imageName);
         return ResponseWrapper.success();
     }
+
+    @DeleteMapping("/remove")
+    public ResponseWrapper removeFile(@RequestParam("path") String path) throws Exception {
+        fileSystemService.removeFile(path);
+        return ResponseWrapper.success();
+    }
 }
