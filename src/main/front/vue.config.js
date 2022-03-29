@@ -117,7 +117,7 @@ const vueConfig = {
         // }
       },
       '/analysis-file': {
-        target: 'http://localhost:28084',
+        target: 'http://localhost:8888',
         ws: false,
         changeOrigin: true,
         // pathRewrite: {

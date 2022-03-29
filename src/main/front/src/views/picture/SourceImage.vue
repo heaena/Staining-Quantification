@@ -303,6 +303,7 @@ export default {
     },
     onClickItem (record) {
       if (record.dir === true) {
+        debugger
         this.breadcrumb.push(record)
         this.dataSource = []
         this.queryParam.parentPath = record.path

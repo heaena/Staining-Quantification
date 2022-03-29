@@ -121,7 +121,7 @@ public class FileSystemService {
     }
 
     private String getSourceImageResourcePath(File file) throws IOException {
-        return file.getCanonicalPath().replace(AnalysisConfig.getImgAnalysisWorkspacePath(), "") + "/" + file.getName();
+        return file.getCanonicalPath().replace(AnalysisConfig.getImgAnalysisWorkspacePath(), "");
     }
 
     private String getOutputResourcePath(File file) throws IOException {
@@ -129,10 +129,12 @@ public class FileSystemService {
     }
 
     public ResponseWrapper addFile(MultipartFile[] uploadFiles, String folderName) throws IOException {
-        String parentCanonicalPath = getRootPath() + "/" + folderName;
+        if (StringUtils.isEmpty(folderName)) {
+            folderName = "";
+        }
+        String uploadPath = getRootPath() + "/" + folderName;
         for (MultipartFile uploadFile:uploadFiles) {
-            String savePath = parentCanonicalPath + "/" + uploadFile.getOriginalFilename();
-            File file = new File(savePath, uploadFile.getOriginalFilename());
+            File file = new File(uploadPath, uploadFile.getOriginalFilename());
             file.mkdirs();
             uploadFile.transferTo(file);
         }
@@ -254,9 +256,10 @@ public class FileSystemService {
             for (File file: files) {
                 FileSystem fileSystem = new FileSystem();
                 fileSystem.setName(file.getName());
+                fileSystem.setPath(file.getCanonicalPath().replace(getRootPath(), ""));
                 fileSystem.setCanonicalFilePath(file.getCanonicalPath());
                 fileSystem.setLastModified(file.lastModified());
-                if (fileSystem.isDir()) {
+                if (file.isDirectory()) {
                     fileSystem.setDir(true);
                 } else {
                     //如果是图片，获取图片访问路径
