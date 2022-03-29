@@ -6,19 +6,19 @@ export const asyncRouterMap = [
     path: '/',
     name: 'index',
     component: BasicLayout,
-    redirect: '/folder',
+    redirect: '/source',
     children: [
       {
-        path: '/folder',
-        name: '文件夹',
-        component: () => import('@/views/picture/FolderTableList'),
-        meta: { title: '文件夹', keepAlive: false, icon: 'folder' }
+        path: '/source',
+        name: 'Source image',
+        component: () => import('@/views/picture/SourceImage'),
+        meta: { title: 'Source image', keepAlive: false, icon: 'folder' }
       },
       {
-        path: '/images/:folderName',
-        name: '图片分析',
+        path: '/task/:folderName',
+        name: 'Analysis task',
         component: () => import('@/views/picture/ImageTableList'),
-        meta: { title: '图片分析', keepAlive: false, icon: 'line-chart' }
+        meta: { title: 'Analysis task', keepAlive: false, icon: 'line-chart' }
       }
     ]
   },

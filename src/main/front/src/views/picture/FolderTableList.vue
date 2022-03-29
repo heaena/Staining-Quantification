@@ -154,7 +154,7 @@ export default {
     },
     enterFolder (record) {
       this.$router.push({
-        path: '/images/' + record.name
+        path: '/task/' + record.name
       })
     },
     loadData (callback) {

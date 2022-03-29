@@ -62,6 +62,19 @@ public class FileSystemService {
         return "" + taskId + "-" + taskName;
     }
 
+    private File[] listChildFile(String path, String filterName) {
+        File parentDir = new File(path);
+        return parentDir.listFiles(file -> {
+            if (file.isHidden()) {
+                return false;
+            }
+            if (StringUtils.isNotEmpty(filterName)) {
+                return file.getName().matches(".*" + filterName + ".*");
+            }
+            return true;
+        });
+    }
+
     private File[] listChildFolder(String path, String filterName) {
         File parentDir = new File(path);
         return parentDir.listFiles(file -> {
@@ -225,5 +238,33 @@ public class FileSystemService {
     private List<String []> parseCsv(File file) throws IOException {
         DataInputStream dataInputStream = new DataInputStream(new FileInputStream(file));
         return new CSVReader(new InputStreamReader(dataInputStream,"UTF-8")).readAll();
+    }
+
+    /**
+     * 获取源图片
+     * @param parentPath
+     * @param name
+     * @return
+     * @throws IOException
+     */
+    public List<FileSystem> listSourceImage(String parentPath, String name) throws IOException {
+        File[] files = listChildFile(getRootPath() + "/" + parentPath, name);
+        List<FileSystem> res = new LinkedList<>();
+        if (files != null) {
+            for (File file: files) {
+                FileSystem fileSystem = new FileSystem();
+                fileSystem.setName(file.getName());
+                fileSystem.setCanonicalFilePath(file.getCanonicalPath());
+                fileSystem.setLastModified(file.lastModified());
+                if (fileSystem.isDir()) {
+                    fileSystem.setDir(true);
+                } else {
+                    //如果是图片，获取图片访问路径
+                    fileSystem.setResourcePath(getSourceImageResourcePath(file));
+                }
+                res.add(fileSystem);
+            }
+        }
+        return res;
     }
 }

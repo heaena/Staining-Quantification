@@ -13,7 +13,6 @@ public class ImageAnalysisApp {
     static Logger logger = LoggerFactory.getLogger(ImageAnalysisApp.class);
 
     public static void main(String[] args) {
-        logger.info("==========start=========");
         //start web
         ConfigurableApplicationContext context = new SpringApplicationBuilder(ImageAnalysisApp.class)
                 .headless(false)

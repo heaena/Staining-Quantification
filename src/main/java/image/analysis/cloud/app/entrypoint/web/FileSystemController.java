@@ -19,6 +19,13 @@ public class FileSystemController extends BaseController{
     @Autowired
     private FileSystemService fileSystemService;
 
+    @GetMapping("/list")
+    public ResponseWrapper list(String parentPath, String name) throws IOException {
+        //如果parentId为null，则查询当前用户的文件夹
+        List<FileSystem> imageList = fileSystemService.listSourceImage(parentPath, name);
+        return ResponseWrapper.success(imageList);
+    }
+
     /**
      * 文件夹查询
      * @param name 模糊查询

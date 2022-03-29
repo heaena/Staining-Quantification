@@ -1,6 +1,7 @@
 import request from '@/utils/request'
 
 const api = {
+  sourceList: '/fileSystem/list',
   folderList: '/fileSystem/listFolder',
   imageList: '/fileSystem/listImage',
   addFolder: '/fileSystem/addFolder',
@@ -8,6 +9,14 @@ const api = {
 }
 
 export default api
+
+export function getList (parameter) {
+  return request({
+    url: api.sourceList,
+    method: 'get',
+    params: parameter
+  })
+}
 
 export function getFolderList (parameter) {
   return request({
