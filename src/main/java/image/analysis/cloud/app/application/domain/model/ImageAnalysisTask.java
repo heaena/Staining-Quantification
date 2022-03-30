@@ -8,12 +8,18 @@ public class ImageAnalysisTask {
     private String taskName;
     private String imagePath;
     private String outputFolderPath;
+    private String param;
 
-    public ImageAnalysisTask(long taskId, String taskName, String imagePath, String outputFolderPath) {
+    public ImageAnalysisTask(long taskId, String taskName, String imagePath, String outputFolderPath, String param) {
         this.taskId = taskId;
         this.taskName = taskName;
         this.imagePath = imagePath;
         this.outputFolderPath = outputFolderPath;
+        this.param = param;
+    }
+
+    public String getParam() {
+        return param;
     }
 
     public String getId() {
