@@ -1,11 +1,11 @@
 import request from '@/utils/request'
 
 const api = {
-  sourceList: '/fileSystem/list',
+  sourceList: '/sourceImage/list',
   folderList: '/fileSystem/listFolder',
   imageList: '/fileSystem/listImage',
-  addFolder: '/fileSystem/addFolder',
-  removeFile: '/fileSystem/remove'
+  addFolder: '/sourceImage/addFolder',
+  removeFile: '/sourceImage/remove'
 }
 
 export default api

@@ -46,7 +46,7 @@
         <template slot-scope="text, record">
           <span>
             <a-button @click="deleteFile(record)" >删除</a-button>
-            <a-button @click="onClickAnalysis(record)" type="primary" style="margin-left: 5px;">分析</a-button>
+            <a-button @click="onClickAnalysis(record)" type="primary" style="margin-left: 5px;">创建分析任务</a-button>
             <a-button @click="onClickAnalysisResult(record)" type="primary" style="margin-left: 5px;">分析结果</a-button>
           </span>
         </template>
@@ -89,7 +89,7 @@
         :multiple="true"
         :withCredentials="true"
         listType="picture"
-        action="/api/fileSystem/uploadFile"
+        action="/api/sourceImage/uploadFile"
         :headers="headers"
         :data="getUploadData()"
         @change="handleChange"

@@ -44,7 +44,7 @@ public class FileSystemService {
         for (String imageName: imageList) {
             String imageCanonicalPath = getSourceImageCanonicalPath(folderName, imageName);
             String outputFolderPath = getImageAnalysisOutputFolderPath(taskId, taskName, folderName, imageName);
-            ImageAnalysisTask imageAnalysisTask = new ImageAnalysisTask(taskId, taskName, imageCanonicalPath, outputFolderPath);
+            ImageAnalysisTask imageAnalysisTask = new ImageAnalysisTask(taskId, taskName, imageCanonicalPath, outputFolderPath, param);
             tasks.add(imageAnalysisTask);
         }
         return tasks;

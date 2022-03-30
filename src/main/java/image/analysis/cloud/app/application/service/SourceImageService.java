@@ -1,27 +1,23 @@
 package image.analysis.cloud.app.application.service;
 
-import com.alibaba.fastjson.JSONObject;
 import image.analysis.cloud.app.application.AnalysisConfig;
 import image.analysis.cloud.app.application.domain.model.FileSystem;
-import image.analysis.cloud.app.application.domain.model.ImageAnalysisTask;
-import image.analysis.cloud.app.application.domain.repo.AnalysisTaskRepo;
-import image.analysis.cloud.app.application.domain.repo.FileSystemRepo;
 import image.analysis.cloud.app.infra.ResponseWrapper;
-import image.analysis.cloud.app.infra.rpc.RemoteAnalysisPlatformService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
+/**
+ * 源图片管理
+ */
 @Service
-public class SourceImageService {
+public class SourceImageService implements ImageService {
 
     // 源图片的目录
     private static final String sourceImagePathName = "/analysis-file";
@@ -31,6 +27,7 @@ public class SourceImageService {
 
     /**
      * 获取源图片
+     *
      * @param parentPath
      * @param name
      * @return
@@ -40,7 +37,7 @@ public class SourceImageService {
         File[] files = listChildFile(getRootPath() + "/" + parentPath, name);
         List<FileSystem> res = new LinkedList<>();
         if (files != null) {
-            for (File file: files) {
+            for (File file : files) {
                 FileSystem fileSystem = new FileSystem();
                 fileSystem.setName(file.getName());
                 fileSystem.setPath(file.getCanonicalPath().replace(getRootPath(), ""));
@@ -50,7 +47,7 @@ public class SourceImageService {
                     fileSystem.setDir(true);
                 } else {
                     //如果是图片，获取图片访问路径
-                    fileSystem.setResourcePath(getSourceImageResourcePath(file));
+                    fileSystem.setResourcePath(getResourcePath(file));
                 }
                 res.add(fileSystem);
             }
@@ -59,17 +56,32 @@ public class SourceImageService {
     }
 
     /**
-     * 获取图片访问路径
-     * @param file
-     * @return
-     * @throws IOException
+     * 新增文件夹
+     *
+     * @param name 文件夹名称
      */
-    private String getSourceImageResourcePath(File file) throws IOException {
-        return file.getCanonicalPath().replace(AnalysisConfig.getImgAnalysisWorkspacePath(), "");
+    public void addFolder(String name) {
+        String folderPath = getRootPath() + "/" + name;
+        File file = new File(folderPath);
+        file.mkdirs();
+    }
+
+    public ResponseWrapper addFile(MultipartFile[] uploadFiles, String folderName) throws IOException {
+        if (StringUtils.isEmpty(folderName)) {
+            folderName = "";
+        }
+        String uploadPath = getRootPath() + "/" + folderName;
+        for (MultipartFile uploadFile : uploadFiles) {
+            File file = new File(uploadPath, uploadFile.getOriginalFilename());
+            file.mkdirs();
+            uploadFile.transferTo(file);
+        }
+        return ResponseWrapper.success();
     }
 
     /**
      * 获取子文件
+     *
      * @param path
      * @param filterName
      * @return
@@ -89,6 +101,7 @@ public class SourceImageService {
 
     /**
      * 删除文件
+     *
      * @param path
      * @throws Exception
      */
@@ -99,6 +112,7 @@ public class SourceImageService {
 
     /**
      * 获取根目录
+     *
      * @return
      */
     private String getRootPath() {
@@ -107,6 +121,7 @@ public class SourceImageService {
 
     /**
      * 删除子文件
+     *
      * @param file
      * @throws Exception
      */
@@ -125,12 +140,13 @@ public class SourceImageService {
 
     /**
      * 创建分析任务
-     * @param taskName 任务名称
+     *
+     * @param taskName   任务名称
      * @param folderPath 文件夹
-     * @param imageList 图片名称
-     * @param param
+     * @param imageList  图片名称
+     * @param param      执行参数
      */
-    public void createTask(String taskName, String folderPath, List<String> imageList, String param) {
+    public void createAnalysisTask(String taskName, String folderPath, List<String> imageList, String param) {
         List<String> imageCanonicalFilePathList = getImageCanonicalFilePath(folderPath, imageList);
         analysisTaskService.createAnalysisTask(taskName, imageCanonicalFilePathList, param);
     }
