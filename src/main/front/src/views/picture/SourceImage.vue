@@ -32,7 +32,7 @@
       </a-breadcrumb-item>
     </a-breadcrumb>
     <!--文件列表-->
-    <a-table :data-source="dataSource">
+    <a-table :data-source="dataSource" rowKey="path">
       <a-table-column key="name" title="文件名" data-index="name" >
         <template slot-scope="text, record">
           <a @click="onClickItem(record)">
@@ -47,7 +47,6 @@
           <span>
             <a-button @click="deleteFile(record)" >删除</a-button>
             <a-button @click="onClickAnalysis(record)" type="primary" style="margin-left: 5px;">创建分析任务</a-button>
-            <a-button @click="onClickAnalysisResult(record)" type="primary" style="margin-left: 5px;">分析结果</a-button>
           </span>
         </template>
       </a-table-column>
@@ -83,7 +82,7 @@
       @ok="handleUploadModalOk"
     >
       <a-upload
-        v-model="fileList"
+        v-model="upload.fileList"
         name="files"
         accept="image/*"
         :multiple="true"
@@ -93,6 +92,7 @@
         :headers="headers"
         :data="getUploadData()"
         @change="handleChange"
+        :showUploadList="upload.showUploadList"
       >
         <a-button type="primary">
           <a-icon type="upload" />
@@ -102,11 +102,11 @@
     </a-modal>
     <!--分析-->
     <a-modal
-      title="新建分析任务"
+      title="创建分析任务"
       :visible="analysisModal.showModal"
       @cancel="onClickAnalysisModalCancel"
       @ok="onClickAnalysisModalOk"
-      okText="开始分析"
+      okText="确定"
     >
       <a-form :form="analysisForm" :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }">
         <a-form-item label="任务名称">
@@ -116,22 +116,22 @@
             v-decorator="['name', { rules: [{ required: true, message: 'Please input!' }] }]"
           />
         </a-form-item>
-        <a-form-item label="ROI阈值">
+        <a-form-item label="d.thr">
           <a-input-number
-            :min="1"
-            :max="10"
-            placeholder="组织区域阈值"
+            :min="0"
+            :value="0"
+            placeholder="初次降噪"
             style="width: 100%"
-            v-decorator="['roi_fill_thr', { rules: [{ required: true, message: 'Please select!' }] }]"
+            v-decorator="['d.thr', { rules: [{ required: true, message: 'Please select!' }] }]"
           />
-          默认值7，可选值>=1
+          尺度在0.01级别，常用范围为0-0.05
         </a-form-item>
         <a-form-item label="染色阈值">
           <a-select
             v-decorator="[
-          'stained_thr',
-          { rules: [{ required: true, message: 'Please select!' }] },
-        ]"
+              'stained_thr',
+              { rules: [{ required: true, message: 'Please select!' }] },
+            ]"
             placeholder="染色区域阈值"
           >
             <a-select-option value="auto">
@@ -145,50 +145,17 @@
         </a-form-item>
       </a-form>
     </a-modal>
-
-    <!--分析结果-->
-    <a-drawer
-      title="分析结果"
-      placement="right"
-      :closable="true"
-      :maskClosable="false"
-      width="90%"
-      :visible="analysisResult.showModal"
-      @close="handleAnalysisResultModalClose"
-    >
-      <div v-for="(item, i) in analysisResult.analysisResultDataSource" :key="i">
-        <a-card :title="getAnalysisResultItemTitle(item)">
-          <a-button slot="extra">删除</a-button>
-          <div style="max-height:500px; overflow-y: auto;">
-            <a-row :gutter="[16,16]">
-              <a-col v-for="img in item.imageList" :key="img.path" :span="6">
-                <a-card :hoverable="true">
-                  <img onclick="onClickItem()" slot="cover" :src="getImagePath(img)"/>
-                  <a-card-meta>
-                    <template slot="description">
-                      {{ img.name }}
-                    </template>
-                  </a-card-meta>
-                </a-card>
-              </a-col>
-            </a-row>
-          </div>
-        </a-card>
-      </div>
-    </a-drawer>
   </a-card>
 </template>
 <script>
-import { getRoleList } from '@/api/manage'
 import { getList, addFolder, removeFile } from '@/api/fileSystem'
-import { startTask, listAnalysisResult } from '@/api/analysis'
+import { startTask } from '@/api/analysis'
 import { message } from 'ant-design-vue'
 export default {
   name: 'TableList',
   data () {
     return {
       analysisForm: this.$form.createForm(this, { name: 'coordinated' }),
-      fileList: [],
       headers: {
         authorization: 'authorization-text'
       },
@@ -202,12 +169,16 @@ export default {
         showModal: false
       },
       upload: {
-        showModal: false
+        showModal: false,
+        showUploadList: {
+          showRemoveIcon: false
+        },
+        fileList: []
       },
       breadcrumb: [
         {
           name: '全部文件',
-          id: ''
+          path: ''
         }
       ],
       // create model
@@ -226,12 +197,6 @@ export default {
           roi_fill_thr: 7,
           stained_thr: 'auto'
         }
-      },
-      analysisResult: {
-        showModal: false,
-        fileId: '',
-        showId: ['1'],
-        analysisResultDataSource: []
       }
     }
   },
@@ -239,7 +204,6 @@ export default {
   },
   created () {
     this.loadData()
-    getRoleList({ t: new Date() })
   },
   computed: {
     rowSelection () {
@@ -251,7 +215,10 @@ export default {
   },
   methods: {
     showUploadModal () {
+      console.log('-----')
+      this.upload.fileList = []
       this.upload.showModal = true
+      console.log(this.upload.fileList)
     },
     handleUploadModalOk () {
       this.loadData()
@@ -292,7 +259,6 @@ export default {
       this.folder.showModal = true
     },
     onClickBreadcrumb (item) {
-      debugger
       this.queryParam.parentPath = item.path
       for (var i = 0; i < this.breadcrumb.length; i++) {
         if (this.breadcrumb[i].path === item.path) {
@@ -330,25 +296,8 @@ export default {
       this.analysisModal.showModal = true
       this.resetAnalysisForm()
     },
-    onClickAnalysisResult (record) {
-      this.analysisResult.showModal = true
-      this.analysisResult.fileId = record.id
-      this.loadAnalysisResult()
-    },
-    loadAnalysisResult () {
-      const requestParameters = { fileId: this.analysisResult.fileId }
-      listAnalysisResult(requestParameters)
-        .then(res => {
-          if (res.code === 0) {
-            this.analysisResult.analysisResultDataSource = res.data
-          }
-        })
-    },
     getImagePath (item) {
       return '/api' + item.path
-    },
-    getAnalysisResultItemTitle (item) {
-      return '任务名称：' + item.name + '，任务时间：' + item.createDate
     },
     onClickAnalysisModalCancel () {
       this.analysisModal.showModal = false
@@ -403,9 +352,6 @@ export default {
             callback()
           }
         })
-    },
-    handleAnalysisResultModalClose () {
-      this.analysisResult.showModal = false
     }
   }
 }

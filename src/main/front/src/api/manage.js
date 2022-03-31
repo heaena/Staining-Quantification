@@ -19,14 +19,6 @@ export function getUserList (parameter) {
   })
 }
 
-export function getRoleList (parameter) {
-  return request({
-    url: api.role,
-    method: 'get',
-    params: parameter
-  })
-}
-
 export function getServiceList (parameter) {
   return request({
     url: api.service,
