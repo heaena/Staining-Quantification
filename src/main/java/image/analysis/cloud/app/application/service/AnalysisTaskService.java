@@ -134,6 +134,7 @@ public class AnalysisTaskService implements ImageService {
 
         result.setTaskName(taskName);
         result.setTaskTime(taskResultfolder.lastModified());
+        result.setCanonicalPath(taskResultfolder.getCanonicalPath());
 
         //查询分析结果文件
         File []  analysisResultFiles = taskResultfolder.listFiles(file -> {

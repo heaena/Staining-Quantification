@@ -1,16 +1,23 @@
 <template>
   <a-card :bordered="false">
+    <div>
+        <strong>任务名称：</strong>{{ this.dataSource.taskName }}，任务时间：{{ formatDate(this.dataSource.taskTime) }}
+    </div>
+    <div style="margin-bottom: 5px;">
+      <span style="color: red;">图片文件地址：</span>{{ this.dataSource.canonicalPath }}
+    </div>
     <!--操作按钮-->
     <div>
-      <a-row :gutter="0">
-        <a-col :md="14" :sm="24">
+      <a-row>
+        <a-col :span="24">
           <a-form layout="inline">
             <a-form-item label="源文件名">
               <a-input v-model="queryParam.filterName" placeholder="源文件名"/>
             </a-form-item>
             <a-form-item>
-              <a-button @click="loadData()" type="primary">查询</a-button>
+              <a-button @click="loadData()">查询</a-button>
               <a-button style="margin-left: 8px" @click="() => this.queryParam = {}">重置</a-button>
+              <a-button style="margin-left: 8px" type="primary" @click="() => this.analysisResultData.showModal = true">分析结果数据</a-button>
             </a-form-item>
           </a-form>
         </a-col>
@@ -23,9 +30,9 @@
           :data-source="tableDataSource"
           :pagination="true"
           size="small">
-          <a-table-column key="name" title="源文件名" data-index="name" >
+          <a-table-column key="name" title="源文件名" data-index="name">
             <template slot-scope="text, record">
-              <a @click="onClickSourceImageName(record.name, record.resourcePath, record.canonicalFilePath)" style="padding-right: 50px;font-size: 16px;">
+              <a @click="onClickSourceImageName(record.name, record.resourcePath, record.canonicalFilePath)" style="font-size: 16px;width: 100%;display: block;">
                 <a-icon type="file-text" style="fontSize: 20px;margin-right: 10px;" theme="filled" /><span style="color: black">{{ record.name }}</span>
               </a>
             </template>
@@ -42,7 +49,6 @@
               </a-card>
             </a-col>
           </a-row>
-
         </div>
       </a-col>
     </a-row>
@@ -60,6 +66,23 @@
       <span style="margin-left: 20px;">文件路径 {{ image.canonicalFilePath }}</span>
       <img :src="image.resourcePath" width="100%"/>
     </a-drawer>
+
+    <a-drawer
+      title="分析结果数据"
+      placement="right"
+      :closable="true"
+      :maskClosable="false"
+      :visible="analysisResultData.showModal"
+      width="auto"
+      @close="handleAnalysisResultDataCancel"
+    >
+      <span style="color: red;">数据文件地址：</span>{{ this.dataSource.canonicalPath }}/out_stats/out_stats_all.csv
+      <table v-if="dataSource.dataJson" border="1" class="sample-table">
+        <tr v-for="(dataRow, a) in dataSource.dataJson" :key="a">
+          <td v-for="(dataCol, j) in dataRow" :key="j">{{ dataCol }}</td>
+        </tr>
+      </table>
+    </a-drawer>
   </a-card>
 </template>
 <script>
@@ -75,6 +98,9 @@ export default {
         name: '',
         showModal: false,
         scr: ''
+      },
+      analysisResultData: {
+        showModal: false
       },
       confirmLoading: false,
       // 查询参数
@@ -94,6 +120,9 @@ export default {
   computed: {
   },
   methods: {
+    str2JSON (str) {
+      return JSON.parse(str)
+    },
     formatDate (value) {
       return Moment(value).format('YYYY-MM-DD HH:mm:ss')
     },
@@ -110,6 +139,9 @@ export default {
     handleImageModalCancel (e) {
       this.image.showModal = false
     },
+    handleAnalysisResultDataCancel () {
+      this.analysisResultData.showModal = false
+    },
     getImagePath (path) {
       return path
     },
@@ -124,6 +156,9 @@ export default {
               tableDataSource.push({ name: name })
             })
             this.tableDataSource = tableDataSource
+          }
+          if (res.data.data) {
+            this.dataSource.dataJson = this.str2JSON(res.data.data)
           }
           if (callback) {
             callback()
