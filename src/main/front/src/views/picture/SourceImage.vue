@@ -41,7 +41,11 @@
           </a>
         </template>
       </a-table-column>
-      <a-table-column key="createDate" title="修改时间" data-index="createDate" />
+      <a-table-column key="lastModified" title="修改时间" data-index="lastModified" >
+        <template slot-scope="text, record">
+          {{ formatDate(record.lastModified) }}
+        </template>
+      </a-table-column>
       <a-table-column key="action" title="操作">
         <template slot-scope="text, record">
           <span>
@@ -178,8 +182,9 @@
   </a-card>
 </template>
 <script>
-import { getList, addFolder, removeFile, createTask } from '@/api/fileSystem'
+import { getList, addFolder, removeFile, createTask } from '@/api/sourceImage'
 import { message } from 'ant-design-vue'
+import Moment from 'moment'
 export default {
   name: 'TableList',
   data () {
@@ -241,6 +246,9 @@ export default {
     }
   },
   methods: {
+    formatDate (value) {
+      return Moment(value).format('YYYY-MM-DD HH:mm:ss')
+    },
     showUploadModal () {
       console.log('-----')
       this.upload.fileList = []

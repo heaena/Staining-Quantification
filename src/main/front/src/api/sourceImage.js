@@ -2,8 +2,6 @@ import request from '@/utils/request'
 
 const api = {
   sourceList: '/sourceImage/list',
-  folderList: '/fileSystem/listFolder',
-  imageList: '/fileSystem/listImage',
   addFolder: '/sourceImage/addFolder',
   removeFile: '/sourceImage/remove',
   createTask: '/sourceImage/createTask'
@@ -22,22 +20,6 @@ export function createTask (data) {
 export function getList (parameter) {
   return request({
     url: api.sourceList,
-    method: 'get',
-    params: parameter
-  })
-}
-
-export function getFolderList (parameter) {
-  return request({
-    url: api.folderList,
-    method: 'get',
-    params: parameter
-  })
-}
-
-export function getImageList (parameter) {
-  return request({
-    url: api.imageList,
     method: 'get',
     params: parameter
   })

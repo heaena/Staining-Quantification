@@ -183,4 +183,33 @@ public class AnalysisTaskService implements ImageService {
         return new File(getRootPath() + "/" + taskName);
     }
 
+    /**
+     * 删除文件
+     *
+     * @param path
+     * @throws Exception
+     */
+    public void removeFile(String path) throws Exception {
+        File file = new File(getRootPath() + "/" + path);
+        removeCurrentAndChild(file);
+    }
+
+    /**
+     * 删除子文件
+     *
+     * @param file
+     * @throws Exception
+     */
+    private void removeCurrentAndChild(File file) {
+
+        if (file.exists()) {
+            File[] files = file.listFiles();
+            if (files != null) {
+                for (File innerFile : files) {
+                    removeCurrentAndChild(innerFile);
+                }
+            }
+            file.delete();
+        }
+    }
 }

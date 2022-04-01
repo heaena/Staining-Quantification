@@ -7,15 +7,13 @@ import image.analysis.cloud.app.application.service.AnalysisTaskService;
 import image.analysis.cloud.app.infra.ResponseWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
 
 @RestController
-@RequestMapping(WebConfig.restApiContextPath + "/analysisTask")
+@RequestMapping(WebConfig.restApiContextPath + "/task")
 @Slf4j
 public class AnalysisTaskController {
 
@@ -39,6 +37,12 @@ public class AnalysisTaskController {
     public ResponseWrapper taskResult(String taskName, String filterName) throws IOException {
         AnalysisTaskResult imageAnalysisResult  = analysisTaskService.taskResult(taskName, filterName);
         return ResponseWrapper.success(imageAnalysisResult);
+    }
+
+    @DeleteMapping("/remove")
+    public ResponseWrapper removeFile(@RequestParam("path") String path) throws Exception {
+        analysisTaskService.removeFile(path);
+        return ResponseWrapper.success();
     }
 
 }

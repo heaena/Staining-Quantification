@@ -3,13 +3,6 @@
     <!--操作按钮-->
     <div>
       <a-row :gutter="0">
-        <a-col :md="10" :sm="24">
-          <a-form layout="inline">
-            <a-form-item>
-              <a-button icon="folder-add" @click="showUploadModal()" type="primary">上传图片</a-button>
-            </a-form-item>
-          </a-form>
-        </a-col>
         <a-col :md="14" :sm="24">
           <a-form layout="inline">
             <a-form-item label="文件名称">
@@ -18,7 +11,6 @@
             <a-form-item>
               <a-button @click="loadData()">查询</a-button>
               <a-button style="margin-left: 8px" @click="() => this.queryParam = {}">重置</a-button>
-              <a-button @click="onClickAnalysis()" type="primary" style="margin-left: 8px;">分析</a-button>
             </a-form-item>
           </a-form>
         </a-col>
@@ -48,7 +40,6 @@
         <template slot-scope="text, record">
           <span>
             <a-button @click="deleteFile(record)" >删除</a-button>
-            <a-button @click="onClickAnalysis(record)" type="primary" style="margin-left: 5px;">分析</a-button>
             <a-button @click="onClickAnalysisResult(record)" type="primary" style="margin-left: 5px;">分析结果</a-button>
           </span>
         </template>
@@ -68,140 +59,10 @@
       <span style="margin-left: 20px;">文件路径 {{ image.canonicalFilePath }}</span>
       <img :src="image.resourcePath" width="100%"/>
     </a-drawer>
-    <!--上传图片-->
-    <a-modal
-      title="上传图片"
-      :visible="upload.showModal"
-      @cancel="handleUploadModalCancel"
-      @ok="handleUploadModalOk"
-    >
-      <a-upload
-        v-model="fileList"
-        name="files"
-        accept="image/*"
-        :multiple="true"
-        :withCredentials="true"
-        listType="picture"
-        action="/api/fileSystem/uploadFile"
-        :headers="headers"
-        :data="getUploadData()"
-        @change="handleChange"
-      >
-        <a-button type="primary">
-          <a-icon type="upload" />
-          选择图片
-        </a-button>
-      </a-upload>
-    </a-modal>
-    <!--分析-->
-    <a-modal
-      title="新建分析任务"
-      :visible="analysisModal.showModal"
-      @cancel="onClickAnalysisModalCancel"
-      @ok="onClickAnalysisModalOk"
-      okText="开始分析"
-    >
-      <a-form :form="analysisForm" :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }">
-        <a-form-item label="任务名称">
-          <a-input
-            placeholder="标注此次任务"
-            :maxLength="50"
-            v-decorator="['name', { rules: [{ required: true, message: 'Please input!' }] }]"
-          />
-        </a-form-item>
-        <a-form-item label="ROI阈值">
-          <a-input-number
-            :min="1"
-            :max="10"
-            placeholder="组织区域阈值"
-            style="width: 100%"
-            v-decorator="['ROI_fill_thr', { rules: [{ required: true, message: 'Please select!' }] }]"
-          />
-          默认值7，可选值>=1
-        </a-form-item>
-        <a-form-item label="染色阈值">
-          <a-select
-            v-decorator="[ 'stained_thr', { rules: [{ required: true, message: 'Please select!' }] }]"
-            placeholder="染色区域阈值"
-          >
-            <a-select-option value="auto">
-              auto
-            </a-select-option>
-            <a-select-option value="0.7">
-              0.7
-            </a-select-option>
-          </a-select>
-          <span>对于Alizarin Red ，建议用"auto"；对于Von Kossa ，建议用0.7</span>
-        </a-form-item>
-      </a-form>
-    </a-modal>
-
-    <!--分析结果-->
-    <a-drawer
-      title="分析结果"
-      placement="right"
-      :closable="true"
-      :maskClosable="false"
-      width="90%"
-      :visible="analysisResult.showModal"
-      @close="handleAnalysisResultModalClose"
-      :bodyStyle="{background:'#f0f2f5'}"
-    >
-      <a-card title="源图片" :hoverable="true">
-        <strong style="font-size: 18px;">{{ analysisResult.result.imageName }}</strong>
-        （ 分析结果系统路径 {{ analysisResult.result.outputPath }} ）
-        <div style="max-height: 500px;">
-          <img style="max-height: 500px;" :src="analysisResult.result.imageResourcePath" slot="cover" @click="onClickImage(analysisResult.result.name, analysisResult.result.imageResourcePath, analysisResult.result.imageCanonicalPath)"/>
-        </div>
-      </a-card>
-      <div v-for="(item, i) in analysisResult.result.outputItemList" :key="i">
-        <a-card :title="getAnalysisResultItemTitle(item)" style="margin-top: 20px;">
-          <div style="max-height:400px; overflow: auto;">
-            <a-row :gutter="[16,16]">
-              <a-col v-if="item.fileMap.total" :span="6">
-                <a-card :hoverable="true">
-                  <img @click="onClickImage(item.fileMap.total.name, item.fileMap.total.resourcePath, item.fileMap.total.canonicalPath)" slot="cover" :src="item.fileMap.total.resourcePath"/>
-                  <a-card-meta>
-                    <template slot="description">
-                      {{ item.fileMap.total.name }}
-                    </template>
-                  </a-card-meta>
-                </a-card>
-              </a-col>
-              <a-col v-if="item.fileMap.stained" :span="6">
-                <a-card :hoverable="true">
-                  <img @click="onClickImage(item.fileMap.stained.name, item.fileMap.stained.resourcePath, item.fileMap.stained.canonicalPath)" slot="cover" :src="item.fileMap.stained.resourcePath"/>
-                  <a-card-meta>
-                    <template slot="description">
-                      {{ item.fileMap.stained.name }}
-                    </template>
-                  </a-card-meta>
-                </a-card>
-              </a-col>
-              <a-col v-if="item.fileMap.data" :span="8" style="max-height:400px; overflow: auto;">
-                <table border="1" class="sample-table">
-                  <tr v-for="(dataRow, a) in str2JSON(item.fileMap.data.data)" :key="a">
-                    <td v-for="(dataCol, j) in dataRow" :key="j">{{ dataCol }}</td>
-                  </tr>
-                </table>
-              </a-col>
-              <a-col v-if="item.fileMap.log" :span="4" style="max-height:400px; overflow: auto;">
-                <table border="1" class="sample-table">
-                  <tr v-for="(dataRow, a) in str2JSON(item.fileMap.log.data)" :key="a">
-                    <td v-for="(dataCol, j) in dataRow" :key="j">{{ dataCol }}</td>
-                  </tr>
-                </table>
-              </a-col>
-
-            </a-row>
-          </div>
-        </a-card>
-      </div>
-    </a-drawer>
   </a-card>
 </template>
 <script>
-import { getImageList, addFolder, removeFile } from '@/api/fileSystem'
+import { getImageList, addFolder, removeFile } from '@/api/sourceImage'
 import { startTask, listAnalysisResult } from '@/api/analysis'
 import { message } from 'ant-design-vue'
 import Moment from 'moment'
@@ -210,11 +71,7 @@ export default {
   data () {
     return {
       collapseActiveKey: ['1'],
-      analysisForm: this.$form.createForm(this, { name: 'coordinated' }),
       fileList: [],
-      headers: {
-        authorization: 'authorization-text'
-      },
       image: {
         name: '',
         showModal: false,
@@ -229,33 +86,16 @@ export default {
       },
       breadcrumb: [
         {
-          name: '全部文件',
+          name: '全部任务',
           id: ''
         }
       ],
-      // create model
-      visible: false,
       confirmLoading: false,
       // 查询参数
       queryParam: {
-        name: ''
+        filterName: ''
       },
-      dataSource: [],
-      analysisModal: {
-        showModal: false,
-        formInitParam: {
-          name: '',
-          ROI_fill_thr: 7,
-          stained_thr: 'auto'
-        }
-      },
-      analysisResult: {
-        showModal: false,
-        fileId: '',
-        showId: ['1'],
-        result: []
-      },
-      selectedRowKeys: []
+      dataSource: []
     }
   },
   filters: {

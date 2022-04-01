@@ -15,9 +15,9 @@ export const asyncRouterMap = [
         meta: { title: 'Source image', keepAlive: false, icon: 'folder' }
       },
       {
-        path: '/task/:folderName',
-        name: 'Analysis task',
-        component: () => import('@/views/picture/ImageTableList'),
+        path: '/tasks',
+        name: 'Analysis tasks',
+        component: () => import('@/views/picture/AnalysisTasks'),
         meta: { title: 'Analysis task', keepAlive: false, icon: 'line-chart' }
       }
     ]

@@ -56,7 +56,7 @@ public class SourceImageController extends BaseController{
     /**
      * 上传图片
      * @param uploadFiles
-     * @param path
+     * @param parentPath
      * @return
      * @throws IOException
      */
