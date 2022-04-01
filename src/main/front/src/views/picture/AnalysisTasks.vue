@@ -5,8 +5,8 @@
       <a-row :gutter="0">
         <a-col :md="14" :sm="24">
           <a-form layout="inline">
-            <a-form-item label="文件名称">
-              <a-input v-model="queryParam.name" placeholder="文件名称"/>
+            <a-form-item label="任务名称">
+              <a-input v-model="queryParam.filterName" placeholder="任务名称"/>
             </a-form-item>
             <a-form-item>
               <a-button @click="loadData()">查询</a-button>
@@ -24,7 +24,7 @@
       size="middle">
       <a-table-column key="name" title="任务名称" data-index="name" >
         <template slot-scope="text, record">
-          <a @click="onClickTask(record.name)" style="padding-right: 50px;font-size: 16px;">
+          <a @click="onClickAnalysisResult(record.name)" style="padding-right: 50px;font-size: 16px;">
             <a-icon type="folder" style="color: goldenrod;fontSize: 20px;margin-right: 10px;" theme="filled" /><span style="color: black">{{ record.name }}</span>
           </a>
         </template>
@@ -43,20 +43,6 @@
         </template>
       </a-table-column>
     </a-table>
-    <!--图片详情-->
-    <a-drawer
-      :title="image.name"
-      placement="left"
-      :closable="true"
-      :maskClosable="false"
-      :visible="image.showModal"
-      width="90%"
-      @close="handleImageModalCancel"
-    >
-      <a :href="image.resourcePath" :download="image.name" style="font-size: 20px;border: silver 1px;">下载</a>
-      <span style="margin-left: 20px;">文件路径 {{ image.canonicalFilePath }}</span>
-      <img :src="image.resourcePath" width="100%"/>
-    </a-drawer>
   </a-card>
 </template>
 <script>
@@ -121,7 +107,7 @@ export default {
         })
     },
     loadData (callback) {
-      const requestParameters = Object.assign({ folderName: this.$route.params.folderName }, this.queryParam)
+      const requestParameters = Object.assign({}, this.queryParam)
       getTaskList(requestParameters)
         .then(res => {
           this.dataSource = res.data
@@ -130,8 +116,8 @@ export default {
           }
         })
     },
-    onClickTask (taskName) {
-      alert(1)
+    onClickAnalysisResult (taskName) {
+      this.$router.push({ path: '/task/' + taskName })
     }
   }
 }

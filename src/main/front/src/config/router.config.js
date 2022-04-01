@@ -18,7 +18,14 @@ export const asyncRouterMap = [
         path: '/tasks',
         name: 'Analysis tasks',
         component: () => import('@/views/picture/AnalysisTasks'),
-        meta: { title: 'Analysis task', keepAlive: false, icon: 'line-chart' }
+        meta: { title: 'Analysis tasks', keepAlive: false, icon: 'line-chart' }
+      },
+      {
+        path: '/task/:taskName',
+        name: 'Analysis tasks',
+        component: () => import('@/views/picture/TaskResult'),
+        meta: { title: 'Analysis tasks', keepAlive: false, icon: 'line-chart' },
+        hidden: true
       }
     ]
   },

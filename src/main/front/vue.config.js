@@ -123,6 +123,14 @@ const vueConfig = {
         // pathRewrite: {
         //     '^/api': '/api'
         // }
+      },
+      '/output': {
+        target: 'http://localhost:8888',
+        ws: false,
+        changeOrigin: true,
+        // pathRewrite: {
+        //     '^/api': '/api'
+        // }
       }
     }
   },

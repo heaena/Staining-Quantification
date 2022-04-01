@@ -2,7 +2,6 @@ package image.analysis.cloud.app.entrypoint.web;
 
 import image.analysis.cloud.app.application.domain.model.AnalysisTaskResult;
 import image.analysis.cloud.app.application.domain.model.FileSystem;
-import image.analysis.cloud.app.application.domain.model.ImageAnalysisResult;
 import image.analysis.cloud.app.application.service.AnalysisTaskService;
 import image.analysis.cloud.app.infra.ResponseWrapper;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +33,7 @@ public class AnalysisTaskController {
     }
 
     @GetMapping("/taskResult")
-    public ResponseWrapper taskResult(String taskName, String filterName) throws IOException {
+    public ResponseWrapper taskResult(@RequestParam("taskName")String taskName, String filterName) throws IOException {
         AnalysisTaskResult imageAnalysisResult  = analysisTaskService.taskResult(taskName, filterName);
         return ResponseWrapper.success(imageAnalysisResult);
     }

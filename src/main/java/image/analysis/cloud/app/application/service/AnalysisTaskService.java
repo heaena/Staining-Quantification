@@ -5,13 +5,11 @@ import com.alibaba.fastjson.JSONObject;
 import image.analysis.cloud.app.application.AnalysisConfig;
 import image.analysis.cloud.app.application.domain.model.AnalysisTaskResult;
 import image.analysis.cloud.app.application.domain.model.FileSystem;
-import image.analysis.cloud.app.application.domain.model.ImageAnalysisResult;
 import image.analysis.cloud.app.application.domain.model.ImageAnalysisTask;
 import image.analysis.cloud.app.infra.ResponseWrapper;
 import image.analysis.cloud.app.infra.rpc.RemoteAnalysisPlatformService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -148,7 +146,9 @@ public class AnalysisTaskService implements ImageService {
             return true;
         });
 
-        if (analysisResultFiles.length > 0) {
+        if (analysisResultFiles == null || analysisResultFiles.length <= 0) {
+            return result;
+        } else {
             //分析结果数据
             result.setData(getOutputData(taskName));
             //分析结果图片
@@ -159,9 +159,8 @@ public class AnalysisTaskService implements ImageService {
                 fileSystem.setDir(false);
                 result.addImage(fileSystem);
             }
+            return result;
         }
-
-        return result;
     }
 
     /**
@@ -171,7 +170,12 @@ public class AnalysisTaskService implements ImageService {
      */
     private String getOutputData(String taskName) throws IOException {
         File outputDataFile = new File(getRootPath() + "/" + taskName + "/out_stats/out_stats_all.csv");
-        return JSONObject.toJSONString(parseCsv(outputDataFile));
+        if (outputDataFile.exists()) {
+            return JSONObject.toJSONString(parseCsv(outputDataFile));
+        } else {
+            return new JSONObject().toJSONString();
+        }
+
     }
 
     private List<String []> parseCsv(File file) throws IOException {
