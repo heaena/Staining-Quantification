@@ -157,7 +157,7 @@ im_process <- function(label, load.path, out.path, d.thr, flood, fill, obj.thr, 
     stats <- data.frame(ROI_area, ROI_intensity,
                          stained_area, stained_intensity)
     singleStats <- cbind(label, stats)
-    ##### 检查或创建out_stats    todo
+    ##### 创建out_stats
     write.csv(singleStats, paste0(out.Path, "/out_stats/", label, "-out_stats.csv"))
     return(singleStats)
 }

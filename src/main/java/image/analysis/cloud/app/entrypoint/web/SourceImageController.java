@@ -56,13 +56,13 @@ public class SourceImageController extends BaseController{
     /**
      * 上传图片
      * @param uploadFiles
-     * @param folderName
+     * @param path
      * @return
      * @throws IOException
      */
     @PostMapping("/uploadFile")
-    public ResponseWrapper upload(@RequestParam("files") MultipartFile[] uploadFiles, String folderName) throws IOException {
-        return sourceImageService.addFile(uploadFiles, folderName);
+    public ResponseWrapper upload(@RequestParam("files") MultipartFile[] uploadFiles, String parentPath) throws IOException {
+        return sourceImageService.addFile(uploadFiles, parentPath);
     }
 
     @DeleteMapping("/remove")

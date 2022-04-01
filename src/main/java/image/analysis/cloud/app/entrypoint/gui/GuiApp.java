@@ -68,7 +68,7 @@ public class GuiApp extends JFrame implements ApplicationListener<WebServerIniti
         }
         btn.addActionListener(e -> {
             cleanAndBeginLog("测试R脚本");
-            new Thread(() -> RemoteAnalysisPlatformService.executeTask(-1, "test", AnalysisConfig.getTestImagePath(), testRscriptPath, param, log)).start();
+//            new Thread(() -> RemoteAnalysisPlatformService.executeTask(-1, "test", AnalysisConfig.getTestImagePath(), testRscriptPath, param, log)).start();
 
         });
         panel.add(btn, INDEX_TEST_BTN);

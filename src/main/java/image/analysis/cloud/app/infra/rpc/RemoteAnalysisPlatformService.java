@@ -6,6 +6,7 @@ import image.analysis.cloud.app.infra.ResponseWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.util.FileCopyUtils;
 
 import javax.swing.*;
 import java.io.BufferedReader;
@@ -39,13 +40,35 @@ public class RemoteAnalysisPlatformService {
         }
     }
 
-    public static ResponseWrapper executeTask(long taskId, String taskName, String inputPath, String outputFolderPath, JSONObject param, JTextArea jTextArea) {
-        String command = String.join(" ", AnalysisConfig.getRscript(), commandFileName, inputPath, outputFolderPath, param.toJSONString());
-//        String command = String.join(" ", "Rscript", commandDir.getCanonicalPath() + "/" + commandFileName, inputPath, outputFolderPath, param.toJSONString());
-        log.info("执行脚本-> {}", command);
+    /**
+     * 远程调用参数：文件名称label, 文件后缀suffix 文件夹load.path, 输出路径out.path,    d-thr, flood, fill, obj-thr(百分比转为小数), stained-thr
+     * @return
+     */
+    public static ResponseWrapper executeTask(long taskId, String taskName, File file, String outputFolderPath, JSONObject param) throws IOException {
+        String fileName = file.getName();
+
+        //拼接脚本命令及参数
+        int lastIndexOf = fileName.lastIndexOf(".");
+        String label = fileName.substring(0, lastIndexOf);
+        String suffix = fileName.substring(lastIndexOf);
+        String loadPath = file.getParentFile().getCanonicalPath();
+        String command = String.join(" ", AnalysisConfig.getRscript(), commandFileName,
+                label,
+                suffix,
+                loadPath,
+                outputFolderPath,
+                param.getString("d-thr"),
+                param.getString("flood"),
+                param.getString("fill"),
+                "" + (param.getInteger("obj-thr")/100),
+                param.getString("stained-thr"));
+        log.info("执行脚本, taskName={},  command[{}]", taskName, command);
+        //复制源文件
+        FileCopyUtils.copy(file, new File(outputFolderPath + "/" + fileName));
+
+        //执行脚本
         Process p = null;
         try {
-//            p = Runtime.getRuntime().exec(command);
             p = Runtime.getRuntime().exec(command, null, commandDir);
             p.waitFor();
             //读取结果
@@ -54,9 +77,6 @@ public class RemoteAnalysisPlatformService {
             String s = null;
             while ((s = input.readLine()) != null) {
                 res.append(s);
-                if (jTextArea != null) {
-                    jTextArea.append(s + "\n");
-                }
             }
             input.close();
             log.info("执行脚本日志【{}】", res);
@@ -67,16 +87,10 @@ public class RemoteAnalysisPlatformService {
             String errStr = null;
             while ((errStr = err.readLine()) != null) {
                 errRes.append(errStr);
-                if (jTextArea != null) {
-                    jTextArea.append(errStr + "\n");
-                }
             }
             err.close();
             if (!errRes.isEmpty()) {
                 log.error("执行脚本异常【{}】", errRes);
-                if (jTextArea != null) {
-                    jTextArea.append("执行异常，请联系管理员！");
-                }
                 return ResponseWrapper.fail();
             }
 
@@ -94,14 +108,13 @@ public class RemoteAnalysisPlatformService {
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         File inputFile = null;
         try {
             inputFile = new ClassPathResource("rcode/test.jpg").getFile();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        String inputPath = inputFile.getPath();
         String outputPath = inputFile.getParentFile().getParentFile().getParentFile().getParentFile().getPath() + "/temp";
 
         //clean outputFolder
@@ -116,10 +129,13 @@ public class RemoteAnalysisPlatformService {
         outputFolder.mkdir();
 
         JSONObject param = new JSONObject();
-        param.put("ROI_fill_thr", "7");
-        param.put("stained_thr", "0.7");
+        param.put("d-thr", 0.05);
+        param.put("flood", "Y");
+        param.put("fill", 10);
+        param.put("obj-thr", 5);
+        param.put("stained-thr", 100);
 
-        executeTask(1, "task-1", inputPath, outputPath, param, null);
+        executeTask(1, "task-1", inputFile, outputPath, param);
 
     }
 }

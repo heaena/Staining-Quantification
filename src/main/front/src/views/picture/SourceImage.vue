@@ -116,12 +116,12 @@
             v-decorator="['taskName', { rules: [{ required: true, message: 'Please input!' }] }]"
           />
         </a-form-item>
-        <a-form-item label="d.thr">
+        <a-form-item label="d-thr">
           <a-input-number
             :min="0"
             placeholder="初次降噪"
             style="width: 100%"
-            v-decorator="['d.thr', {initialValue: '0'}, { rules: [{ required: true, message: 'Please select!' }] }]"
+            v-decorator="['d-thr', {initialValue: '0'}, { rules: [{ required: true, message: 'Please select!' }] }]"
           />
           常用范围为0-0.05
         </a-form-item>
@@ -151,7 +151,7 @@
           </a-select>
           <span>选择相连区域是否需要填实</span>
         </a-form-item>
-        <a-form-item label="obj.thr">
+        <a-form-item label="obj-thr">
           <a-input-number
             :min="0"
             :max="100"
@@ -159,17 +159,17 @@
             style="width: 100%"
             :formatter="value => `${value}%`"
             :parser="value => value.replace('%', '')"
-            v-decorator="['obj.thr', {initialValue: '5'}, { rules: [{ required: true, message: 'Please select!' }] }]"
+            v-decorator="['obj-thr', {initialValue: '5'}, { rules: [{ required: true, message: 'Please select!' }] }]"
           />
           去掉面积占全部图片的百分比，常用范围为0-10
         </a-form-item>
-        <a-form-item label="stained.thr">
+        <a-form-item label="stained-thr">
           <a-input-number
             :min="0"
             :max="255"
             placeholder="染色区域阈值"
             style="width: 100%"
-            v-decorator="['obj.thr', {initialValue: '100'}, { rules: [{ required: true, message: 'Please select!' }] }]"
+            v-decorator="['stained-thr', {initialValue: '100'}, { rules: [{ required: true, message: 'Please select!' }] }]"
           />
           von kossa常用值为140，alizarin red常用值为100
         </a-form-item>
@@ -257,7 +257,7 @@ export default {
     },
     getUploadData () {
       return {
-        folderId: this.queryParam.parentPath
+        parentPath: this.queryParam.parentPath
       }
     },
     handleChange (info) {
@@ -340,7 +340,6 @@ export default {
           delete values.taskName
           delete values.path
           const requestParameters = { path: path, taskName: taskName, param: JSON.stringify(values) }
-          debugger
           createTask(requestParameters)
             .then(res => {
               if (res.code === 0) {

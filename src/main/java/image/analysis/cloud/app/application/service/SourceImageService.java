@@ -69,11 +69,11 @@ public class SourceImageService implements ImageService {
         file.mkdirs();
     }
 
-    public ResponseWrapper addFile(MultipartFile[] uploadFiles, String folderName) throws IOException {
-        if (StringUtils.isEmpty(folderName)) {
-            folderName = "";
+    public ResponseWrapper addFile(MultipartFile[] uploadFiles, String parentPath) throws IOException {
+        if (StringUtils.isEmpty(parentPath)) {
+            parentPath = "";
         }
-        String uploadPath = getRootPath() + "/" + folderName;
+        String uploadPath = getRootPath() + "/" + parentPath;
         for (MultipartFile uploadFile : uploadFiles) {
             File file = new File(uploadPath, uploadFile.getOriginalFilename());
             file.mkdirs();

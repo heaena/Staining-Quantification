@@ -39,10 +39,16 @@ public class AnalysisTaskService implements ImageService {
     public void createAnalysisTask(String taskName, List<File> analysisFiles, String param) throws IOException {
         long taskId = getTaskId();
         List<ImageAnalysisTask> tasks = new ArrayList<>();
+        String outputFolderPath = getOutputPath(taskId, taskName);
         for (File file: analysisFiles) {
-            String outputFolderPath = getOutputPath(taskId, taskName);
+
             ImageAnalysisTask imageAnalysisTask = new ImageAnalysisTask(taskId, taskName, file.getCanonicalPath(), outputFolderPath, param);
             tasks.add(imageAnalysisTask);
+        }
+        //创建输出目录
+        File outputFolder = new File(outputFolderPath + "/out_stats");
+        if (!outputFolder.exists()) {
+            outputFolder.mkdirs();
         }
         submitTask(tasks);
     }
@@ -54,11 +60,12 @@ public class AnalysisTaskService implements ImageService {
     public void submitTask(List<ImageAnalysisTask> tasks) {
         tasks.stream().forEach(item -> {
             executorService.submit(() -> {
-                File outputFolder = new File(item.getOutputFolderPath());
-                if (!outputFolder.exists()) {
-                    outputFolder.mkdirs();
+                ResponseWrapper response = null;
+                try {
+                    response = RemoteAnalysisPlatformService.executeTask(item.getTaskId(), item.getTaskName(), new File(item.getImagePath()), item.getOutputFolderPath(), JSONObject.parseObject(item.getParam()));
+                } catch (Exception e) {
+                    log.error("执行任务异常", e);
                 }
-                ResponseWrapper response = RemoteAnalysisPlatformService.executeTask(item.getTaskId(), item.getTaskName(), item.getImagePath(), item.getOutputFolderPath(), JSONObject.parseObject(item.getParam()), null);
                 if (response.isSuccess()) {
 
                 } else {
@@ -70,7 +77,7 @@ public class AnalysisTaskService implements ImageService {
     }
 
     private String getOutputPath(long taskId, String taskName) {
-        return getRootPath() + outputRoot + "/" + taskId + "-" + taskName;
+        return getRootPath() + "/" + taskId + "-" + taskName;
     }
 
     /**
