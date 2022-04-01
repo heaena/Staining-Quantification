@@ -113,49 +113,78 @@
           <a-input
             placeholder="标注此次任务"
             :maxLength="50"
-            v-decorator="['name', { rules: [{ required: true, message: 'Please input!' }] }]"
+            v-decorator="['taskName', { rules: [{ required: true, message: 'Please input!' }] }]"
           />
         </a-form-item>
         <a-form-item label="d.thr">
           <a-input-number
             :min="0"
-            :value="0"
             placeholder="初次降噪"
             style="width: 100%"
-            v-decorator="['d.thr', { rules: [{ required: true, message: 'Please select!' }] }]"
+            v-decorator="['d.thr', {initialValue: '0'}, { rules: [{ required: true, message: 'Please select!' }] }]"
           />
-          尺度在0.01级别，常用范围为0-0.05
+          常用范围为0-0.05
         </a-form-item>
-        <a-form-item label="染色阈值">
+        <a-form-item label="fill">
+          <a-input-number
+            :min="0"
+            placeholder="加深初次识别区域"
+            style="width: 100%"
+            v-decorator="['fill', {initialValue: '10'}, { rules: [{ required: true, message: 'Please select!' }] }]"
+          />
+          常用范围为0-15
+        </a-form-item>
+        <a-form-item label="flood">
           <a-select
             v-decorator="[
-              'stained_thr',
+              'flood', {initialValue: 'Y'},
               { rules: [{ required: true, message: 'Please select!' }] },
             ]"
-            placeholder="染色区域阈值"
+            placeholder="将相连区域填实"
           >
-            <a-select-option value="auto">
-              auto
+            <a-select-option value="Y">
+              Yes
             </a-select-option>
-            <a-select-option value="0.7">
-              0.7
+            <a-select-option value="N">
+              No
             </a-select-option>
           </a-select>
-          <span>对于Alizarin Red ，建议用"auto"；对于Von Kossa ，建议用0.7</span>
+          <span>选择相连区域是否需要填实</span>
+        </a-form-item>
+        <a-form-item label="obj.thr">
+          <a-input-number
+            :min="0"
+            :max="100"
+            placeholder="最终降噪"
+            style="width: 100%"
+            :formatter="value => `${value}%`"
+            :parser="value => value.replace('%', '')"
+            v-decorator="['obj.thr', {initialValue: '5'}, { rules: [{ required: true, message: 'Please select!' }] }]"
+          />
+          去掉面积占全部图片的百分比，常用范围为0-10
+        </a-form-item>
+        <a-form-item label="stained.thr">
+          <a-input-number
+            :min="0"
+            :max="255"
+            placeholder="染色区域阈值"
+            style="width: 100%"
+            v-decorator="['obj.thr', {initialValue: '100'}, { rules: [{ required: true, message: 'Please select!' }] }]"
+          />
+          von kossa常用值为140，alizarin red常用值为100
         </a-form-item>
       </a-form>
     </a-modal>
   </a-card>
 </template>
 <script>
-import { getList, addFolder, removeFile } from '@/api/fileSystem'
-import { startTask } from '@/api/analysis'
+import { getList, addFolder, removeFile, createTask } from '@/api/fileSystem'
 import { message } from 'ant-design-vue'
 export default {
   name: 'TableList',
   data () {
     return {
-      analysisForm: this.$form.createForm(this, { name: 'coordinated' }),
+      analysisForm: {},
       headers: {
         authorization: 'authorization-text'
       },
@@ -192,10 +221,8 @@ export default {
       dataSource: [],
       analysisModal: {
         showModal: false,
-        formInitParam: {
-          name: '',
-          roi_fill_thr: 7,
-          stained_thr: 'auto'
+        param: {
+          path: ''
         }
       }
     }
@@ -292,9 +319,9 @@ export default {
         })
     },
     onClickAnalysis (record) {
-      this.analysisModal.formInitParam.fileId = record.id
+      this.analysisModal.param.path = record.path
       this.analysisModal.showModal = true
-      this.resetAnalysisForm()
+      this.analysisForm = this.$form.createForm(this, { name: 'coordinated' })
     },
     getImagePath (item) {
       return '/api' + item.path
@@ -308,27 +335,22 @@ export default {
         if (errors) {
           return false
         } else {
-          const name = values.name
-          const fileId = that.analysisModal.formInitParam.fileId
-          delete values.name
-          delete values.id
-          const requestParameters = { fileId: fileId, taskName: name, param: JSON.stringify(values) }
-          startTask(requestParameters)
+          const taskName = values.taskName
+          const path = that.analysisModal.param.path
+          delete values.taskName
+          delete values.path
+          const requestParameters = { path: path, taskName: taskName, param: JSON.stringify(values) }
+          debugger
+          createTask(requestParameters)
             .then(res => {
               if (res.code === 0) {
                 that.onClickAnalysisModalCancel()
                 that.messageConfirm('任务执行中，请稍后查看分析结果')
+              } else {
+                that.warning(res.msg)
               }
             })
         }
-      })
-    },
-    resetAnalysisForm (param) {
-      if (!param) {
-        param = this.analysisModal.formInitParam
-      }
-      this.$nextTick(() => {
-        this.analysisForm.setFieldsValue(param)
       })
     },
     messageConfirm (msg) {

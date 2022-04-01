@@ -51,16 +51,6 @@ public class AnalysisController extends BaseController{
         return ResponseWrapper.success();
     }
 
-    @PostMapping("/startTask")
-    public ResponseWrapper startTask(@RequestBody TaskRequestParam taskRequestParam) {
-        List<String> imageListObj = new ArrayList<>();
-        if (StringUtils.isNotEmpty(taskRequestParam.getImageList())) {
-            imageListObj = JSONObject.parseArray(taskRequestParam.getImageList()).toJavaList(String.class);
-        }
-        analysisService.startTask(taskRequestParam.getTaskName(), taskRequestParam.getFolderName(), imageListObj, taskRequestParam.getParam());
-        return ResponseWrapper.success();
-    }
-
     @GetMapping("/listAnalysisResult")
     public ResponseWrapper<ImageAnalysisResult> listAnalysisResult(@RequestParam("folderName") String folderName, @RequestParam("imageName") String imageName) throws IOException {
         ImageAnalysisResult imageAnalysisResult = fileSystemService.getAnalysisResult(folderName, imageName);

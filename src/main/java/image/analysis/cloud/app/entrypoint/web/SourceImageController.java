@@ -77,13 +77,8 @@ public class SourceImageController extends BaseController{
      * @return
      */
     @PostMapping("/createTask")
-    public ResponseWrapper createTask(@RequestBody TaskRequestParam taskRequestParam) {
-        List<String> imageListObj = new ArrayList<>();
-        if (StringUtils.isNotEmpty(taskRequestParam.getImageList())) {
-            imageListObj = JSONObject.parseArray(taskRequestParam.getImageList()).toJavaList(String.class);
-        }
-        sourceImageService.createAnalysisTask(taskRequestParam.getTaskName(), taskRequestParam.getFolderName(), imageListObj, taskRequestParam.getParam());
-        return ResponseWrapper.success();
+    public ResponseWrapper createTask(@RequestBody TaskRequestParam taskRequestParam) throws IOException {
+        return sourceImageService.createAnalysisTask(taskRequestParam);
     }
 
 }

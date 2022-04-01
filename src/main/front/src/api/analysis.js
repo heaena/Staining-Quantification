@@ -4,7 +4,7 @@ const api = {
   saveParam: '/analysis/param/save',
   removeParam: '/analysis/param/remove',
   listParam: '/analysis/param/list',
-  startTask: '/analysis/startTask',
+  startTask: '/sourceImage/createTask',
   listAnalysisResult: '/analysis/listAnalysisResult'
 }
 

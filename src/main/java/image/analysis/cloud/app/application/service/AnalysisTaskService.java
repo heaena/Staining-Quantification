@@ -32,16 +32,16 @@ public class AnalysisTaskService implements ImageService {
     /**
      * 创建分析任务
      * @param taskName 任务名称
-     * @param imageList 源图片集合
+     * @param analysisFiles 源图片集合
      * @param param 任务参数
      * @return
      */
-    public void createAnalysisTask(String taskName, List<String> imageList, String param) {
+    public void createAnalysisTask(String taskName, List<File> analysisFiles, String param) throws IOException {
         long taskId = getTaskId();
         List<ImageAnalysisTask> tasks = new ArrayList<>();
-        for (String imageCanonicalPath: imageList) {
+        for (File file: analysisFiles) {
             String outputFolderPath = getOutputPath(taskId, taskName);
-            ImageAnalysisTask imageAnalysisTask = new ImageAnalysisTask(taskId, taskName, imageCanonicalPath, outputFolderPath, param);
+            ImageAnalysisTask imageAnalysisTask = new ImageAnalysisTask(taskId, taskName, file.getCanonicalPath(), outputFolderPath, param);
             tasks.add(imageAnalysisTask);
         }
         submitTask(tasks);

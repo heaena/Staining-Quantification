@@ -2,8 +2,7 @@ package image.analysis.cloud.app.entrypoint.web;
 
 public class TaskRequestParam {
     String taskName;
-    String folderName;
-    String imageList;
+    String path;
     String param;
 
     public String getTaskName() {
@@ -14,20 +13,12 @@ public class TaskRequestParam {
         this.taskName = taskName;
     }
 
-    public String getFolderName() {
-        return folderName;
+    public String getPath() {
+        return path;
     }
 
-    public void setFolderName(String folderName) {
-        this.folderName = folderName;
-    }
-
-    public String getImageList() {
-        return imageList;
-    }
-
-    public void setImageList(String imageList) {
-        this.imageList = imageList;
+    public void setPath(String path) {
+        this.path = path;
     }
 
     public String getParam() {

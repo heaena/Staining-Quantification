@@ -5,10 +5,19 @@ const api = {
   folderList: '/fileSystem/listFolder',
   imageList: '/fileSystem/listImage',
   addFolder: '/sourceImage/addFolder',
-  removeFile: '/sourceImage/remove'
+  removeFile: '/sourceImage/remove',
+  createTask: '/sourceImage/createTask'
 }
 
 export default api
+
+export function createTask (data) {
+  return request({
+    url: api.createTask,
+    method: 'post',
+    data: data
+  })
+}
 
 export function getList (parameter) {
   return request({

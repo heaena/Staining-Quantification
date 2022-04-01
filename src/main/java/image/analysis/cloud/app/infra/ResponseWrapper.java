@@ -33,6 +33,10 @@ public class ResponseWrapper<T> {
         return new ResponseWrapper(CODE_FAIL, MSG_FAIL);
     }
 
+    public static ResponseWrapper fail(String msg) {
+        return new ResponseWrapper(CODE_FAIL, msg);
+    }
+
     public boolean isSuccess() {
         return code == CODE_SUCCESS;
     }

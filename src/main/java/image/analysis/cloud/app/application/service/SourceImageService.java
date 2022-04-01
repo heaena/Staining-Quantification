@@ -2,6 +2,7 @@ package image.analysis.cloud.app.application.service;
 
 import image.analysis.cloud.app.application.AnalysisConfig;
 import image.analysis.cloud.app.application.domain.model.FileSystem;
+import image.analysis.cloud.app.entrypoint.web.TaskRequestParam;
 import image.analysis.cloud.app.infra.ResponseWrapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -138,20 +141,35 @@ public class SourceImageService implements ImageService {
         }
     }
 
-    /**
-     * 创建分析任务
-     *
-     * @param taskName   任务名称
-     * @param folderPath 文件夹
-     * @param imageList  图片名称
-     * @param param      执行参数
-     */
-    public void createAnalysisTask(String taskName, String folderPath, List<String> imageList, String param) {
-        List<String> imageCanonicalFilePathList = getImageCanonicalFilePath(folderPath, imageList);
-        analysisTaskService.createAnalysisTask(taskName, imageCanonicalFilePathList, param);
-    }
-
     private List<String> getImageCanonicalFilePath(String folderPath, List<String> imageList) {
         return imageList.stream().map(imageName -> getRootPath() + "/" + folderPath + "/" + imageName).toList();
     }
+
+    /**
+     * 创建分析任务
+     * @param taskRequestParam
+     * @throws IOException
+     */
+    public ResponseWrapper createAnalysisTask(TaskRequestParam taskRequestParam) throws IOException {
+        String taskName = taskRequestParam.getTaskName();
+        File analysisFile = new File(getRootPath() + taskRequestParam.getPath());
+        List<File> analysisFiles;
+        if (analysisFile.isDirectory()) {
+            analysisFiles = Arrays.stream(analysisFile.listFiles(childFile -> {
+                if (childFile.isHidden() || childFile.isDirectory()) {
+                    return false;
+                }
+                return true;
+            })).toList();
+        } else {
+            analysisFiles = new ArrayList<>(1);
+            analysisFiles.add(analysisFile);
+        }
+        if (analysisFiles.isEmpty()) {
+            return ResponseWrapper.fail("没有可分析的图片，请选择！");
+        }
+        analysisTaskService.createAnalysisTask(taskName, analysisFiles, taskRequestParam.getParam());
+        return ResponseWrapper.success();
+    }
+
 }
