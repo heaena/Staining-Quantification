@@ -3,7 +3,6 @@ library(plyr)
 library(EBImage)
 library(imagerExtra)
 library(dbscan)
-memory.limit(10000000000000)
 
 HOS <- function(channel){
   rescale <- channel *255
