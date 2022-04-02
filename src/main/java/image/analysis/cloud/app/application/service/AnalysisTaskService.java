@@ -1,8 +1,10 @@
 package image.analysis.cloud.app.application.service;
 
 import au.com.bytecode.opencsv.CSVReader;
+import au.com.bytecode.opencsv.CSVWriter;
 import com.alibaba.fastjson.JSONObject;
 import image.analysis.cloud.app.application.AnalysisConfig;
+import image.analysis.cloud.app.application.domain.model.AnalysisResultDataParse;
 import image.analysis.cloud.app.application.domain.model.AnalysisTaskResult;
 import image.analysis.cloud.app.application.domain.model.FileSystem;
 import image.analysis.cloud.app.application.domain.model.ImageAnalysisTask;
@@ -11,13 +13,15 @@ import image.analysis.cloud.app.infra.rpc.RemoteAnalysisPlatformService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.FileCopyUtils;
 
+import javax.annotation.PostConstruct;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.Queue;
+import java.util.concurrent.*;
 
 @Service
 @Slf4j
@@ -25,7 +29,56 @@ public class AnalysisTaskService implements ImageService {
 
     private ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
+    private static final BlockingDeque<AnalysisResultDataParse> analysisResultDataParseBlockingDeque = new LinkedBlockingDeque<>(1000);
+
     private static final String outputRoot = "/output";
+
+    private static final String analysisResultDataPath = "/.out_stats";
+    private static final String analysisResultDataFileSuffix = "-out_stats.csv";
+    private static final String analysisResultAllDataPath = "/out_stats_all/out_stats_all.csv";
+    private static final String [] scvTitle = { "filename",	"ROI_area",	"ROI_intensit",	"stained_area",	"stained_intensity" };
+
+    @PostConstruct
+    public void listenParse() {
+        new Thread(() -> {
+            while (true) {
+                try {
+                    AnalysisResultDataParse analysisResultDataParse = analysisResultDataParseBlockingDeque.take();
+                    parseAnalysisResultDataFile(analysisResultDataParse);
+                } catch (Exception e) {
+                    log.error("分析结果文件解析任务异常");
+                    try {
+                        TimeUnit.SECONDS.sleep(1);
+                    } catch (InterruptedException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            }
+        }).start();
+    }
+
+    private void parseAnalysisResultDataFile(AnalysisResultDataParse analysisResultDataParse) throws IOException {
+        File intFile = new File(analysisResultDataParse.getSourcePath());
+        if (!intFile.exists()) {
+            return;
+        }
+
+        File outFile = new File(analysisResultDataParse.getTargetPath());
+        if (!outFile.exists()) {
+            outFile.mkdirs();
+        }
+
+        List<String[]> dataList = parseCsv(intFile);
+        if (dataList != null || !dataList.isEmpty()) {
+            writeCsvLine(outFile, dataList.get(0));
+        }
+    }
+
+    private void writeCsvLine(File file, String[] line) throws IOException {
+        CSVWriter csvWriter = new CSVWriter(new FileWriter(file));
+        csvWriter.writeNext(line);
+        csvWriter.flush();
+    }
 
     /**
      * 创建分析任务
@@ -39,28 +92,35 @@ public class AnalysisTaskService implements ImageService {
         List<ImageAnalysisTask> tasks = new ArrayList<>();
         String outputFolderPath = getOutputPath(taskId, taskName);
         for (File file: analysisFiles) {
-
             ImageAnalysisTask imageAnalysisTask = new ImageAnalysisTask(taskId, taskName, file.getCanonicalPath(), outputFolderPath, param);
             tasks.add(imageAnalysisTask);
         }
         //创建输出目录
-        File outputFolder = new File(outputFolderPath + "/out_stats");
-        if (!outputFolder.exists()) {
-            outputFolder.mkdirs();
+        File outFile = new File(outputFolderPath + analysisResultAllDataPath);
+        if (!outFile.exists()) {
+            outFile.mkdirs();
         }
-        submitTask(tasks);
+        //写入csv文件头部
+        writeCsvLine(outFile, scvTitle);
+        //提交任务
+        submitTask(tasks, analysisResultDataParseBlockingDeque);
     }
 
     /**
      * 向线程池提交分析任务
      * @param tasks
      */
-    public void submitTask(List<ImageAnalysisTask> tasks) {
+    public void submitTask(List<ImageAnalysisTask> tasks, BlockingDeque<AnalysisResultDataParse> blockingDeque) {
         tasks.stream().forEach(item -> {
             executorService.submit(() -> {
                 ResponseWrapper response = null;
                 try {
-                    response = RemoteAnalysisPlatformService.executeTask(item.getTaskId(), item.getTaskName(), new File(item.getImagePath()), item.getOutputFolderPath(), JSONObject.parseObject(item.getParam()));
+                    File image = new File(item.getImagePath());
+                    response = RemoteAnalysisPlatformService.executeTask(item.getTaskId(), item.getTaskName(), image, item.getOutputFolderPath(), JSONObject.parseObject(item.getParam()));
+                    AnalysisResultDataParse analysisResultDataParse = new AnalysisResultDataParse();
+                    analysisResultDataParse.setSourcePath(item.getOutputFolderPath() + analysisResultDataPath + image.getName() + analysisResultDataFileSuffix);
+                    analysisResultDataParse.setTargetPath(item.getOutputFolderPath() + analysisResultAllDataPath);
+                    blockingDeque.add(analysisResultDataParse);
                 } catch (Exception e) {
                     log.error("执行任务异常", e);
                 }
@@ -170,7 +230,7 @@ public class AnalysisTaskService implements ImageService {
      * @return
      */
     private String getOutputData(String taskName) throws IOException {
-        File outputDataFile = new File(getRootPath() + "/" + taskName + "/out_stats/out_stats_all.csv");
+        File outputDataFile = new File(getRootPath() + "/" + taskName + analysisResultAllDataPath);
         if (outputDataFile.exists()) {
             return JSONObject.toJSONString(parseCsv(outputDataFile));
         } else {

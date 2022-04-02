@@ -1,11 +1,19 @@
 <template>
   <a-card :bordered="false">
-    <div>
-        <strong>任务名称：</strong>{{ this.dataSource.taskName }}，任务时间：{{ formatDate(this.dataSource.taskTime) }}
-    </div>
-    <div style="margin-bottom: 5px;">
-      <span style="color: red;">图片文件地址：</span>{{ this.dataSource.canonicalPath }}
-    </div>
+    <a-row>
+      <a-col :span="22">
+        <div>
+          <strong>任务名称：</strong>{{ this.dataSource.taskName }}，任务时间：{{ formatDate(this.dataSource.taskTime) }}
+        </div>
+        <div style="margin-bottom: 5px;">
+          <span style="color: red;">图片文件地址：</span>{{ this.dataSource.canonicalPath }}
+        </div>
+      </a-col>
+      <a-col :span="2">
+        <a-button style="margin-left: 8px" @click="() => this.$router.push({ path: '/tasks' })">全部任务</a-button>
+      </a-col>
+    </a-row>
+
     <!--操作按钮-->
     <div>
       <a-row>
