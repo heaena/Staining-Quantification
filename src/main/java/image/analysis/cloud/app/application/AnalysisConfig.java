@@ -1,5 +1,7 @@
 package image.analysis.cloud.app.application;
 
+import image.analysis.cloud.app.application.service.AnalysisTaskService;
+import image.analysis.cloud.app.application.service.SourceImageService;
 import image.analysis.cloud.app.infra.util.ServerPortUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
@@ -47,6 +49,16 @@ public class AnalysisConfig {
         imgAnalysisWorkspaceFile = new File(workspaceRootPath + "/image-analysis");
         if (!imgAnalysisWorkspaceFile.exists()) {
             imgAnalysisWorkspaceFile.mkdirs();
+        }
+
+        SourceImageService.sourceImageRootFolder = new File(workspaceRootPath + "/image-analysis" + SourceImageService.sourceImagePathName);
+        if(!SourceImageService.sourceImageRootFolder.exists()) {
+            SourceImageService.sourceImageRootFolder.mkdirs();
+        }
+
+        AnalysisTaskService.outputRootFolder = new File(workspaceRootPath + "/image-analysis" + AnalysisTaskService.outputRoot);
+        if(!AnalysisTaskService.outputRootFolder.exists()) {
+            AnalysisTaskService.outputRootFolder.mkdirs();
         }
     }
 

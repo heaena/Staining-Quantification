@@ -3,7 +3,6 @@ package image.analysis.cloud.app.application.service;
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
 import com.alibaba.fastjson.JSONObject;
-import image.analysis.cloud.app.application.AnalysisConfig;
 import image.analysis.cloud.app.application.domain.model.AnalysisResultDataParse;
 import image.analysis.cloud.app.application.domain.model.AnalysisTaskResult;
 import image.analysis.cloud.app.application.domain.model.FileSystem;
@@ -29,7 +28,8 @@ public class AnalysisTaskService implements ImageService {
 
     private static final BlockingDeque<AnalysisResultDataParse> analysisResultDataParseBlockingDeque = new LinkedBlockingDeque<>(1000);
 
-    private static final String outputRoot = "/output";
+    public static final String outputRoot = "/output";
+    public static File outputRootFolder;
 
     private static final String analysisResultDataPath = "/.out_stats";
     private static final String analysisResultDataFileSuffix = "-out_stats.csv";
@@ -146,7 +146,7 @@ public class AnalysisTaskService implements ImageService {
      * @return
      */
     private String getRootPath() throws IOException {
-        return AnalysisConfig.getImgAnalysisWorkspacePath() + outputRoot;
+        return outputRootFolder.getCanonicalPath();
     }
 
 

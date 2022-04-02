@@ -1,6 +1,5 @@
 package image.analysis.cloud.app.application.service;
 
-import image.analysis.cloud.app.application.AnalysisConfig;
 import image.analysis.cloud.app.application.domain.model.FileSystem;
 import image.analysis.cloud.app.entrypoint.web.TaskRequestParam;
 import image.analysis.cloud.app.infra.ResponseWrapper;
@@ -23,7 +22,8 @@ import java.util.List;
 public class SourceImageService implements ImageService {
 
     // 源图片的目录
-    private static final String sourceImagePathName = "/analysis-file";
+    public static final String sourceImagePathName = "/analysis-file";
+    public static File sourceImageRootFolder;
 
     @Autowired
     private AnalysisTaskService analysisTaskService;
@@ -119,7 +119,12 @@ public class SourceImageService implements ImageService {
      * @return
      */
     private String getRootPath() {
-        return AnalysisConfig.getImgAnalysisWorkspacePath() + sourceImagePathName;
+        try {
+            return sourceImageRootFolder.getCanonicalPath();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**
