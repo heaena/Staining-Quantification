@@ -175,7 +175,7 @@ public class AnalysisTaskService implements ImageService {
             FileSystem fileSystem = new FileSystem();
             try {
                 fileSystem.setName(item.getName());
-                fileSystem.setPath(item.getCanonicalPath().replace(getRootPath(), ""));
+                fileSystem.setPath(checkFilePath(item.getCanonicalPath()).replace(getRootPath(), ""));
                 fileSystem.setCanonicalFilePath(item.getCanonicalPath());
                 fileSystem.setLastModified(item.lastModified());
                 fileSystem.setDir(true);
