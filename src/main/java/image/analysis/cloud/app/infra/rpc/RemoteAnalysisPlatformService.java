@@ -104,7 +104,9 @@ public class RemoteAnalysisPlatformService {
             log.error("执行脚本异常", e);
             return ResponseWrapper.fail();
         } finally {
-            p.destroy();
+            if (p != null) {
+                p.destroy();
+            }
         }
     }
 
