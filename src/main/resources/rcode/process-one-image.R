@@ -1,8 +1,10 @@
+library(magrittr)
 library(imager)
 library(plyr)
 library(EBImage)
 library(imagerExtra)
 library(dbscan)
+
 
 HOS <- function(channel){
   rescale <- channel *255
@@ -57,7 +59,7 @@ HOS <- function(channel){
 
 ## suffix ： .jpg .png
 im_process <- function(label, suffix, load.path, out.path, d.thr, flood, fill, obj.thr, stained.thr){
-
+    print(60)
     im <- load.image(paste0(load.path, "/" ,label, suffix))
 
     im.g <- grayscale(im)
@@ -127,7 +129,7 @@ im_process <- function(label, suffix, load.path, out.path, d.thr, flood, fill, o
     if_select2 <- Reduce('+', if_select)
     # convert it to cimg and display
     im.select <- as.cimg(if_select2)
-    save.image(im.select, paste0(out.path, label, "-total.jpg"))
+    save.image(im.select, paste0(out.path, "/", label, "-total.jpg"))
 
     ### make pixel values outside ROI equal to 0 on original rescaled image
     ROI2d <- g2d1 * 255
@@ -145,7 +147,7 @@ im_process <- function(label, suffix, load.path, out.path, d.thr, flood, fill, o
     ### thresholding within ROI area
     # Alizarin Red: >100; Von Kossa: > 140
     stained <- as.cimg(ifelse(g2d1> stained.thr/255 & ROI2d!=0, 1, 0))
-    save.image(stained, paste0(out.path, label, "-stained.jpg"))
+    save.image(stained, paste0(out.path, "/", label, "-stained.jpg"))
 
     ### number of pixels in stained area (excluding area outside of ROI)
     stained_area <- length(which(stained!=0))
@@ -157,6 +159,6 @@ im_process <- function(label, suffix, load.path, out.path, d.thr, flood, fill, o
                          stained_area, stained_intensity)
     singleStats <- cbind(label, stats)
     ##### write stats
-    write.csv(singleStats, paste0(out.Path, "/.out_stats/", label, suffix, "-out_stats.csv"))
+    write.csv(singleStats, paste0(out.path, "/.out_stats/", label, suffix, "-out_stats.csv"))
     return(singleStats)
 }

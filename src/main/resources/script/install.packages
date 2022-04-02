@@ -7,7 +7,5 @@ Rscript -e 'if (!requireNamespace("BiocManager", quietly = TRUE))
               install.packages("BiocManager")
             BiocManager::install("EBImage")'
 
-Rscript -e 'install.packages("stringi",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/")'
-
 #### 本地开发安装依赖可以指定lib
 #### install.packages("imager", lib="/Library/Frameworks/R.framework/Versions/4.1/Resources/library", repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/")

@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.FileCopyUtils;
 
-import javax.swing.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -45,30 +44,29 @@ public class RemoteAnalysisPlatformService {
      * @return
      */
     public static ResponseWrapper executeTask(long taskId, String taskName, File file, String outputFolderPath, JSONObject param) throws IOException {
-        String fileName = file.getName();
-
-        //拼接脚本命令及参数
-        int lastIndexOf = fileName.lastIndexOf(".");
-        String label = fileName.substring(0, lastIndexOf);
-        String suffix = fileName.substring(lastIndexOf);
-        String loadPath = file.getParentFile().getCanonicalPath();
-        String command = String.join(" ", AnalysisConfig.getRscript(), commandFileName,
-                label,
-                suffix,
-                loadPath,
-                outputFolderPath,
-                param.getString("d-thr"),
-                param.getString("flood"),
-                param.getString("fill"),
-                "" + (param.getInteger("obj-thr")/100),
-                param.getString("stained-thr"));
-        log.info("执行脚本, taskName={},  command[{}]", taskName, command);
-        //复制源文件
-        FileCopyUtils.copy(file, new File(outputFolderPath + "/" + fileName));
-
         //执行脚本
         Process p = null;
         try {
+            String fileName = file.getName();
+
+            //拼接脚本命令及参数
+            int lastIndexOf = fileName.lastIndexOf(".");
+            String label = fileName.substring(0, lastIndexOf);
+            String suffix = fileName.substring(lastIndexOf);
+            String loadPath = file.getParentFile().getCanonicalPath();
+            String command = String.join(" ", AnalysisConfig.getRscript(), commandFileName,
+                    label,
+                    suffix,
+                    loadPath,
+                    outputFolderPath,
+                    param.getString("d-thr"),
+                    param.getString("flood"),
+                    param.getString("fill"),
+                    "" + (param.getDouble("obj-thr")/100),
+                    param.getString("stained-thr"));
+            log.info("执行脚本, taskName={},  command[{}]", taskName, command);
+            //复制源文件
+            FileCopyUtils.copy(file, new File(outputFolderPath + "/" + fileName));
             p = Runtime.getRuntime().exec(command, null, commandDir);
             p.waitFor();
             //读取结果
@@ -86,7 +84,7 @@ public class RemoteAnalysisPlatformService {
             StringBuilder errRes = new StringBuilder();
             String errStr = null;
             while ((errStr = err.readLine()) != null) {
-                errRes.append(errStr);
+                errRes.append(errStr + "\n");
             }
             err.close();
             if (!errRes.isEmpty()) {
