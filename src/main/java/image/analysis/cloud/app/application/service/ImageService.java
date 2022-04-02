@@ -14,10 +14,7 @@ public interface ImageService {
      * @throws IOException
      */
     default String getResourcePath(File file) throws IOException {
-        return checkFilePath(file.getCanonicalPath()).replace(AnalysisConfig.getImgAnalysisWorkspacePath(), "");
+        return file.getCanonicalPath().replace(AnalysisConfig.getImgAnalysisWorkspacePath(), "");
     }
 
-    default String checkFilePath(String path) {
-        return path.replaceAll("\\\\", "/");
-    }
 }

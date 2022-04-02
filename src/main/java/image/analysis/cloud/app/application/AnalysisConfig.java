@@ -26,6 +26,7 @@ public class AnalysisConfig {
     private static String workspaceRootPath;
     private static String workspaceName = ".image-analysis-cloud-app";
     private static String analysisWorkspaceName = "image-analysis";
+    private static File imgAnalysisWorkspaceFile;
     private static String testImagePath = "";
     private static String rscript = "Rscript";
 
@@ -33,7 +34,6 @@ public class AnalysisConfig {
         File inputFile = null;
         try {
             inputFile = ResourceUtils.getFile("/rcode/test.jpg");
-//            inputFile = new ClassPathResource("/rcode/test.jpg").getFile();
             testImagePath = inputFile.getCanonicalPath();
         } catch (IOException e) {
             e.printStackTrace();
@@ -44,6 +44,10 @@ public class AnalysisConfig {
     @Value("${user.home}")
     public void setUserHome(String userHome) {
         workspaceRootPath = userHome + "/" + workspaceName;
+        imgAnalysisWorkspaceFile = new File(workspaceRootPath + "/image-analysis");
+        if (!imgAnalysisWorkspaceFile.exists()) {
+            imgAnalysisWorkspaceFile.mkdirs();
+        }
     }
 
     @Bean
@@ -75,7 +79,12 @@ public class AnalysisConfig {
     }
 
     public static String getImgAnalysisWorkspacePath() {
-        return workspaceRootPath + "/image-analysis";
+        try {
+            return imgAnalysisWorkspaceFile.getCanonicalPath();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public static String getImgAnalysisH2Path() {

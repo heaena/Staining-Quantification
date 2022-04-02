@@ -63,7 +63,7 @@ public class SourceImageService implements ImageService {
      *
      * @param name 文件夹名称
      */
-    public void addFolder(String name) {
+    public void addFolder(String name) throws IOException {
         String folderPath = getRootPath() + "/" + name;
         File file = new File(folderPath);
         file.mkdirs();

@@ -1,21 +1,14 @@
 package image.analysis.cloud.app.entrypoint.web;
 
-import com.alibaba.fastjson.JSONObject;
-import image.analysis.cloud.app.application.domain.model.AnalysisTask;
 import image.analysis.cloud.app.application.domain.model.FileSystem;
-import image.analysis.cloud.app.application.domain.model.ImageAnalysisResult;
-import image.analysis.cloud.app.application.service.AnalysisService;
-import image.analysis.cloud.app.application.service.FileSystemService;
 import image.analysis.cloud.app.application.service.SourceImageService;
 import image.analysis.cloud.app.infra.ResponseWrapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -48,7 +41,7 @@ public class SourceImageController extends BaseController{
      * @return
      */
     @PostMapping("/addFolder")
-    public ResponseWrapper add(String name) {
+    public ResponseWrapper add(String name) throws IOException {
         sourceImageService.addFolder(name);
         return ResponseWrapper.success();
     }

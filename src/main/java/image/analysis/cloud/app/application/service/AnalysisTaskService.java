@@ -13,14 +13,12 @@ import image.analysis.cloud.app.infra.rpc.RemoteAnalysisPlatformService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.util.FileCopyUtils;
 
 import javax.annotation.PostConstruct;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Queue;
 import java.util.concurrent.*;
 
 @Service
@@ -66,6 +64,7 @@ public class AnalysisTaskService implements ImageService {
         File outFile = new File(analysisResultDataParse.getTargetPath());
         if (!outFile.exists()) {
             outFile.mkdirs();
+            outFile.createNewFile();
         }
 
         List<String[]> dataList = parseCsv(intFile);
@@ -96,9 +95,13 @@ public class AnalysisTaskService implements ImageService {
             tasks.add(imageAnalysisTask);
         }
         //创建输出目录
+        File outFolder = new File(outputFolderPath + "/out_stats_all");
+        if (!outFolder.exists()) {
+            outFolder.mkdirs();
+        }
         File outFile = new File(outputFolderPath + analysisResultAllDataPath);
         if (!outFile.exists()) {
-            outFile.mkdirs();
+            outFile.createNewFile();
         }
         //写入csv文件头部
         writeCsvLine(outFile, scvTitle);
@@ -134,7 +137,7 @@ public class AnalysisTaskService implements ImageService {
 
     }
 
-    private String getOutputPath(long taskId, String taskName) {
+    private String getOutputPath(long taskId, String taskName) throws IOException {
         return getRootPath() + "/" + taskId + "-" + taskName;
     }
 
@@ -142,7 +145,7 @@ public class AnalysisTaskService implements ImageService {
      * 分析结果根目录
      * @return
      */
-    private String getRootPath() {
+    private String getRootPath() throws IOException {
         return AnalysisConfig.getImgAnalysisWorkspacePath() + outputRoot;
     }
 
@@ -156,7 +159,7 @@ public class AnalysisTaskService implements ImageService {
      * @param filterName 模糊查询
      * @return
      */
-    public List<FileSystem> listTask(String filterName) {
+    public List<FileSystem> listTask(String filterName) throws IOException {
         File file = new File(getRootPath());
         if (!file.exists()) {
             file.mkdir();
@@ -175,7 +178,7 @@ public class AnalysisTaskService implements ImageService {
             FileSystem fileSystem = new FileSystem();
             try {
                 fileSystem.setName(item.getName());
-                fileSystem.setPath(checkFilePath(item.getCanonicalPath()).replace(getRootPath(), ""));
+                fileSystem.setPath(item.getCanonicalPath().replace(getRootPath(), ""));
                 fileSystem.setCanonicalFilePath(item.getCanonicalPath());
                 fileSystem.setLastModified(item.lastModified());
                 fileSystem.setDir(true);
@@ -244,7 +247,7 @@ public class AnalysisTaskService implements ImageService {
         return new CSVReader(new InputStreamReader(dataInputStream,"UTF-8")).readAll();
     }
 
-    private File getTaskResultFile(String taskName) {
+    private File getTaskResultFile(String taskName) throws IOException {
         return new File(getRootPath() + "/" + taskName);
     }
 
