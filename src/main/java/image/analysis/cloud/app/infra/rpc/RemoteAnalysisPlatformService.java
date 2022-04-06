@@ -128,14 +128,18 @@ public class RemoteAnalysisPlatformService {
         outputFolder.deleteOnExit();
         outputFolder.mkdir();
 
+        new File(outputPath + "/.out_stats").mkdirs();
+
         JSONObject param = new JSONObject();
         param.put("d-thr", 0.05);
         param.put("flood", "Y");
-        param.put("fill", 10);
+        param.put("fill", 5);
         param.put("obj-thr", 5);
         param.put("stained-thr", 100);
 
-        executeTask(1, "task-1", inputFile, outputPath, param);
+        ResponseWrapper res = executeTask(1, "task-1", inputFile, outputPath, param);
+
+        System.out.println(JSONObject.toJSONString(res));
 
     }
 }

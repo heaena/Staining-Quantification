@@ -1,9 +1,9 @@
-library(magrittr)
-library(imager)
-library(plyr)
-library(EBImage)
-library(imagerExtra)
-library(dbscan)
+library(magrittr,warn.conflicts = F)
+library(imager,warn.conflicts = F)
+library(plyr,warn.conflicts = F)
+library(EBImage,warn.conflicts = F)
+library(imagerExtra,warn.conflicts = F)
+library(dbscan,warn.conflicts = F)
 
 
 HOS <- function(channel){
@@ -59,7 +59,12 @@ HOS <- function(channel){
 
 ## suffix ： .jpg .png
 im_process <- function(label, suffix, load.path, out.path, d.thr, flood, fill, obj.thr, stained.thr){
-    print(60)
+
+    d.thr <- as.numeric(d.thr)
+    fill <- as.numeric(fill)
+    obj.thr <- as.numeric(obj.thr)
+    stained.thr <- as.numeric(stained.thr)
+
     im <- load.image(paste0(load.path, "/" ,label, suffix))
 
     im.g <- grayscale(im)
@@ -93,7 +98,6 @@ im_process <- function(label, suffix, load.path, out.path, d.thr, flood, fill, o
     px <- index.coord(as.cimg(d.select), m_nonoise)
     d.select[px] <- 1
 
-
     ROI.connect <- imager::fill(as.cimg(d.select), fill)
 
     # whether fill connected area or not
@@ -101,8 +105,7 @@ im_process <- function(label, suffix, load.path, out.path, d.thr, flood, fill, o
       ROI.fill <- EBImage::fillHull(ROI.connect)
     } else if (flood=="N"){
       ROI.fill <- ROI.connect
-      }
-
+    }
 
     ROI_label <- bwlabel(ROI.fill)
     table <- table(ROI_label)
@@ -157,8 +160,8 @@ im_process <- function(label, suffix, load.path, out.path, d.thr, flood, fill, o
     ##### combine result from ROI and stained area
     stats <- data.frame(ROI_area, ROI_intensity,
                          stained_area, stained_intensity)
-    singleStats <- cbind(label, stats)
+    image_full_name = paste0(label, suffix)
+    singleStats <- cbind(image_full_name, stats)
     ##### write stats
     write.csv(singleStats, paste0(out.path, "/.out_stats/", label, suffix, "-out_stats.csv"))
-    return(singleStats)
 }

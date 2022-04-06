@@ -47,21 +47,56 @@ todo
 ```
 
 
-1、app 电脑独立运行
-java 集成（前端UI、R脚本）=》app （xxx.dmg, xxx.exe）
-2、app安装及使用
-四、todo list
-李
-1、提供参数及说明 *****
-2、csv文件已提供
-3、持久化R脚本执行的时间、状态、错误日志，文件名称：log-[name].csv；数据文件名称：data-[name].csv
-4、按照/src/main/resources/rcode/process-one-image.R格式编写单张图片的处理函数 *****
-5、按照src/main/resources/script/install.packages格式提供安装依赖的脚本 *****
+```text
+异常
+Attaching package: ‘imager’
 
-张凯
-1、在分析结果页面，根据分析结果，调整参数，再次执行分析 ****
-2、在图片页面，按照图片名称和分析任务，导出分析结果 ***
-3、展示数据结果 *****
-4、页面增加参数 *****（参数支持滑动***）
-5、分析执行的状态、消耗时间、执行日志(包括错误日志) ***
-6、在windows系统打包app测试 *****
+The following object is masked from ‘package:magrittr’:
+    add
+
+The following objects are masked from ‘package:stats’:
+
+    convolve, spectrum
+
+The following object is masked from ‘package:graphics’:
+
+    frame
+
+The following object is masked from ‘package:base’:
+
+    save.image
+
+
+Attaching package: ‘plyr’
+
+The following object is masked from ‘package:imager’:
+
+    liply
+
+
+Attaching package: ‘EBImage’
+
+The following objects are masked from ‘package:imager’:
+
+    channel, dilate, display, erode, resize, watershed
+
+以上错误解释（函数被屏蔽）及处理方法,可以通过library（）的参数warn.conflicts，去除警告, 如下  https://blog.csdn.net/ouyangk1026/article/details/122165567
+library(igraph,warn.conflicts = F)
+
+Error in bdilate_square(px, x) : 
+  Not compatible with requested type: [type=character; target=integer].
+Calls: im_process ... %>% -> shrink -> berode_square -> grow -> bdilate_square
+Execution halted
+把字符串转为数字 as.numeric
+```
+
+```text
+Error in file(file, ifelse(append, "a", "w")) : 
+  cannot open the connection
+Calls: im_process ... write.csv -> eval.parent -> eval -> eval -> <Anonymous> -> file
+In addition: Warning message:
+In file(file, ifelse(append, "a", "w")) :
+  cannot open file '/Users/zhangkai/IdeaProjects/image-analysis-app/temp/.out_stats/test.jpg-out_stats.csv': No such file or directory
+Execution halted
+文件夹不存在，需要先创建
+```
