@@ -24,7 +24,7 @@
       size="middle">
       <a-table-column key="name" title="任务名称" data-index="name" >
         <template slot-scope="text, record">
-          <a @click="onClickAnalysisResult(record.name)" style="padding-right: 50px;font-size: 16px;">
+          <a @click="onClickAnalysisResult(record)" style="padding-right: 50px;font-size: 16px;">
             <a-icon type="folder" style="color: goldenrod;fontSize: 20px;margin-right: 10px;" theme="filled" /><span style="color: black">{{ record.name }}</span>
           </a>
         </template>
@@ -100,7 +100,7 @@ export default {
       this.loadData()
     },
     deleteFile (record) {
-      const requestParameters = { id: record.id }
+      const requestParameters = { path: record.path }
       remove(requestParameters)
         .then(res => {
           this.loadData()
@@ -116,8 +116,8 @@ export default {
           }
         })
     },
-    onClickAnalysisResult (taskName) {
-      this.$router.push({ path: '/task/' + taskName })
+    onClickAnalysisResult (task) {
+      this.$router.push({ path: '/task/' + task.name })
     }
   }
 }

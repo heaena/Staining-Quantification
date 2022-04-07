@@ -34,7 +34,7 @@ public class AnalysisTaskService implements ImageService {
     private static final String analysisResultDataPath = "/.out_stats";
     private static final String analysisResultDataFileSuffix = "-out_stats.csv";
     private static final String analysisResultAllDataPath = "/out_stats_all/out_stats_all.csv";
-    private static final String [] scvTitle = { "filename",	"ROI_area",	"ROI_intensit",	"stained_area",	"stained_intensity" };
+    private static final String [] scvTitle = { "#", "image_full_name",	"ROI_area",	"ROI_intensit",	"stained_area",	"stained_intensity" };
 
     @PostConstruct
     public void listenParse() {
@@ -62,19 +62,15 @@ public class AnalysisTaskService implements ImageService {
         }
 
         File outFile = new File(analysisResultDataParse.getTargetPath());
-        if (!outFile.exists()) {
-            outFile.mkdirs();
-            outFile.createNewFile();
-        }
 
         List<String[]> dataList = parseCsv(intFile);
-        if (dataList != null || !dataList.isEmpty()) {
-            writeCsvLine(outFile, dataList.get(0));
+        if (dataList != null && dataList.size() >= 2) {
+            writeCsvLine(outFile, dataList.get(1));
         }
     }
 
     private void writeCsvLine(File file, String[] line) throws IOException {
-        CSVWriter csvWriter = new CSVWriter(new FileWriter(file));
+        CSVWriter csvWriter = new CSVWriter(new FileWriter(file, true));
         csvWriter.writeNext(line);
         csvWriter.flush();
     }
@@ -87,21 +83,26 @@ public class AnalysisTaskService implements ImageService {
      * @return
      */
     public void createAnalysisTask(String taskName, List<File> analysisFiles, String param) throws IOException {
-        long taskId = getTaskId();
         List<ImageAnalysisTask> tasks = new ArrayList<>();
-        String outputFolderPath = getOutputPath(taskId, taskName);
+        String outputFolderPath = getOutputPath(taskName);
         for (File file: analysisFiles) {
-            ImageAnalysisTask imageAnalysisTask = new ImageAnalysisTask(taskId, taskName, file.getCanonicalPath(), outputFolderPath, param);
+            ImageAnalysisTask imageAnalysisTask = new ImageAnalysisTask(taskName, file.getCanonicalPath(), outputFolderPath, param);
             tasks.add(imageAnalysisTask);
         }
         //创建输出目录
-        File outFolder = new File(outputFolderPath + "/out_stats_all");
-        if (!outFolder.exists()) {
-            outFolder.mkdirs();
+        File outAllFolder = new File(outputFolderPath + "/out_stats_all");
+        if (!outAllFolder.exists()) {
+            outAllFolder.mkdirs();
         }
+        //创建所有结果的输出文件
         File outFile = new File(outputFolderPath + analysisResultAllDataPath);
         if (!outFile.exists()) {
             outFile.createNewFile();
+        }
+        //创建单个图片的数据数据文件目录
+        File outFolder = new File(outputFolderPath + analysisResultDataPath);
+        if (!outFolder.exists()) {
+            outFolder.mkdirs();
         }
         //写入csv文件头部
         writeCsvLine(outFile, scvTitle);
@@ -121,7 +122,7 @@ public class AnalysisTaskService implements ImageService {
                     File image = new File(item.getImagePath());
                     response = RemoteAnalysisPlatformService.executeTask(item.getTaskId(), item.getTaskName(), image, item.getOutputFolderPath(), JSONObject.parseObject(item.getParam()));
                     AnalysisResultDataParse analysisResultDataParse = new AnalysisResultDataParse();
-                    analysisResultDataParse.setSourcePath(item.getOutputFolderPath() + analysisResultDataPath + image.getName() + analysisResultDataFileSuffix);
+                    analysisResultDataParse.setSourcePath(item.getOutputFolderPath() + analysisResultDataPath + "/" + image.getName() + analysisResultDataFileSuffix);
                     analysisResultDataParse.setTargetPath(item.getOutputFolderPath() + analysisResultAllDataPath);
                     blockingDeque.add(analysisResultDataParse);
                 } catch (Exception e) {
@@ -137,8 +138,8 @@ public class AnalysisTaskService implements ImageService {
 
     }
 
-    private String getOutputPath(long taskId, String taskName) throws IOException {
-        return getRootPath() + "/" + taskId + "-" + taskName;
+    private String getOutputPath(String taskName) throws IOException {
+        return getRootPath() + "/" + taskName;
     }
 
     /**
@@ -147,11 +148,6 @@ public class AnalysisTaskService implements ImageService {
      */
     private String getRootPath() throws IOException {
         return outputRootFolder.getCanonicalPath();
-    }
-
-
-    private long getTaskId() {
-        return System.currentTimeMillis();
     }
 
     /**

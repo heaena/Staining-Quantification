@@ -100,3 +100,11 @@ In file(file, ifelse(append, "a", "w")) :
 Execution halted
 文件夹不存在，需要先创建
 ```
+
+```text
+Error in pixset(x) : 
+  A pixset must be a logical array with four dimensions
+Calls: im_process ... Ops.imager_array -> as.pixset -> as.pixset.logical -> pixset
+Execution halted
+
+```

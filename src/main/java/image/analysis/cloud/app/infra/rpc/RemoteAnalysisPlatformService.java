@@ -133,7 +133,7 @@ public class RemoteAnalysisPlatformService {
         JSONObject param = new JSONObject();
         param.put("d-thr", 0.05);
         param.put("flood", "Y");
-        param.put("fill", 5);
+        param.put("fill", 10);
         param.put("obj-thr", 5);
         param.put("stained-thr", 100);
 

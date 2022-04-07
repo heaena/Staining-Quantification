@@ -173,8 +173,14 @@ public class SourceImageService implements ImageService {
         if (analysisFiles.isEmpty()) {
             return ResponseWrapper.fail("没有可分析的图片，请选择！");
         }
+        taskName = taskName + "-" + getTaskId();
         analysisTaskService.createAnalysisTask(taskName, analysisFiles, taskRequestParam.getParam());
-        return ResponseWrapper.success();
+
+        return ResponseWrapper.success(taskName);
+    }
+
+    private long getTaskId() {
+        return System.currentTimeMillis();
     }
 
 }

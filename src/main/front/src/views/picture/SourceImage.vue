@@ -125,7 +125,7 @@
             :min="0"
             placeholder="初次降噪"
             style="width: 100%"
-            v-decorator="['d-thr', {initialValue: '0'}, { rules: [{ required: true, message: 'Please select!' }] }]"
+            v-decorator="['d-thr', {initialValue: '0.03'}, { rules: [{ required: true, message: 'Please select!' }] }]"
           />
           常用范围为0-0.05
         </a-form-item>
@@ -183,7 +183,7 @@
 </template>
 <script>
 import { getList, addFolder, removeFile, createTask } from '@/api/sourceImage'
-import { message } from 'ant-design-vue'
+import { message, Modal } from 'ant-design-vue'
 import Moment from 'moment'
 export default {
   name: 'TableList',
@@ -352,7 +352,7 @@ export default {
             .then(res => {
               if (res.code === 0) {
                 that.onClickAnalysisModalCancel()
-                that.messageConfirm('任务执行中，请稍后查看分析结果')
+                that.messageConfirm('任务执行中，请稍后查看分析结果', res.data)
               } else {
                 that.warning(res.msg)
               }
@@ -360,15 +360,15 @@ export default {
         }
       })
     },
-    messageConfirm (msg) {
-      const h = this.$createElement
-      this.$success({
-        title: '提示',
-        content: h('div', {}, [
-          h('p', msg)
-        ]),
+    messageConfirm (msg, taskName) {
+      const that = this
+      Modal.confirm({
+        title: 'Confirm',
+        content: msg,
+        okText: '查看分析结果',
+        cancelText: '知道了',
         onOk () {
-
+          that.$router.push({ path: '/task/' + taskName })
         }
       })
     },

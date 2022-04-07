@@ -84,7 +84,7 @@
       width="auto"
       @close="handleAnalysisResultDataCancel"
     >
-      <span style="color: red;">数据文件地址：</span>{{ this.dataSource.canonicalPath }}/out_stats/out_stats_all.csv
+      <span style="color: red;">数据文件地址：</span>{{ this.dataSource.canonicalPath }}/out_stats_all/out_stats_all.csv
       <table v-if="dataSource.dataJson" border="1" class="sample-table">
         <tr v-for="(dataRow, a) in dataSource.dataJson" :key="a">
           <td v-for="(dataCol, j) in dataRow" :key="j">{{ dataCol }}</td>

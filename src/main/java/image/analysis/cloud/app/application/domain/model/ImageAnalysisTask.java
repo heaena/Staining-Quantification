@@ -1,17 +1,14 @@
 package image.analysis.cloud.app.application.domain.model;
 
-import java.util.UUID;
-
 public class ImageAnalysisTask {
-    private String id = UUID.randomUUID().toString();
+    private String id;
     private long taskId;
     private String taskName;
     private String imagePath;
     private String outputFolderPath;
     private String param;
 
-    public ImageAnalysisTask(long taskId, String taskName, String imagePath, String outputFolderPath, String param) {
-        this.taskId = taskId;
+    public ImageAnalysisTask(String taskName, String imagePath, String outputFolderPath, String param) {
         this.taskName = taskName;
         this.imagePath = imagePath;
         this.outputFolderPath = outputFolderPath;
