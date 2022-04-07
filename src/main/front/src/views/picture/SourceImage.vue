@@ -125,7 +125,7 @@
             :min="0"
             placeholder="初次降噪"
             style="width: 100%"
-            v-decorator="['d-thr', {initialValue: '0.03'}, { rules: [{ required: true, message: 'Please select!' }] }]"
+            v-decorator="['d-thr', {initialValue: '0.01'}, { rules: [{ required: true, message: 'Please select!' }] }]"
           />
           常用范围为0-0.05
         </a-form-item>
