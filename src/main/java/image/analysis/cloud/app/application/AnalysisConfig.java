@@ -17,8 +17,6 @@ import org.springframework.util.ResourceUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
 
 @Configuration
 @Component
@@ -35,7 +33,6 @@ public class AnalysisConfig {
     private static File imgAnalysisWorkspaceFile;
     private static String testImagePath = "";
     private static String rscript = "Rscript";
-    private static List<String> envp = new LinkedList<>();
 
     static {
         File inputFile = null;
@@ -84,16 +81,14 @@ public class AnalysisConfig {
     public void setRscript(String rscript) throws IOException {
         if (rscript != null) {
             if ("inner".equals(rscript)) {
-                String path = new ClassPathResource("/rcode/").getFile().getParentFile().getParentFile().getCanonicalPath() + "/R/bin";
+                String path = new ClassPathResource("/rcode/").getFile().getParentFile().getParentFile().getCanonicalPath() + "/R/bin/Rscript";
                 path = new File(path).getCanonicalPath();
-                log.info("R插件 path=" + path);
-                envp.add("path=" + path);
+                log.info("Rscript path=" + path);
+                AnalysisConfig.rscript = path;
+            } else {
+                AnalysisConfig.rscript = rscript;
             }
         }
-    }
-
-    public static List<String> getEnvp() {
-        return envp;
     }
 
     public static String getLogsPath() {

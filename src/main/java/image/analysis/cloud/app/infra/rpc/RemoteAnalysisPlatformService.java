@@ -13,7 +13,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
-import java.util.List;
 
 public class RemoteAnalysisPlatformService {
 
@@ -55,7 +54,8 @@ public class RemoteAnalysisPlatformService {
             String label = fileName.substring(0, lastIndexOf);
             String suffix = fileName.substring(lastIndexOf);
             String loadPath = file.getParentFile().getCanonicalPath();
-            String command = String.join(" ", AnalysisConfig.getRscript(), commandFileName,
+            String [] commandArray = new String [] {
+                    AnalysisConfig.getRscript(), commandFileName,
                     label,
                     suffix,
                     loadPath,
@@ -64,16 +64,22 @@ public class RemoteAnalysisPlatformService {
                     param.getString("flood"),
                     param.getString("fill"),
                     "" + (param.getDouble("obj-thr")/100),
-                    param.getString("stained-thr"));
-            log.info("执行脚本, taskName={},  command[{}]", taskName, command);
+                    param.getString("stained-thr")
+            };
+            /*String command = String.join(" ", AnalysisConfig.getRscript(), commandFileName,
+                    label,
+                    suffix,
+                    loadPath,
+                    outputFolderPath,
+                    param.getString("d-thr"),
+                    param.getString("flood"),
+                    param.getString("fill"),
+                    "" + (param.getDouble("obj-thr")/100),
+                    param.getString("stained-thr"));*/
+            log.info("执行脚本, taskName={},  command[{}]", taskName, commandArray);
             //复制源文件
             FileCopyUtils.copy(file, new File(outputFolderPath + "/" + fileName));
-            String [] envp = null;
-            List<String> envList = AnalysisConfig.getEnvp();
-            if (envList != null && !envList.isEmpty()) {
-                envp = envList.toArray(new String[]{});
-            }
-            p = Runtime.getRuntime().exec(command, envp, commandDir);
+            p = Runtime.getRuntime().exec(commandArray, null, commandDir);
             p.waitFor();
             //读取结果
             BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream(), "UTF-8"));
