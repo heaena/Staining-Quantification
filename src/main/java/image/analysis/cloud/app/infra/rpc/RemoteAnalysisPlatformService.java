@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.List;
 
 public class RemoteAnalysisPlatformService {
 
@@ -67,7 +68,12 @@ public class RemoteAnalysisPlatformService {
             log.info("执行脚本, taskName={},  command[{}]", taskName, command);
             //复制源文件
             FileCopyUtils.copy(file, new File(outputFolderPath + "/" + fileName));
-            p = Runtime.getRuntime().exec(command, AnalysisConfig.getEnvp().toArray(new String[]{}), commandDir);
+            String [] envp = null;
+            List<String> envList = AnalysisConfig.getEnvp();
+            if (envList != null && !envList.isEmpty()) {
+                envp = envList.toArray(new String[]{});
+            }
+            p = Runtime.getRuntime().exec(command, envp, commandDir);
             p.waitFor();
             //读取结果
             BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream(), "UTF-8"));

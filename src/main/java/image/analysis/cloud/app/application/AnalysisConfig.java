@@ -85,6 +85,7 @@ public class AnalysisConfig {
         if (rscript != null) {
             if ("inner".equals(rscript)) {
                 String path = new ClassPathResource("/rcode/").getFile().getParentFile().getParentFile().getCanonicalPath() + "/R/bin";
+                path = new File(path).getCanonicalPath();
                 log.info("R插件 path=" + path);
                 envp.add("path=" + path);
             }
