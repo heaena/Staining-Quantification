@@ -3,6 +3,7 @@ package image.analysis.cloud.app.application;
 import image.analysis.cloud.app.application.service.AnalysisTaskService;
 import image.analysis.cloud.app.application.service.SourceImageService;
 import image.analysis.cloud.app.infra.util.ServerPortUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
@@ -23,6 +24,7 @@ import java.util.List;
 @Component
 @ConfigurationProperties(prefix = "image.analysis.cloud.app")
 @AutoConfigureBefore(ServerProperties.class)
+@Slf4j
 public class AnalysisConfig {
 
     private Boolean availablePort = false;
@@ -82,7 +84,9 @@ public class AnalysisConfig {
     public void setRscript(String rscript) throws IOException {
         if (rscript != null) {
             if ("inner".equals(rscript)) {
-                envp.add("path=" + new ClassPathResource("/rcode/").getFile().getParentFile().getParentFile().getCanonicalPath() + "/R/bin");
+                String path = new ClassPathResource("/rcode/").getFile().getParentFile().getParentFile().getCanonicalPath() + "/R/bin";
+                log.info("R插件 path=" + path);
+                envp.add("path=" + path);
             }
         }
     }
