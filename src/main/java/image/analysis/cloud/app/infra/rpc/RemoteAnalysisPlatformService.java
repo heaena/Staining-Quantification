@@ -67,7 +67,7 @@ public class RemoteAnalysisPlatformService {
             log.info("执行脚本, taskName={},  command[{}]", taskName, command);
             //复制源文件
             FileCopyUtils.copy(file, new File(outputFolderPath + "/" + fileName));
-            p = Runtime.getRuntime().exec(command, null, commandDir);
+            p = Runtime.getRuntime().exec(command, AnalysisConfig.getEnvp().toArray(new String[]{}), commandDir);
             p.waitFor();
             //读取结果
             BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream(), "UTF-8"));
