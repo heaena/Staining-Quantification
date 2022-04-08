@@ -1,5 +1,6 @@
 package image.analysis.cloud.app;
 
+import image.analysis.cloud.app.entrypoint.gui.GuiApp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -17,8 +18,8 @@ public class ImageAnalysisApp {
                 .headless(false)
                 .run(args);
         //start gui
-//        GuiApp guiApp = context.getBean(GuiApp.class);
-//        guiApp.start();
+        GuiApp guiApp = context.getBean(GuiApp.class);
+        guiApp.start();
     }
 
 }

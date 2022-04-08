@@ -34,7 +34,7 @@ public class AnalysisTaskService implements ImageService {
     private static final String analysisResultDataPath = "/.out_stats";
     private static final String analysisResultDataFileSuffix = "-out_stats.csv";
     private static final String analysisResultAllDataPath = "/out_stats_all/out_stats_all.csv";
-    private static final String [] scvTitle = { "#", "image_full_name",	"ROI_area",	"ROI_intensit",	"stained_area",	"stained_intensity" };
+    private static final String [] scvTitle = { "image_full_name",	"ROI_area",	"ROI_intensit",	"stained_area",	"stained_intensity" };
 
     @PostConstruct
     public void listenParse() {
@@ -160,6 +160,7 @@ public class AnalysisTaskService implements ImageService {
         if (!file.exists()) {
             file.mkdir();
         }
+
         return Arrays.stream(file.listFiles(childFile -> {
             // 过滤文件
             if (childFile.isHidden()) {

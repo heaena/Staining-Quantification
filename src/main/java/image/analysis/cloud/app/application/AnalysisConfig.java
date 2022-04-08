@@ -79,7 +79,7 @@ public class AnalysisConfig {
     public void setRscript(String rscript) throws IOException {
         if (rscript != null) {
             if ("inner".equals(rscript)) {
-                AnalysisConfig.rscript = new ClassPathResource("/rcode/").getFile().getParentFile().getCanonicalPath() + "/bin/Rscript";
+                AnalysisConfig.rscript = new ClassPathResource("/rcode/").getFile().getParentFile().getParentFile().getCanonicalPath() + "/R/bin/Rscript";
             } else {
                 AnalysisConfig.rscript = rscript;
             }

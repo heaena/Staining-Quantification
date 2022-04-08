@@ -163,5 +163,5 @@ im_process <- function(label, suffix, load.path, out.path, d.thr, flood, fill, o
     image_full_name = paste0(label, suffix)
     singleStats <- cbind(image_full_name, stats)
     ##### write stats
-    write.csv(singleStats, paste0(out.path, "/.out_stats/", label, suffix, "-out_stats.csv"))
+    write.csv(singleStats, paste0(out.path, "/.out_stats/", label, suffix, "-out_stats.csv"), row.names=F)
 }
