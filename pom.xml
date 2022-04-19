@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>image.analysis.cloud</groupId>
-    <artifactId>image-analysis-app</artifactId>
+    <artifactId>staining-quantification-app</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <parent>
@@ -21,10 +21,10 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <javafx.version>17.0.1</javafx.version>
-        <mainClass>image.analysis.cloud.app.ImageAnalysisApp</mainClass>
+        <mainClass>image.analysis.cloud.app.StainingQuantificationApp</mainClass>
         <package.content.dir>${project.basedir}/package-content</package.content.dir>
         <package.output.dir>${project.basedir}/package-output</package.output.dir>
-        <package.mainJar.filename>image-analysis-app</package.mainJar.filename>
+        <package.mainJar.filename>staining-quantification-app</package.mainJar.filename>
         <package.app.filename>ImageAnalysisApp</package.app.filename>
     </properties>
 
@@ -203,12 +203,12 @@
                 <artifactId>jpackage-maven-plugin</artifactId>
                 <version>1.4.0</version>
                 <configuration>
-                    <name>ImageAnalysisApp</name>
+                    <name>SQ</name>
                     <type>EXE</type>
                     <vendor>LiXinRui</vendor>
                     <verbose>true</verbose>
                     <winConsole>true</winConsole>
-                    <winMenuGroup>ImageAnalysis</winMenuGroup>
+                    <winMenuGroup>StainingQuantification</winMenuGroup>
                     <winMenu>true</winMenu>
                     <winDirChooser>true</winDirChooser>
                     <winShortcut>true</winShortcut>

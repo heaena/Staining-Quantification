@@ -1,10 +1,9 @@
 package image.analysis.cloud.app.entrypoint.gui;
 
 import com.alibaba.fastjson.JSONObject;
-import image.analysis.cloud.app.ImageAnalysisApp;
+import image.analysis.cloud.app.StainingQuantificationApp;
 import image.analysis.cloud.app.application.AnalysisConfig;
 import image.analysis.cloud.app.application.service.RService;
-import image.analysis.cloud.app.infra.rpc.RemoteAnalysisPlatformService;
 import org.springframework.boot.web.context.WebServerInitializedEvent;
 import org.springframework.boot.web.server.WebServer;
 import org.springframework.context.ApplicationListener;
@@ -25,7 +24,7 @@ public class GuiApp extends JFrame implements ApplicationListener<WebServerIniti
         init();
     }
     public void init() {
-        setTitle(ImageAnalysisApp.class.getSimpleName());
+        setTitle(StainingQuantificationApp.class.getSimpleName());
         setSize(700, 500);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -142,7 +141,7 @@ public class GuiApp extends JFrame implements ApplicationListener<WebServerIniti
      * @return
      */
     private void addHomeBtn(JPanel panel) {
-        final JButton homeBtn = new JButton("首页");
+        final JButton homeBtn = new JButton("Home");
         homeBtn.addActionListener(e -> openBrowse("/"));
         panel.add(homeBtn, INDEX_HOME_BTN);
     }

@@ -28,8 +28,8 @@ public class AnalysisConfig {
     private Boolean availablePort = false;
 
     private static String workspaceRootPath;
-    private static String workspaceName = ".image-analysis-cloud-app";
-    private static String analysisWorkspaceName = "image-analysis";
+    private static String workspaceName = "/staining-quantification-app";
+    private static String analysisWorkspaceName = "/staining-quantification";
     private static File imgAnalysisWorkspaceFile;
     private static String testImagePath = "";
     private static String rscript = "Rscript";
@@ -47,18 +47,19 @@ public class AnalysisConfig {
 
     @Value("${user.home}")
     public void setUserHome(String userHome) {
-        workspaceRootPath = userHome + "/" + workspaceName;
-        imgAnalysisWorkspaceFile = new File(workspaceRootPath + "/image-analysis");
+        workspaceRootPath = userHome + workspaceName;
+        String imgAnalysisWorkspaceFilePath = workspaceRootPath + analysisWorkspaceName;
+        imgAnalysisWorkspaceFile = new File(imgAnalysisWorkspaceFilePath);
         if (!imgAnalysisWorkspaceFile.exists()) {
             imgAnalysisWorkspaceFile.mkdirs();
         }
 
-        SourceImageService.sourceImageRootFolder = new File(workspaceRootPath + "/image-analysis" + SourceImageService.sourceImagePathName);
+        SourceImageService.sourceImageRootFolder = new File(imgAnalysisWorkspaceFilePath  + SourceImageService.sourceImagePathName);
         if(!SourceImageService.sourceImageRootFolder.exists()) {
             SourceImageService.sourceImageRootFolder.mkdirs();
         }
 
-        AnalysisTaskService.outputRootFolder = new File(workspaceRootPath + "/image-analysis" + AnalysisTaskService.outputRoot);
+        AnalysisTaskService.outputRootFolder = new File(imgAnalysisWorkspaceFilePath + AnalysisTaskService.outputRoot);
         if(!AnalysisTaskService.outputRootFolder.exists()) {
             AnalysisTaskService.outputRootFolder.mkdirs();
         }

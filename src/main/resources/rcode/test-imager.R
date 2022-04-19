@@ -164,8 +164,8 @@ im_process <- function(label, suffix, load.path, out.path, d.thr, flood, fill, o
 
 im_process(label = "test",
            suffix = ".jpg",
-           load.path = "/Users/zhangkai/.image-analysis-cloud-app/image-analysis/analysis-file/",
-           out.path = "/Users/zhangkai/.image-analysis-cloud-app/image-analysis/output/",
+           load.path = "/Users/zhangkai/staining-quantification-app/staining-quantification/analysis-file/",
+           out.path = "/Users/zhangkai/staining-quantification-app/staining-quantification/output/",
            d.thr = 0.01,  # from HOS to LD
            obj.thr = 0.05,  # clear minor noise area
            flood = "Y",

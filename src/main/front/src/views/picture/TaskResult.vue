@@ -3,14 +3,14 @@
     <a-row>
       <a-col :span="22">
         <div>
-          <strong>任务名称：</strong>{{ this.dataSource.taskName }}，任务时间：{{ formatDate(this.dataSource.taskTime) }}
+          <strong>Task Title：</strong>{{ this.dataSource.taskName }}，Task Time：{{ formatDate(this.dataSource.taskTime) }}
         </div>
         <div style="margin-bottom: 5px;">
-          <span style="color: red;">图片文件地址：</span>{{ this.dataSource.canonicalPath }}
+          <span style="color: red;">Images Path：</span>{{ this.dataSource.canonicalPath }}
         </div>
       </a-col>
       <a-col :span="2">
-        <a-button style="margin-left: 8px" @click="() => this.$router.push({ path: '/tasks' })">全部任务</a-button>
+        <a-button style="margin-left: 8px" @click="() => this.$router.push({ path: '/tasks' })">All Tasks</a-button>
       </a-col>
     </a-row>
 
@@ -19,13 +19,13 @@
       <a-row>
         <a-col :span="24">
           <a-form layout="inline">
-            <a-form-item label="源文件名">
-              <a-input v-model="queryParam.filterName" placeholder="源文件名"/>
+            <a-form-item label="Source Image Name">
+              <a-input v-model="queryParam.filterName" placeholder="Source Image Name"/>
             </a-form-item>
             <a-form-item>
-              <a-button @click="loadData()">查询</a-button>
-              <a-button style="margin-left: 8px" @click="() => this.queryParam = {}">重置</a-button>
-              <a-button style="margin-left: 8px" type="primary" @click="() => this.analysisResultData.showModal = true">分析结果数据</a-button>
+              <a-button @click="loadData()">Search</a-button>
+              <a-button style="margin-left: 8px" @click="() => this.queryParam = {}">Reset</a-button>
+              <a-button style="margin-left: 8px" type="primary" @click="() => this.analysisResultData.showModal = true">Analysis Result Data</a-button>
             </a-form-item>
           </a-form>
         </a-col>
@@ -38,7 +38,7 @@
           :data-source="tableDataSource"
           :pagination="true"
           size="small">
-          <a-table-column key="name" title="源文件名" data-index="name">
+          <a-table-column key="name" title="Source Image Name" data-index="name">
             <template slot-scope="text, record">
               <a @click="onClickSourceImageName(record.name, record.resourcePath, record.canonicalFilePath)" style="font-size: 16px;width: 100%;display: block;">
                 <a-icon type="file-text" style="fontSize: 20px;margin-right: 10px;" theme="filled" /><span style="color: black">{{ record.name }}</span>
@@ -70,21 +70,21 @@
       width="90%"
       @close="handleImageModalCancel"
     >
-      <a :href="image.resourcePath" :download="image.name" style="font-size: 20px;border: silver 1px;">下载</a>
-      <span style="margin-left: 20px;">文件路径 {{ image.canonicalFilePath }}</span>
+      <a :href="image.resourcePath" :download="image.name" style="font-size: 20px;border: silver 1px;">Download</a>
+      <span style="margin-left: 20px;">Image path {{ image.canonicalFilePath }}</span>
       <img :src="image.resourcePath" width="100%"/>
     </a-drawer>
 
     <a-drawer
-      title="分析结果数据"
+      title="Analysis results data"
       placement="right"
       :closable="true"
-      :maskClosable="false"
+      :maskClosable="true"
       :visible="analysisResultData.showModal"
       width="auto"
       @close="handleAnalysisResultDataCancel"
     >
-      <span style="color: red;">数据文件地址：</span>{{ this.dataSource.canonicalPath }}/out_stats_all/out_stats_all.csv
+      <span style="color: red;">Analysis results data file path：</span>{{ this.dataSource.canonicalPath }}/out_stats_all/out_stats_all.csv
       <table v-if="dataSource.dataJson" border="1" class="sample-table">
         <tr v-for="(dataRow, a) in dataSource.dataJson" :key="a">
           <td v-for="(dataCol, j) in dataRow" :key="j">{{ dataCol }}</td>

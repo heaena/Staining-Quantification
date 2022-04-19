@@ -5,12 +5,12 @@
       <a-row :gutter="0">
         <a-col :md="14" :sm="24">
           <a-form layout="inline">
-            <a-form-item label="任务名称">
-              <a-input v-model="queryParam.filterName" placeholder="任务名称"/>
+            <a-form-item label="Task Title">
+              <a-input v-model="queryParam.filterName" placeholder="Task Title"/>
             </a-form-item>
             <a-form-item>
-              <a-button @click="loadData()">查询</a-button>
-              <a-button style="margin-left: 8px" @click="() => this.queryParam = {}">重置</a-button>
+              <a-button @click="loadData()">Search</a-button>
+              <a-button style="margin-left: 8px" @click="() => this.queryParam = {}">Reset</a-button>
             </a-form-item>
           </a-form>
         </a-col>
@@ -22,23 +22,23 @@
       :pagination="false"
       rowKey="name"
       size="middle">
-      <a-table-column key="name" title="任务名称" data-index="name" >
+      <a-table-column key="name" title="Task Title" data-index="name" >
         <template slot-scope="text, record">
           <a @click="onClickAnalysisResult(record)" style="padding-right: 50px;font-size: 16px;">
             <a-icon type="folder" style="color: goldenrod;fontSize: 20px;margin-right: 10px;" theme="filled" /><span style="color: black">{{ record.name }}</span>
           </a>
         </template>
       </a-table-column>
-      <a-table-column key="lastModified" title="修改时间" data-index="lastModified" >
+      <a-table-column key="lastModified" title="Last Edited Time" data-index="lastModified" >
         <template slot-scope="text, record">
           {{ formatDate(record.lastModified) }}
         </template>
       </a-table-column>
-      <a-table-column key="action" title="操作">
+      <a-table-column key="action" title="Action">
         <template slot-scope="text, record">
           <span>
-            <a-button @click="deleteFile(record)" >删除</a-button>
-            <a-button @click="onClickAnalysisResult(record)" type="primary" style="margin-left: 5px;">分析结果</a-button>
+            <a-button @click="deleteFile(record)" >Delete</a-button>
+            <a-button @click="onClickAnalysisResult(record)" type="primary" style="margin-left: 5px;">View Analysis Results</a-button>
           </span>
         </template>
       </a-table-column>

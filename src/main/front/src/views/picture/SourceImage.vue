@@ -6,19 +6,19 @@
         <a-col :md="10" :sm="24">
           <a-form layout="inline">
             <a-form-item>
-              <a-button icon="folder-add" @click="showUploadModal()" type="primary">上传图片</a-button>
-              <a-button icon="folder-add" @click="clickAddFolder()">新建文件夹</a-button>
+              <a-button icon="folder-add" @click="showUploadModal()" type="primary">Upload Image</a-button>
+              <a-button icon="folder-add" @click="clickAddFolder()">Create New Folder</a-button>
             </a-form-item>
           </a-form>
         </a-col>
         <a-col :md="14" :sm="24">
           <a-form layout="inline">
-            <a-form-item label="文件名称">
-              <a-input v-model="queryParam.name" placeholder="文件名称"/>
+            <a-form-item label="File Name">
+              <a-input v-model="queryParam.name" placeholder="File Name"/>
             </a-form-item>
             <a-form-item>
-              <a-button @click="loadData()">查询</a-button>
-              <a-button style="margin-left: 8px" @click="() => this.queryParam = {}">重置</a-button>
+              <a-button @click="loadData()">Search</a-button>
+              <a-button style="margin-left: 8px" @click="() => this.queryParam = {}">Reset</a-button>
             </a-form-item>
           </a-form>
         </a-col>
@@ -33,7 +33,7 @@
     </a-breadcrumb>
     <!--文件列表-->
     <a-table :data-source="dataSource" rowKey="path">
-      <a-table-column key="name" title="文件名" data-index="name" >
+      <a-table-column key="name" title="File Name" data-index="name" >
         <template slot-scope="text, record">
           <a @click="onClickItem(record)">
             <a-icon v-if="record.dir===true" type="folder" style="color: goldenrod;fontSize: 20px;margin-right: 10px;" theme="filled" />
@@ -41,16 +41,16 @@
           </a>
         </template>
       </a-table-column>
-      <a-table-column key="lastModified" title="修改时间" data-index="lastModified" >
+      <a-table-column key="lastModified" title="Last Edited Time" data-index="lastModified" >
         <template slot-scope="text, record">
           {{ formatDate(record.lastModified) }}
         </template>
       </a-table-column>
-      <a-table-column key="action" title="操作">
+      <a-table-column key="action" title="Action">
         <template slot-scope="text, record">
           <span>
-            <a-button @click="deleteFile(record)" >删除</a-button>
-            <a-button @click="onClickAnalysis(record)" type="primary" style="margin-left: 5px;">创建分析任务</a-button>
+            <a-button @click="deleteFile(record)" >Delete</a-button>
+            <a-button @click="onClickAnalysis(record)" type="primary" style="margin-left: 5px;">Create Analysis Task</a-button>
           </span>
         </template>
       </a-table-column>
@@ -65,25 +65,29 @@
       width="90%"
       @close="handleImageModalCancel"
     >
-      <a :href="image.resourcePath" :download="image.name" style="font-size: 20px;border: silver 1px;">下载</a>
-      <span style="margin-left: 20px;">文件路径 {{ image.canonicalFilePath }}</span>
+      <a :href="image.resourcePath" :download="image.name" style="font-size: 20px;border: silver 1px;">Download</a>
+      <span style="margin-left: 20px;">Image path： {{ image.canonicalFilePath }}</span>
       <img :src="image.resourcePath" width="100%"/>
     </a-drawer>
     <!--新增文件夹-->
     <a-modal
-      title="新建文件夹"
+      title="Create New Folder"
       :visible="folder.showModal"
       @cancel="handleFolderModalCancel"
       @ok="handleFolderModalOk"
+      okText="OK"
+      cancelText="Cancel"
     >
-      <a-input placeholder="文件夹名称" v-model="folder.name"/>
+      <a-input placeholder="Folder Name" v-model="folder.name"/>
     </a-modal>
     <!--上传图片-->
     <a-modal
-      title="上传图片"
+      title="Upload Image"
       :visible="upload.showModal"
       @cancel="handleUploadModalCancel"
       @ok="handleUploadModalOk"
+      okText="OK"
+      cancelText="Cancel"
     >
       <a-upload
         v-model="upload.fileList"
@@ -100,51 +104,50 @@
       >
         <a-button type="primary">
           <a-icon type="upload" />
-          选择图片
+          Choose Image
         </a-button>
       </a-upload>
     </a-modal>
     <!--分析-->
     <a-modal
-      title="创建分析任务"
+      title="Create Analysis Task"
       :visible="analysisModal.showModal"
       @cancel="onClickAnalysisModalCancel"
       @ok="onClickAnalysisModalOk"
-      okText="确定"
+      okText="OK"
+      cancelText="Cancel"
     >
-      <a-form :form="analysisForm" :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }">
-        <a-form-item label="任务名称">
+      <a-form :form="analysisForm" :label-col="{ span: 7 }" :wrapper-col="{ span: 16 }">
+        <a-form-item label="Task Title">
           <a-input
-            placeholder="标注此次任务"
+            placeholder="Mark this task"
             :maxLength="50"
             v-decorator="['taskName', { rules: [{ required: true, message: 'Please input!' }] }]"
           />
         </a-form-item>
-        <a-form-item label="d-thr">
+        <a-form-item label="local density filter" extra="note: denosing parameter. default value is 0. The most commonly used range of this parameter is 0~0.05.">
           <a-input-number
             :min="0"
-            placeholder="初次降噪"
+            placeholder="denosing parameter"
             style="width: 100%"
             v-decorator="['d-thr', {initialValue: '0.01'}, { rules: [{ required: true, message: 'Please select!' }] }]"
           />
-          常用范围为0-0.05
         </a-form-item>
-        <a-form-item label="fill">
+        <a-form-item label="fill" extra="note: dilate parameter. default value is 10. The most commonly used range is 0~15">
           <a-input-number
             :min="0"
-            placeholder="加深初次识别区域"
+            placeholder="dilate parameter"
             style="width: 100%"
             v-decorator="['fill', {initialValue: '10'}, { rules: [{ required: true, message: 'Please select!' }] }]"
           />
-          常用范围为0-15
         </a-form-item>
-        <a-form-item label="flood">
+        <a-form-item label="flood" extra="note: default value is Yes. whether to flood the connected areas">
           <a-select
             v-decorator="[
               'flood', {initialValue: 'Y'},
               { rules: [{ required: true, message: 'Please select!' }] },
             ]"
-            placeholder="将相连区域填实"
+            placeholder="whether to flood the connected areas"
           >
             <a-select-option value="Y">
               Yes
@@ -153,29 +156,26 @@
               No
             </a-select-option>
           </a-select>
-          <span>选择相连区域是否需要填实</span>
         </a-form-item>
-        <a-form-item label="obj-thr">
+        <a-form-item label="object area excluded" extra="note: denosing parameter. default value is 5%. The most commonly used range is 0~10%.">
           <a-input-number
             :min="0"
             :max="100"
-            placeholder="最终降噪"
+            placeholder="denosing parameter"
             style="width: 100%"
             :formatter="value => `${value}%`"
             :parser="value => value.replace('%', '')"
             v-decorator="['obj-thr', {initialValue: '5'}, { rules: [{ required: true, message: 'Please select!' }] }]"
           />
-          去掉面积占全部图片的百分比，常用范围为0-10
         </a-form-item>
-        <a-form-item label="stained-thr">
+        <a-form-item label="staining threshold" extra="note: the staining threshold paramter ranges from 0~255. the default for Von Kossa staining is set to 140, and for Alizarin Red is set to 100.">
           <a-input-number
             :min="0"
             :max="255"
-            placeholder="染色区域阈值"
+            placeholder="the staining threshold paramter"
             style="width: 100%"
             v-decorator="['stained-thr', {initialValue: '100'}, { rules: [{ required: true, message: 'Please select!' }] }]"
           />
-          von kossa常用值为140，alizarin red常用值为100
         </a-form-item>
       </a-form>
     </a-modal>
@@ -211,7 +211,7 @@ export default {
       },
       breadcrumb: [
         {
-          name: '全部文件',
+          name: 'All Files',
           path: ''
         }
       ],
@@ -352,7 +352,7 @@ export default {
             .then(res => {
               if (res.code === 0) {
                 that.onClickAnalysisModalCancel()
-                that.messageConfirm('任务执行中，请稍后查看分析结果', res.data)
+                that.messageConfirm('The task is in progress. Please check the analysis results later', res.data)
               } else {
                 that.warning(res.msg)
               }
@@ -362,15 +362,33 @@ export default {
     },
     messageConfirm (msg, taskName) {
       const that = this
-      Modal.confirm({
-        title: 'Confirm',
-        content: msg,
-        okText: '查看分析结果',
-        cancelText: '知道了',
-        onOk () {
-          that.$router.push({ path: '/task/' + taskName })
-        }
-      })
+      if (taskName) {
+        Modal.confirm({
+          title: 'Success',
+          content: msg,
+          okText: 'View Analysis Results',
+          closable: true,
+          closeIcon: <close-outlined />,
+          maskClosable: true,
+          cancelText: 'Got it',
+          icon: function () {
+            return ''
+          },
+          onOk () {
+            that.$router.push({ path: '/task/' + taskName })
+          }
+        })
+      } else {
+        Modal.confirm({
+          title: 'Create failed ！',
+          closable: true,
+          okText: 'Got it',
+          maskClosable: true,
+          icon: function () {
+            return ''
+          }
+        })
+      }
     },
     loadData (callback) {
       const requestParameters = Object.assign({}, this.queryParam)

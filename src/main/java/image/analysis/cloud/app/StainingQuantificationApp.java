@@ -8,13 +8,13 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
 @SpringBootApplication
-public class ImageAnalysisApp {
+public class StainingQuantificationApp {
 
-    static Logger logger = LoggerFactory.getLogger(ImageAnalysisApp.class);
+    static Logger logger = LoggerFactory.getLogger(StainingQuantificationApp.class);
 
     public static void main(String[] args) {
         //start web
-        ConfigurableApplicationContext context = new SpringApplicationBuilder(ImageAnalysisApp.class)
+        ConfigurableApplicationContext context = new SpringApplicationBuilder(StainingQuantificationApp.class)
                 .headless(false)
                 .run(args);
         //start gui

@@ -3,7 +3,7 @@
     <template v-slot:links>
     </template>
     <template v-slot:copyright>
-      <a href="https://github.com/vueComponent" target="_blank">前端框架</a>
+<!--      <a href="https://github.com/vueComponent" target="_blank">前端框架</a>-->
     </template>
   </global-footer>
 </template>
