@@ -6,8 +6,8 @@
         <a-col :md="10" :sm="24">
           <a-form layout="inline">
             <a-form-item>
-              <a-button icon="folder-add" @click="showUploadModal()" type="primary">Upload Image</a-button>
-              <a-button icon="folder-add" @click="clickAddFolder()">Create New Folder</a-button>
+              <a-button icon="arrow-up" @click="showUploadModal()" type="primary">Upload Image</a-button>
+              <a-button v-show="createFolderShow" icon="folder-add" @click="clickAddFolder()">Create New Folder</a-button>
             </a-form-item>
           </a-form>
         </a-col>
@@ -229,7 +229,8 @@ export default {
         param: {
           path: ''
         }
-      }
+      },
+      createFolderShow: true
     }
   },
   filters: {
@@ -302,6 +303,9 @@ export default {
         }
       }
       this.loadData()
+      if (!item.path) {
+        this.createFolderShow = true
+      }
     },
     onClickItem (record) {
       if (record.dir === true) {
@@ -309,6 +313,7 @@ export default {
         this.dataSource = []
         this.queryParam.parentPath = record.path
         this.loadData()
+        this.createFolderShow = false
       } else {
         this.image.name = record.name
         this.image.resourcePath = record.resourcePath

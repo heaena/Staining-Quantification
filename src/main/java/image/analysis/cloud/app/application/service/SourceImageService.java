@@ -37,6 +37,12 @@ public class SourceImageService implements ImageService {
      * @throws IOException
      */
     public List<FileSystem> listSourceImage(String parentPath, String name) throws IOException {
+        if (StringUtils.isEmpty(parentPath)) {
+            parentPath = "";
+        }
+        if (StringUtils.isEmpty(name)) {
+            name = "";
+        }
         File[] files = listChildFile(getRootPath() + "/" + parentPath, name);
         List<FileSystem> res = new LinkedList<>();
         if (files != null) {
