@@ -213,7 +213,7 @@
                     <winMenu>true</winMenu>
                     <winDirChooser>true</winDirChooser>
                     <winShortcut>true</winShortcut>
-                    <winUpgradeUuid>cd33d780-b3a9-4123-8cbb-e2d803df21e6</winUpgradeUuid>
+                    <winUpgradeUuid>ad33d780-b3a9-4123-8cbb-e2d803df21e6</winUpgradeUuid>
                     <appVersion>1.0.0</appVersion>
                     <mainJar>${package.mainJar.filename}.jar</mainJar>
                     <input>${package.content.dir}</input>
