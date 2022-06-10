@@ -1,4 +1,9 @@
 # Staining-Quantification
+
+## download app
+[all releases](https://github.com/heaena/Staining-Quantification/releases)
+
+
 ## description
 - this SQ tool is used for histological image staining quantification. 
 - it could be used as an alternative of ImageJ for biological image analysis in general.
