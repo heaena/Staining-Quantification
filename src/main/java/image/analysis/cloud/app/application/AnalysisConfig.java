@@ -84,12 +84,12 @@ public class AnalysisConfig {
             if ("inner".equals(rscript)) {
                 String path = new ClassPathResource("/rcode/").getFile().getParentFile().getParentFile().getCanonicalPath() + "/R/bin/Rscript";
                 path = new File(path).getCanonicalPath();
-                log.info("Rscript path=" + path);
                 AnalysisConfig.rscript = path;
             } else {
                 AnalysisConfig.rscript = rscript;
             }
         }
+        log.info("Rscript path=" + AnalysisConfig.rscript);
     }
 
     public static String getLogsPath() {

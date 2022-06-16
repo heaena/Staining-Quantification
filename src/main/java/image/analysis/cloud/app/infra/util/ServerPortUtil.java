@@ -1,7 +1,5 @@
 package image.analysis.cloud.app.infra.util;
 
-import org.h2.util.NetUtils;
-
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.Random;

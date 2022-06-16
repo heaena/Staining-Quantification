@@ -1,11 +1,18 @@
-Rscript -e 'install.packages("imager",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/")'
-Rscript -e 'install.packages("plyr",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/")'
-Rscript -e 'install.packages("imagerExtra",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/")'
-Rscript -e 'install.packages("Rcpp",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/")'
-Rscript -e 'install.packages("dbscan",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/")'
-Rscript -e 'if (!requireNamespace("BiocManager", quietly = TRUE))
+
+install.packages("imager",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/",lib="C:/Users/xinrui/IdeaProjects/image-analysis-app/package-content/R/library")
+install.packages("magrittr",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/",lib="C:/Users/xinrui/IdeaProjects/image-analysis-app/package-content/R/library")
+install.packages("plyr",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/",lib="C:/Users/xinrui/IdeaProjects/image-analysis-app/package-content/R/library")
+install.packages("imagerExtra",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/",lib="C:/Users/xinrui/IdeaProjects/image-analysis-app/package-content/R/library")
+install.packages("Rcpp",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/",lib="C:/Users/xinrui/IdeaProjects/image-analysis-app/package-content/R/library")
+install.packages("dbscan",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/",lib="C:/Users/xinrui/IdeaProjects/image-analysis-app/package-content/R/library")
+
+if (!requireNamespace("BiocManager", quietly = TRUE))
               install.packages("BiocManager")
             BiocManager::install("EBImage")'
 
 #### 本地开发安装依赖可以指定lib
 #### install.packages("imager", lib="/Library/Frameworks/R.framework/Versions/4.1/Resources/library", repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/")
+options(repos="http://mirror.tuna.tsinghua.edu.cn/CRAN/",
+lib="C:\Users\xinrui\IdeaProjects\image-analysis-app\package-content\R\library")
+install.packages("magrittr","imager","plyr","imagerExtra","dbscan",lib="C:/Users/xinrui/IdeaProjects/image-analysis-app/package-content/R/library")
+install.packages("magrittr",repos="https://mirrors.tuna.tsinghua.edu.cn/CRAN/",lib="C:/Users/xinrui/IdeaProjects/image-analysis-app/package-content/R/library")

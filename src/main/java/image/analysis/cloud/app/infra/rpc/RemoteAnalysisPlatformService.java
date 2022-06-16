@@ -22,6 +22,7 @@ public class RemoteAnalysisPlatformService {
     private static final String commandFileName = "command-process-one-image.R";
 
     private static File commandDir;
+    private static final String systemEncoding = System.getProperty("sun.jnu.encoding");
 
     static {
         try {
@@ -82,7 +83,7 @@ public class RemoteAnalysisPlatformService {
             p = Runtime.getRuntime().exec(commandArray, null, commandDir);
             p.waitFor();
             //读取结果
-            BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream(), "UTF-8"));
+            BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream(), systemEncoding));
             StringBuilder res = new StringBuilder();
             String s = null;
             while ((s = input.readLine()) != null) {
@@ -92,7 +93,7 @@ public class RemoteAnalysisPlatformService {
             log.info("执行脚本日志【{}】", res);
 
             //读取异常
-            BufferedReader err = new BufferedReader(new InputStreamReader(p.getErrorStream(), "UTF-8"));
+            BufferedReader err = new BufferedReader(new InputStreamReader(p.getErrorStream(), systemEncoding));
             StringBuilder errRes = new StringBuilder();
             String errStr = null;
             while ((errStr = err.readLine()) != null) {

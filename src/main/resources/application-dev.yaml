@@ -4,7 +4,7 @@ image:
   analysis:
     cloud:
       app:
-        rscript: Rscript
+        rscript: C:\Users\xinrui\IdeaProjects\image-analysis-app\package-content\R\bin\Rscript
         available-port: false
 logging:
   config: classpath:logback-dev.xml

@@ -1,18 +1,13 @@
 package image.analysis.cloud.app.application.domain.model;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import image.analysis.cloud.app.infra.util.IdUtil;
 
 import java.io.File;
 import java.util.Date;
 import java.util.List;
 
-@TableName("analysis_task")
 public class AnalysisTask {
     public static final String OUTPUT_PATH = "/output";
-    @TableId
     private String id;
     private long taskId;
     private String fileId;
@@ -22,7 +17,6 @@ public class AnalysisTask {
     private String param;
     private Date createDate;
 
-    @TableField(exist = false)
     private List<FileSystem> imageList;
 
     public AnalysisTask() {
